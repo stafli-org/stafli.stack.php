@@ -1,0 +1,43 @@
+---
+#
+#    Debian 8 (jessie) docker-compose.yml
+#    Copyright (C) 2016 SOL-ICT
+#    This file is part of the Docker High Performance PHP Stack.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# For Docker Compose v2+ only
+version: '2'
+
+#
+# Services/profiles
+#
+services:
+
+#
+# Networks
+#
+networks:
+  default:
+    driver: "${general_network_driver}"
+  proxy:
+    driver: "${general_network_driver}"
+  frontend:
+    driver: "${general_network_driver}"
+  application:
+    driver: "${general_network_driver}"
+  backend:
+    driver: "${general_network_driver}"
+
