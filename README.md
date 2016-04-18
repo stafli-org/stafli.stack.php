@@ -2,10 +2,18 @@
 High Performance PHP stack builds based on [Debian](https://www.debian.org/) and [CentOS](https://www.centos.org/), and developed as scripts for [Docker](https://www.docker.com/).  
 Continues on [Docker General Purpose System Distro](https://github.com/solict/docker-general-purpose-system-distro) builds.
 
+Requires [Docker Compose](https://docs.docker.com/compose/) 1.6.x or higher due to the [version 2](https://docs.docker.com/compose/compose-file/#versioning) format of the docker-compose.yml files.
+
+The docker-compose.yml are separated by distribution and require .env files to function properly.  
+
 ## Distributions
 The profiles use custom images as a starting point:
 - __Debian__, from the [Docker General Purpose System Distro](https://github.com/solict/docker-general-purpose-system-distro)
+  - [Debian 8 (jessie)](../../tree/master/debian8)
+  - [Debian 7 (wheezy)](../../tree/master/debian7)
 - __CentOS__, from the [Docker General Purpose System Distro](https://github.com/solict/docker-general-purpose-system-distro)
+  - [CentOS 7 (centos7)](../../tree/master/centos7)
+  - [CentOS 6 (centos6)](../../tree/master/centos6)
 
 ## Credits
 Docker High Performance PHP Stack  
