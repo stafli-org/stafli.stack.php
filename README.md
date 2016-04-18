@@ -22,12 +22,23 @@ The profiles use custom images as a starting point:
 
 ## Profiles
 These are the profiles described by the dockerfiles:
+- Memcached 1.4.x, adds Memcached on top of upstream Standard profile
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/solict/high-performance-php-stack/tags/) upon building:
+- Memcached 1.4.x profile:
+  - solict/high-performance-php-stack:debian8_memcached14
+  - solict/high-performance-php-stack:debian7_memcached14
+  - solict/high-performance-php-stack:centos7_memcached14
+  - solict/high-performance-php-stack:centos6_memcached14
 
 ## Containers
 These containers are generated upon issuing a create:
+- Memcached 1.4.x profile:
+  - debian8_memcached14_xxx
+  - debian7_memcached14_xxx
+  - centos7_memcached14_xxx
+  - centos6_memcached14_xxx
 
 ## Usage
 
@@ -44,6 +55,7 @@ Where <image_url> is the full image url (lookup the image list above).
 
 Examples:
 ```
+docker pull solict/high-performance-php-stack:debian7_memcached14
 ```
 
 ### From GitHub repository (advanced)

@@ -26,6 +26,38 @@ version: '2'
 #
 services:
 
+  memcached14:
+    labels:
+      - "${service_memcached14_label_url}.description=${service_memcached14_description}"
+      - "${service_memcached14_label_url}.vendor=${project_vendor}"
+      - "${service_memcached14_label_url}.license=${project_license}"
+      - "${service_memcached14_label_url}.architecture=${project_architecture}"
+      - "${service_memcached14_label_url}.version=${project_version}"
+    image: "${service_memcached14_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_memcached14_dockerfile}"
+      args:
+        app_memcached_user: "${service_memcached14_args_app_memcached_user}"
+        app_memcached_group: "${service_memcached14_args_app_memcached_group}"
+        app_memcached_loglevel: "${service_memcached14_args_app_memcached_loglevel}"
+        app_memcached_auth_sasl: "${service_memcached14_args_app_memcached_auth_sasl}"
+        app_memcached_listen_proto: "${service_memcached14_args_app_memcached_listen_proto}"
+        app_memcached_listen_addr: "${service_memcached14_args_app_memcached_listen_addr}"
+        app_memcached_listen_port: "${service_memcached14_args_app_memcached_listen_port}"
+        app_memcached_limit_backlog: "${service_memcached14_args_app_memcached_limit_backlog}"
+        app_memcached_limit_concurent: "${service_memcached14_args_app_memcached_limit_concurent}"
+        app_memcached_limit_memory: "${service_memcached14_args_app_memcached_limit_memory}"
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - backend
+    ports:
+      - "${service_memcached14_networking_port_int1}"
+      - "${service_memcached14_networking_port_int2}"
+    working_dir: "${general_working_dir}"
+    command: "${service_memcached14_command}"
+
 #
 # Networks
 #
