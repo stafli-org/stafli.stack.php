@@ -58,6 +58,38 @@ services:
     working_dir: "${general_working_dir}"
     command: "${service_memcached14_command}"
 
+  redis30:
+    labels:
+      - "${service_redis30_label_url}.description=${service_redis30_description}"
+      - "${service_redis30_label_url}.vendor=${project_vendor}"
+      - "${service_redis30_label_url}.license=${project_license}"
+      - "${service_redis30_label_url}.architecture=${project_architecture}"
+      - "${service_redis30_label_url}.version=${project_version}"
+    image: "${service_redis30_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_redis30_dockerfile}"
+      args:
+        app_redis_user: "${service_redis30_args_app_redis_user}"
+        app_redis_group: "${service_redis30_args_app_redis_group}"
+        app_redis_loglevel: "${service_redis30_args_app_redis_loglevel}"
+        app_redis_listen_addr: "${service_redis30_args_app_redis_listen_addr}"
+        app_redis_listen_port: "${service_redis30_args_app_redis_listen_port}"
+        app_redis_listen_timeout: "${service_redis30_args_app_redis_listen_timeout}"
+        app_redis_listen_keepalive: "${service_redis30_args_app_redis_listen_keepalive}"
+        app_redis_limit_backlog: "${service_redis30_args_app_redis_limit_backlog}"
+        app_redis_limit_concurent: "${service_redis30_args_app_redis_limit_concurent}"
+        app_redis_limit_memory: "${service_redis30_args_app_redis_limit_memory}"
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - backend
+    ports:
+      - "${service_redis30_networking_port_int1}"
+      - "${service_redis30_networking_port_int2}"
+    working_dir: "${general_working_dir}"
+    command: "${service_redis30_command}"
+
 #
 # Networks
 #
