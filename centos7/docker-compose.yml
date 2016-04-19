@@ -90,6 +90,32 @@ services:
     working_dir: "${general_working_dir}"
     command: "${service_redis30_command}"
 
+  mysql55:
+    labels:
+      - "${service_mysql55_label_url}.description=${service_mysql55_description}"
+      - "${service_mysql55_label_url}.vendor=${project_vendor}"
+      - "${service_mysql55_label_url}.license=${project_license}"
+      - "${service_mysql55_label_url}.architecture=${project_architecture}"
+      - "${service_mysql55_label_url}.version=${project_version}"
+    image: "${service_mysql55_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_mysql55_dockerfile}"
+      args:
+        app_mysql_user: "${service_mysql55_args_app_mysql_user}"
+        app_mysql_group: "${service_mysql55_args_app_mysql_group}"
+        app_mysql_listen_addr: "${service_mysql55_args_app_mysql_listen_addr}"
+        app_mysql_listen_port: "${service_mysql55_args_app_mysql_listen_port}"
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - backend
+    ports:
+      - "${service_mysql55_networking_port_int1}"
+      - "${service_mysql55_networking_port_int2}"
+    working_dir: "${general_working_dir}"
+    command: "${service_mysql55_command}"
+
 #
 # Networks
 #

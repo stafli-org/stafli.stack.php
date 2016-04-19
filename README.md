@@ -24,6 +24,7 @@ The profiles use custom images as a starting point:
 These are the profiles described by the dockerfiles:
 - Memcached 1.4.x, adds Memcached on top of upstream Standard profile
 - Redis 3.0.x, adds Redis on top of upstream Standard profile
+- MySQL 5.5.x/5.6.x/MariaDB 10.x, adds MySQL/MariaDB on top of upstream Standard profile
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/solict/high-performance-php-stack/tags/) upon building:
@@ -37,6 +38,11 @@ These are the [resulting images](https://hub.docker.com/r/solict/high-performanc
   - solict/high-performance-php-stack:debian7_redis30
   - solict/high-performance-php-stack:centos7_redis30
   - solict/high-performance-php-stack:centos6_redis30
+- MySQL 5.5.x/5.6.x/MariaDB 10.x profile:
+  - solict/high-performance-php-stack:debian8_mysql56
+  - solict/high-performance-php-stack:debian7_mysql56
+  - solict/high-performance-php-stack:centos7_mysql55
+  - solict/high-performance-php-stack:centos6_mysql55
 
 ## Containers
 These containers are generated upon issuing a create:
@@ -50,6 +56,11 @@ These containers are generated upon issuing a create:
   - debian7_redis30_xxx
   - centos7_redis30_xxx
   - centos6_redis30_xxx
+- MySQL 5.5.x/5.6.x/MariaDB 10.x profile:
+  - debian8_mysql56_xxx
+  - debian7_mysql56_xxx
+  - centos7_mysql55_xxx
+  - centos6_mysql55_xxx
 
 ## Usage
 
@@ -68,6 +79,7 @@ Examples:
 ```
 docker pull solict/high-performance-php-stack:debian7_memcached14
 docker pull solict/high-performance-php-stack:debian7_redis30
+docker pull solict/high-performance-php-stack:debian7_mysql56
 ```
 
 ### From GitHub repository (advanced)
