@@ -116,6 +116,67 @@ services:
     working_dir: "${general_working_dir}"
     command: "${service_mysql56_command}"
 
+  php56:
+    labels:
+      - "${service_php56_label_url}.description=${service_php56_description}"
+      - "${service_php56_label_url}.vendor=${project_vendor}"
+      - "${service_php56_label_url}.license=${project_license}"
+      - "${service_php56_label_url}.architecture=${project_architecture}"
+      - "${service_php56_label_url}.version=${project_version}"
+    image: "${service_php56_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_php56_dockerfile}"
+      args:
+        app_php_exts_core_dis: "${service_php56_args_app_php_exts_core_dis}"
+        app_php_exts_core_en: "${service_php56_args_app_php_exts_core_en}"
+        app_php_exts_extra_dis: "${service_php56_args_app_php_exts_extra_dis}"
+        app_php_exts_extra_en: "${service_php56_args_app_php_exts_extra_en}"
+        app_php_global_log_level: "${service_php56_args_app_php_global_log_level}"
+        app_php_global_log_display: "${service_php56_args_app_php_global_log_display}"
+        app_php_global_log_file: "${service_php56_args_app_php_global_log_file}"
+        app_php_global_limit_timeout: "${service_php56_args_app_php_global_limit_timeout}"
+        app_php_global_limit_memory: "${service_php56_args_app_php_global_limit_memory}"
+        app_fpm_global_user: "${service_php56_args_app_fpm_global_user}"
+        app_fpm_global_group: "${service_php56_args_app_fpm_global_group}"
+        app_fpm_global_log_level: "${service_php56_args_app_fpm_global_log_level}"
+        app_fpm_global_limit_descriptors: "${service_php56_args_app_fpm_global_limit_descriptors}"
+        app_fpm_global_limit_processes: "${service_php56_args_app_fpm_global_limit_processes}"
+        app_fpm_global_home: "${service_php56_args_app_fpm_global_home}"
+        app_fpm_pool_id: "${service_php56_args_app_fpm_pool_id}"
+        app_fpm_pool_user: "${service_php56_args_app_fpm_pool_user}"
+        app_fpm_pool_group: "${service_php56_args_app_fpm_pool_group}"
+        app_fpm_pool_listen_wlist: "${service_php56_args_app_fpm_pool_listen_wlist}"
+        app_fpm_pool_listen_addr: "${service_php56_args_app_fpm_pool_listen_addr}"
+        app_fpm_pool_listen_port: "${service_php56_args_app_fpm_pool_listen_port}"
+        app_fpm_pool_limit_descriptors: "${service_php56_args_app_fpm_pool_limit_descriptors}"
+        app_fpm_pool_limit_backlog: "${service_php56_args_app_fpm_pool_limit_backlog}"
+        app_fpm_pool_pm_method: "${service_php56_args_app_fpm_pool_pm_method}"
+        app_fpm_pool_pm_max_children: "${service_php56_args_app_fpm_pool_pm_max_children}"
+        app_fpm_pool_pm_start_servers: "${service_php56_args_app_fpm_pool_pm_start_servers}"
+        app_fpm_pool_pm_min_spare_servers: "${service_php56_args_app_fpm_pool_pm_min_spare_servers}"
+        app_fpm_pool_pm_max_spare_servers: "${service_php56_args_app_fpm_pool_pm_max_spare_servers}"
+        app_fpm_pool_pm_process_idle_timeout: "${service_php56_args_app_fpm_pool_pm_process_idle_timeout}"
+        app_fpm_pool_pm_max_requests: "${service_php56_args_app_fpm_pool_pm_max_requests}"
+    depends_on:
+      - memcached14
+      - redis30
+      - mysql56
+    links:
+      - memcached14
+      - redis30
+      - mysql56
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - application
+      - backend
+    ports:
+      - "${service_php56_networking_port_int1}"
+      - "${service_php56_networking_port_int2}"
+    working_dir: "${general_working_dir}"
+    command: "${service_php56_command}"
+
 #
 # Networks
 #
