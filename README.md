@@ -26,6 +26,8 @@ These are the profiles described by the dockerfiles:
 - Redis 3.0.x, adds Redis on top of upstream Standard profile
 - MySQL 5.5.x/5.6.x/MariaDB 10.x, adds MySQL/MariaDB on top of upstream Standard profile
 - PHP 5.6.x, adds PHP on top of upstream Devel profile
+- HTTPd 2.x.x Web, adds HTTPd on top of upstream Devel profile
+- HTTPd 2.x.x Proxy, adds HTTPd on top of upstream Standard profile
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/solict/high-performance-php-stack/tags/) upon building:
@@ -49,6 +51,16 @@ These are the [resulting images](https://hub.docker.com/r/solict/high-performanc
   - solict/high-performance-php-stack:debian7_php56
   - solict/high-performance-php-stack:centos7_php56
   - solict/high-performance-php-stack:centos6_php56
+- HTTPd 2.x.x Web profile:
+  - solict/high-performance-php-stack:debian8_httpd24_web
+  - solict/high-performance-php-stack:debian7_httpd22_web
+  - solict/high-performance-php-stack:centos7_httpd24_web
+  - solict/high-performance-php-stack:centos6_httpd22_web
+- HTTPd 2.x.x Proxy profile:
+  - solict/high-performance-php-stack:debian8_httpd24_proxy
+  - solict/high-performance-php-stack:debian7_httpd22_proxy
+  - solict/high-performance-php-stack:centos7_httpd24_proxy
+  - solict/high-performance-php-stack:centos6_httpd22_proxy
 
 ## Containers
 These containers are generated upon issuing a create:
@@ -72,6 +84,16 @@ These containers are generated upon issuing a create:
   - debian7_php56_xxx
   - centos7_php56_xxx
   - centos6_php56_xxx
+- HTTPd 2.x.x Web profile:
+  - debian8_httpd24_web_xxx
+  - debian7_httpd22_web_xxx
+  - centos7_httpd24_web_xxx
+  - centos6_httpd22_web_xxx
+- HTTPd 2.x.x Proxy profile:
+  - debian8_httpd24_proxy_xxx
+  - debian7_httpd22_proxy_xxx
+  - centos7_httpd24_proxy_xxx
+  - centos6_httpd22_proxy_xxx
 
 ## Usage
 
@@ -92,6 +114,8 @@ docker pull solict/high-performance-php-stack:debian7_memcached14
 docker pull solict/high-performance-php-stack:debian7_redis30
 docker pull solict/high-performance-php-stack:debian7_mysql56
 docker pull solict/high-performance-php-stack:debian7_php56
+docker pull solict/high-performance-php-stack:debian7_httpd22_web
+docker pull solict/high-performance-php-stack:debian7_httpd22_proxy
 ```
 
 ### From GitHub repository (advanced)

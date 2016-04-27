@@ -177,6 +177,90 @@ services:
     working_dir: "${general_working_dir}"
     command: "${service_php56_command}"
 
+  httpd24_web:
+    labels:
+      - "${service_httpd24_web_label_url}.description=${service_httpd24_web_description}"
+      - "${service_httpd24_web_label_url}.vendor=${project_vendor}"
+      - "${service_httpd24_web_label_url}.license=${project_license}"
+      - "${service_httpd24_web_label_url}.architecture=${project_architecture}"
+      - "${service_httpd24_web_label_url}.version=${project_version}"
+    image: "${service_httpd24_web_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_httpd24_web_dockerfile}"
+      args:
+        app_httpd_global_mods_core_dis: "${service_httpd24_web_args_app_httpd_mods_core_dis}"
+        app_httpd_global_mods_core_en: "${service_httpd24_web_args_app_httpd_mods_core_en}"
+        app_httpd_global_mods_extra_dis: "${service_httpd24_web_args_app_httpd_mods_extra_dis}"
+        app_httpd_global_mods_extra_en: "${service_httpd24_web_args_app_httpd_mods_extra_en}"
+        app_httpd_global_user: "${service_httpd24_web_args_app_httpd_global_user}"
+        app_httpd_global_group: "${service_httpd24_web_args_app_httpd_global_group}"
+        app_httpd_global_loglevel: "${service_httpd24_web_args_app_httpd_global_loglevel}"
+        app_httpd_global_listen_addr: "${service_httpd24_web_args_app_httpd_global_listen_addr}"
+        app_httpd_global_listen_port_http: "${service_httpd24_web_args_app_httpd_global_listen_port_http}"
+        app_httpd_global_listen_port_https: "${service_httpd24_web_args_app_httpd_global_listen_port_https}"
+        app_httpd_global_listen_timeout: "${service_httpd24_web_args_app_httpd_global_listen_timeout}"
+        app_httpd_global_listen_keepalive_status: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_status}"
+        app_httpd_global_listen_keepalive_requests: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_requests}"
+        app_httpd_global_listen_keepalive_timeout: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_timeout}"
+    depends_on:
+      - php56
+    links:
+      - php56
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - frontend
+      - application
+    ports:
+      - "${service_httpd24_web_networking_port_int1}"
+      - "${service_httpd24_web_networking_port_int2}"
+      - "${service_httpd24_web_networking_port_int3}"
+    working_dir: "${general_working_dir}"
+    command: "${service_httpd24_web_command}"
+
+  httpd24_proxy:
+    labels:
+      - "${service_httpd24_proxy_label_url}.description=${service_httpd24_proxy_description}"
+      - "${service_httpd24_proxy_label_url}.vendor=${project_vendor}"
+      - "${service_httpd24_proxy_label_url}.license=${project_license}"
+      - "${service_httpd24_proxy_label_url}.architecture=${project_architecture}"
+      - "${service_httpd24_proxy_label_url}.version=${project_version}"
+    image: "${service_httpd24_proxy_image_url}"
+    build:
+      context: "${general_context}"
+      dockerfile: "${service_httpd24_proxy_dockerfile}"
+      args:
+        app_httpd_global_mods_core_dis: "${service_httpd24_proxy_args_app_httpd_mods_core_dis}"
+        app_httpd_global_mods_core_en: "${service_httpd24_proxy_args_app_httpd_mods_core_en}"
+        app_httpd_global_mods_extra_dis: "${service_httpd24_proxy_args_app_httpd_mods_extra_dis}"
+        app_httpd_global_mods_extra_en: "${service_httpd24_proxy_args_app_httpd_mods_extra_en}"
+        app_httpd_global_user: "${service_httpd24_proxy_args_app_httpd_global_user}"
+        app_httpd_global_group: "${service_httpd24_proxy_args_app_httpd_global_group}"
+        app_httpd_global_loglevel: "${service_httpd24_proxy_args_app_httpd_global_loglevel}"
+        app_httpd_global_listen_addr: "${service_httpd24_proxy_args_app_httpd_global_listen_addr}"
+        app_httpd_global_listen_port_http: "${service_httpd24_proxy_args_app_httpd_global_listen_port_http}"
+        app_httpd_global_listen_port_https: "${service_httpd24_proxy_args_app_httpd_global_listen_port_https}"
+        app_httpd_global_listen_timeout: "${service_httpd24_proxy_args_app_httpd_global_listen_timeout}"
+        app_httpd_global_listen_keepalive_status: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_status}"
+        app_httpd_global_listen_keepalive_requests: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_requests}"
+        app_httpd_global_listen_keepalive_timeout: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_timeout}"
+    depends_on:
+      - httpd24_web
+    links:
+      - httpd24_web
+    logging:
+      driver: "${general_logging_driver}"
+    networks:
+      - proxy
+      - frontend
+    ports:
+      - "${service_httpd24_proxy_networking_port_int1}"
+      - "${service_httpd24_proxy_networking_port_int2}"
+      - "${service_httpd24_proxy_networking_port_int3}"
+    working_dir: "${general_working_dir}"
+    command: "${service_httpd24_proxy_command}"
+
 #
 # Networks
 #
