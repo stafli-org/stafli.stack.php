@@ -119,6 +119,7 @@ RUN printf "Updading HTTPd configuration...\n"; \
     \
     touch /etc/httpd/ports.conf; \
     mkdir /etc/httpd/sites.d; \
+    mkdir /etc/httpd/incl.d; \
     \
     # /etc/httpd/conf/httpd.conf \
     file="/etc/httpd/conf/httpd.conf"; \
@@ -166,5 +167,97 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}\n\
 </IfModule>\n\
 " > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/incl.d/000-php-fpm.conf \
+    file="/etc/httpd/incl.d/000-php-fpm.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# Pool for PHP-FPM\n\
+<IfModule proxy_fcgi_module>\n\
+DirectoryIndex index.php\n\
+ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://centos7_php56_1:9000/\$1\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/000-default.conf \
+    file="/etc/httpd/sites.d/000-default.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+<VirtualHost *:80>\n\
+        # ServerName www.example.com\n\
+\n\
+        ServerAdmin webmaster@localhost\n\
+        DocumentRoot /var/www/html\n\
+\n\
+        ErrorLog logs/error_log\n\
+        TransferLog logs/access_log\n\
+        LogLevel warn\n\
+</VirtualHost>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    \
+    # /etc/httpd/sites.d/000-default_ssl.conf \
+    file="/etc/httpd/sites.d/000-default_ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+<VirtualHost *:443>\n\
+        # ServerName www.example.com\n\
+\n\
+        ServerAdmin webmaster@localhost\n\
+        DocumentRoot /var/www/html\n\
+\n\
+        ErrorLog logs/ssl_error_log\n\
+        TransferLog logs/ssl_access_log\n\
+        LogLevel warn\n\
+\n\
+        SSLEngine on\n\
+        SSLCertificateFile /etc/pki/tls/certs/localhost.crt\n\
+        SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\n\
+</VirtualHost>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/000-default.conf \
+    file="/etc/httpd/sites.d/000-default.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add php-fpm include \
+    perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
+        # Worker for PHP-FPM\n\
+        Include incl.d/000-php-fpm.conf\
+>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/000-default_ssl.conf \
+    file="/etc/httpd/sites.d/000-default_ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add php-fpm include \
+    perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
+        # Worker for PHP-FPM\n\
+        Include incl.d/000-php-fpm.conf\
+>" ${file}; \
+    printf "Done patching ${file}...\n";
+
+#
+# Demo
+#
+
+RUN printf "Preparing demo...\n"; \
+    \
+    # /var/www/html/index.php \
+    file="/var/www/html/index.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+echo \"Hello World!\";\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /var/www/html/phpinfo.php \
+    file="/var/www/html/phpinfo.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+phpinfo();\n\
+\n" > ${file}; \
     printf "Done patching ${file}...\n";
 

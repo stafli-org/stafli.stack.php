@@ -297,7 +297,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     perl -0p -i -e "s>; Default Value: not set\n;ping.path = .*>; Default Value: not set\nping.path = /fpm-ping>" ${file}; \
     perl -0p -i -e "s>; Default Value: pong\n;ping.response = .*>; Default Value: pong\nping.response = pong>" ${file}; \
     # change whitelist \
-    perl -0p -i -e "s>; Default Value: any\n;listen.allowed_clients = .*>; Default Value: any\nlisten.allowed_clients = ${app_fpm_pool_listen_wlist}>" ${file}; \
+    perl -0p -i -e "s>; Default Value: any\nlisten.allowed_clients = .*>; Default Value: any\n;listen.allowed_clients = ${app_fpm_pool_listen_wlist}>" ${file}; \
     # change interface and port \
     perl -0p -i -e "s>; Note: This value is mandatory.\nlisten = .*>; Note: This value is mandatory.\nlisten = ${app_fpm_pool_listen_addr}:${app_fpm_pool_listen_port}>" ${file}; \
     # change maximum file open limit \
@@ -315,6 +315,10 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change timeouts \
     perl -0p -i -e "s>; Default Value: 0\n;request_slowlog_timeout = .*>; Default Value: 0\nrequest_slowlog_timeout = $((${app_php_global_limit_timeout}+5))>" ${file}; \
     perl -0p -i -e "s>; Default Value: 0\n;request_terminate_timeout = .*>; Default Value: 0\nrequest_terminate_timeout = $((${app_php_global_limit_timeout}+10))>" ${file}; \
+    # change chroot \
+    perl -0p -i -e "s>; Default Value: not set\n;chroot = .*>; Default Value: not set\nchroot = ${app_fpm_global_home}/${app_fpm_pool_id}/html>" ${file}; \
+    # change chdir \
+    perl -0p -i -e "s>; Default Value: current directory or / when chroot\n;chdir = .*>; Default Value: current directory or / when chroot\nchdir = />" ${file}; \
     # change allowed extensions \
     perl -0p -i -e "s>; Default Value: .php\n;security.limit_extensions = .*>; Default Value: .php\nsecurity.limit_extensions = .php>" ${file}; \
     # change temporary files \
@@ -355,7 +359,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change i18n \
     perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
     perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"UTC\">" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/php-fpm.ini \
@@ -391,7 +395,21 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
 # Demo
 #
 
-RUN file="${app_fpm_global_home}/${app_fpm_pool_id}/html/phpinfo.php"; \
+RUN printf "Preparing demo...\n"; \
+    \
+    # ${app_fpm_global_home}/${app_fpm_pool_id}/html/index.php \
+    file="${app_fpm_global_home}/${app_fpm_pool_id}/html/index.php"; \
     printf "\n# Adding demo file ${file}...\n"; \
-    echo "<?php phpinfo(); ?>" > $file;
+    printf "<?php\n\
+echo \"Hello World!\";\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # ${app_fpm_global_home}/${app_fpm_pool_id}/html/phpinfo.php \
+    file="${app_fpm_global_home}/${app_fpm_pool_id}/html/phpinfo.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+phpinfo();\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n";
 

@@ -53,13 +53,15 @@ ARG app_httpd_global_listen_keepalive_timeout="5"
 # - pwauth: for pwauth, the authenticator for mod_authnz_external
 # - libapache2-mod-xsendfile: the X-Sendfile DSO module
 # - libapache2-mod-upload-progress: the Upload Progress DSO module
+# - ssl-cert: for make-ssl-cert, to generate certificates
 RUN printf "# Install the HTTPd packages...\n" && \
     apt-get update && apt-get install -qy \
       apache2 \
       apache2-utils apachetop \
       apache2-mpm-event \
       libapache2-mod-authnz-external pwauth \
-      libapache2-mod-xsendfile libapache2-mod-upload-progress && \
+      libapache2-mod-xsendfile libapache2-mod-upload-progress \
+      ssl-cert && \
     printf "# Cleanup the Package Manager...\n" && \
     apt-get clean && rm -rf /var/lib/apt/lists/*;
 
@@ -119,6 +121,8 @@ autorestart=true\n\
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
     \
+    mkdir /etc/apache2/incl.d; \
+    \
     # /etc/apache2/apache2.conf \
     file="/etc/apache2/apache2.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
@@ -141,5 +145,65 @@ RUN printf "Updading HTTPd configuration...\n"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     perl -0p -i -e "s>Listen 80>Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}>g" ${file}; \
     perl -0p -i -e "s>Listen 443>Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/incl.d/000-php-fpm.conf \
+    file="/etc/apache2/incl.d/000-php-fpm.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# Pool for PHP-FPM\n\
+<IfModule proxy_fcgi_module>\n\
+DirectoryIndex index.php\n\
+ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://debian8_php56_1:9000/\$1\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/sites-available/000-default.conf \
+    file="/etc/apache2/sites-available/000-default.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add php-fpm include \
+    perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
+        # Worker for PHP-FPM\n\
+        Include incl.d/000-php-fpm.conf\
+>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/sites-available/default-ssl.conf \
+    file="/etc/apache2/sites-available/default-ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add php-fpm include \
+    perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
+                # Worker for PHP-FPM\n\
+                Include incl.d/000-php-fpm.conf\
+>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "\n# Generate certificates...\n"; \
+    make-ssl-cert generate-default-snakeoil --force-overwrite; \
+    \
+    printf "\n# Enable sites...\n"; \
+    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/000-default-ssl.conf; \
+    a2ensite 000-default 000-default-ssl;
+
+#
+# Demo
+#
+
+RUN printf "Preparing demo...\n"; \
+    \
+    # /var/www/html/index.php \
+    file="/var/www/html/index.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+echo \"Hello World!\";\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /var/www/html/phpinfo.php \
+    file="/var/www/html/phpinfo.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+phpinfo();\n\
+\n" > ${file}; \
     printf "Done patching ${file}...\n";
 
