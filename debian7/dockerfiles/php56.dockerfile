@@ -257,6 +257,57 @@ autorestart=true\n\
 # PHP / PHP-FPM
 RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     \
+    # /etc/php5/cli/php.ini \
+    file="/etc/php5/cli/php.ini"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # change logging \
+    perl -0p -i -e "s>; http://php.net/error-reporting\nerror_reporting = .*>; http://php.net/error-reporting\nerror_reporting = ${app_php_global_log_level}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/display-startup-errors\ndisplay_startup_errors = .*>; http://php.net/display-startup-errors\ndisplay_startup_errors = ${app_php_global_log_display}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/display-errors\ndisplay_errors = .*>; http://php.net/display-errors\ndisplay_errors = ${app_php_global_log_display}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/log-errors\nlog_errors = .*>; http://php.net/log-errors\nlog_errors = ${app_php_global_log_file}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/log-errors-max-len\nlog_errors_max_len = .*>; http://php.net/log-errors-max-len\nlog_errors_max_len = 10M>" ${file}; \
+    # change timeouts \
+    perl -0p -i -e "s>; http://php.net/max-input-time\nmax_input_time = .*>; http://php.net/max-input-time\nmax_input_time = -1>" ${file}; \
+    perl -0p -i -e "s>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = .*>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = -1>" ${file}; \
+    # change memory limit \
+    perl -0p -i -e "s>; http://php.net/memory-limit\nmemory_limit = .*>; http://php.net/memory-limit\nmemory_limit = -1>" ${file}; \
+    # change upload limit \
+    perl -0p -i -e "s>; http://php.net/post-max-size\npost_max_size = .*>; http://php.net/post-max-size\npost_max_size = -1>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/upload-max-filesize\nupload_max_filesize = .*>; http://php.net/upload-max-filesize\nupload_max_filesize = -1>" ${file}; \
+    # change i18n \
+    perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/php5/fpm/php.ini \
+    file="/etc/php5/fpm/php.ini"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # change logging \
+    perl -0p -i -e "s>; http://php.net/error-reporting\nerror_reporting = .*>; http://php.net/error-reporting\nerror_reporting = ${app_php_global_log_level}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/display-startup-errors\ndisplay_startup_errors = .*>; http://php.net/display-startup-errors\ndisplay_startup_errors = ${app_php_global_log_display}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/display-errors\ndisplay_errors = .*>; http://php.net/display-errors\ndisplay_errors = ${app_php_global_log_display}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/log-errors\nlog_errors = .*>; http://php.net/log-errors\nlog_errors = ${app_php_global_log_file}>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/log-errors-max-len\nlog_errors_max_len = .*>; http://php.net/log-errors-max-len\nlog_errors_max_len = 10M>" ${file}; \
+    # change timeouts \
+    perl -0p -i -e "s>; http://php.net/max-input-time\nmax_input_time = .*>; http://php.net/max-input-time\nmax_input_time = $((${app_php_global_limit_timeout}/2))>" ${file}; \
+    perl -0p -i -e "s>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = .*>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = ${app_php_global_limit_timeout}>" ${file}; \
+    # change memory limit \
+    perl -0p -i -e "s>; http://php.net/memory-limit\nmemory_limit = .*>; http://php.net/memory-limit\nmemory_limit = $((${app_php_global_limit_memory}/1024/1024))M>" ${file}; \
+    # change upload limit \
+    perl -0p -i -e "s>; http://php.net/post-max-size\npost_max_size = .*>; http://php.net/post-max-size\npost_max_size = $((${app_php_global_limit_memory}*15/20/1024/1024))M>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/upload-max-filesize\nupload_max_filesize = .*>; http://php.net/upload-max-filesize\nupload_max_filesize = $((${app_php_global_limit_memory}/2/1024/1024))M>" ${file}; \
+    # change i18n \
+    perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
+    # change CGI \
+    perl -0p -i -e "s>; http://php.net/cgi.force-redirect\n;cgi.force_redirect = .*>; http://php.net/cgi.force-redirect\ncgi.force_redirect = 1>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/cgi.fix-pathinfo\n;cgi.fix_pathinfo=.*>; http://php.net/cgi.fix-pathinfo\ncgi.fix_pathinfo = 1>" ${file}; \
+    perl -0p -i -e "s>; this feature.\n;fastcgi.logging = .*>; this feature.\nfastcgi.logging = 1>" ${file}; \
+    perl -0p -i -e "s>; http://php.net/cgi.rfc2616-headers\n;cgi.rfc2616_headers = .*>; http://php.net/cgi.rfc2616-headers\ncgi.rfc2616_headers = 0>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     # /etc/php5/fpm/php-fpm.conf \
     file="/etc/php5/fpm/php-fpm.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
@@ -330,57 +381,6 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[ftp_proxy\] = \\\$ftp_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[https_proxy\] = \\\$https_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[http_proxy\] = \\\$http_proxy\n>" ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/php5/cli/php.ini \
-    file="/etc/php5/cli/php.ini"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    # change logging \
-    perl -0p -i -e "s>; http://php.net/error-reporting\nerror_reporting = .*>; http://php.net/error-reporting\nerror_reporting = ${app_php_global_log_level}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/display-startup-errors\ndisplay_startup_errors = .*>; http://php.net/display-startup-errors\ndisplay_startup_errors = ${app_php_global_log_display}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/display-errors\ndisplay_errors = .*>; http://php.net/display-errors\ndisplay_errors = ${app_php_global_log_display}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/log-errors\nlog_errors = .*>; http://php.net/log-errors\nlog_errors = ${app_php_global_log_file}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/log-errors-max-len\nlog_errors_max_len = .*>; http://php.net/log-errors-max-len\nlog_errors_max_len = 10M>" ${file}; \
-    # change timeouts \
-    perl -0p -i -e "s>; http://php.net/max-input-time\nmax_input_time = .*>; http://php.net/max-input-time\nmax_input_time = -1>" ${file}; \
-    perl -0p -i -e "s>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = .*>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = -1>" ${file}; \
-    # change memory limit \
-    perl -0p -i -e "s>; http://php.net/memory-limit\nmemory_limit = .*>; http://php.net/memory-limit\nmemory_limit = -1>" ${file}; \
-    # change upload limit \
-    perl -0p -i -e "s>; http://php.net/post-max-size\npost_max_size = .*>; http://php.net/post-max-size\npost_max_size = -1>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/upload-max-filesize\nupload_max_filesize = .*>; http://php.net/upload-max-filesize\nupload_max_filesize = -1>" ${file}; \
-    # change i18n \
-    perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/php5/fpm/php.ini \
-    file="/etc/php5/fpm/php.ini"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    # change logging \
-    perl -0p -i -e "s>; http://php.net/error-reporting\nerror_reporting = .*>; http://php.net/error-reporting\nerror_reporting = ${app_php_global_log_level}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/display-startup-errors\ndisplay_startup_errors = .*>; http://php.net/display-startup-errors\ndisplay_startup_errors = ${app_php_global_log_display}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/display-errors\ndisplay_errors = .*>; http://php.net/display-errors\ndisplay_errors = ${app_php_global_log_display}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/log-errors\nlog_errors = .*>; http://php.net/log-errors\nlog_errors = ${app_php_global_log_file}>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/log-errors-max-len\nlog_errors_max_len = .*>; http://php.net/log-errors-max-len\nlog_errors_max_len = 10M>" ${file}; \
-    # change timeouts \
-    perl -0p -i -e "s>; http://php.net/max-input-time\nmax_input_time = .*>; http://php.net/max-input-time\nmax_input_time = $((${app_php_global_limit_timeout}/2))>" ${file}; \
-    perl -0p -i -e "s>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = .*>; Note: This directive is hardcoded to 0 for the CLI SAPI\nmax_execution_time = ${app_php_global_limit_timeout}>" ${file}; \
-    # change memory limit \
-    perl -0p -i -e "s>; http://php.net/memory-limit\nmemory_limit = .*>; http://php.net/memory-limit\nmemory_limit = $((${app_php_global_limit_memory}/1024/1024))M>" ${file}; \
-    # change upload limit \
-    perl -0p -i -e "s>; http://php.net/post-max-size\npost_max_size = .*>; http://php.net/post-max-size\npost_max_size = $((${app_php_global_limit_memory}*15/20/1024/1024))M>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/upload-max-filesize\nupload_max_filesize = .*>; http://php.net/upload-max-filesize\nupload_max_filesize = $((${app_php_global_limit_memory}/2/1024/1024))M>" ${file}; \
-    # change i18n \
-    perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
-    # change CGI \
-    perl -0p -i -e "s>; http://php.net/cgi.force-redirect\n;cgi.force_redirect = .*>; http://php.net/cgi.force-redirect\ncgi.force_redirect = 1>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/cgi.fix-pathinfo\n;cgi.fix_pathinfo=.*>; http://php.net/cgi.fix-pathinfo\ncgi.fix_pathinfo = 1>" ${file}; \
-    perl -0p -i -e "s>; this feature.\n;fastcgi.logging = .*>; this feature.\nfastcgi.logging = 1>" ${file}; \
-    perl -0p -i -e "s>; http://php.net/cgi.rfc2616-headers\n;cgi.rfc2616_headers = .*>; http://php.net/cgi.rfc2616-headers\ncgi.rfc2616_headers = 0>" ${file}; \
     printf "Done patching ${file}...\n";
 
 #
