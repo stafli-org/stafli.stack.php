@@ -167,3 +167,27 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>Listen 443>NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\nListen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
     printf "Done patching ${file}...\n";
 
+#
+# Demo
+#
+
+RUN printf "Preparing demo...\n"; \
+    # HTTPd vhost \
+    app_httpd_vhost_home="/var/www"; \
+    \
+    # ${app_httpd_vhost_home}/html/index.php \
+    file="${app_httpd_vhost_home}/html/index.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+echo \"Hello World!\";\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # ${app_httpd_vhost_home}/html/phpinfo.php \
+    file="${app_httpd_vhost_home}/html/phpinfo.php"; \
+    printf "\n# Adding demo file ${file}...\n"; \
+    printf "<?php\n\
+phpinfo();\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n";
+

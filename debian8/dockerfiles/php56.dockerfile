@@ -391,17 +391,19 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
 #
 
 RUN printf "Preparing demo...\n"; \
+    # PHP-FPM Pool \
+    app_fpm_pool_home="${app_fpm_global_home}/${app_fpm_pool_id}"; \
     \
-    # ${app_fpm_global_home}/${app_fpm_pool_id}/html/index.php \
-    file="${app_fpm_global_home}/${app_fpm_pool_id}/html/index.php"; \
+    # ${app_fpm_pool_home}/html/index.php \
+    file="${app_fpm_pool_home}/html/index.php"; \
     printf "\n# Adding demo file ${file}...\n"; \
     printf "<?php\n\
 echo \"Hello World!\";\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # ${app_fpm_global_home}/${app_fpm_pool_id}/html/phpinfo.php \
-    file="${app_fpm_global_home}/${app_fpm_pool_id}/html/phpinfo.php"; \
+    # ${app_fpm_pool_home}/html/phpinfo.php \
+    file="${app_fpm_pool_home}/html/phpinfo.php"; \
     printf "\n# Adding demo file ${file}...\n"; \
     printf "<?php\n\
 phpinfo();\n\

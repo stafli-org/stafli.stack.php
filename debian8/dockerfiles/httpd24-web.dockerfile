@@ -190,17 +190,19 @@ ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://debian8_php56_1:9000/\$1\n\
 #
 
 RUN printf "Preparing demo...\n"; \
+    # HTTPd vhost \
+    app_httpd_vhost_home="/var/www"; \
     \
-    # /var/www/html/index.php \
-    file="/var/www/html/index.php"; \
+    # ${app_httpd_vhost_home}/html/index.php \
+    file="${app_httpd_vhost_home}/html/index.php"; \
     printf "\n# Adding demo file ${file}...\n"; \
     printf "<?php\n\
 echo \"Hello World!\";\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /var/www/html/phpinfo.php \
-    file="/var/www/html/phpinfo.php"; \
+    # ${app_httpd_vhost_home}/html/phpinfo.php \
+    file="${app_httpd_vhost_home}/html/phpinfo.php"; \
     printf "\n# Adding demo file ${file}...\n"; \
     printf "<?php\n\
 phpinfo();\n\
