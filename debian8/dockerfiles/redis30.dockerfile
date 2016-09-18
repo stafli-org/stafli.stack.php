@@ -70,7 +70,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_redis_group} \
       --no-create-home --home-dir /var/lib/redis \
-      --shell /bin/false \
+      --shell /usr/sbin/nologin \
       ${app_redis_user};
 
 # Supervisor

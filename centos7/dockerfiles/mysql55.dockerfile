@@ -65,7 +65,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_mysql_group} \
       --no-create-home --home-dir /var/lib/mysql \
-      --shell /bin/false \
+      --shell /sbin/nologin \
       ${app_mysql_user};
 
 # Supervisor

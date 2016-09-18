@@ -227,7 +227,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_fpm_global_group} \
       --no-create-home --home-dir /var/www \
-      --shell /bin/false \
+      --shell /sbin/nologin \
       ${app_fpm_global_user}; \
     \
     # PHP-FPM Pool \
@@ -239,7 +239,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_fpm_pool_group} \
       --create-home --home-dir ${app_fpm_pool_home} \
-      --shell /bin/false \
+      --shell /sbin/nologin \
       ${app_fpm_pool_user}; \
     mkdir -p ${app_fpm_pool_home}/bin ${app_fpm_pool_home}/log ${app_fpm_pool_home}/html; \
     chown -R ${app_fpm_global_user}:${app_fpm_global_group} ${app_fpm_pool_home}; \

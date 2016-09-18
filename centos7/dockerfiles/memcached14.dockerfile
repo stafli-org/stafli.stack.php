@@ -69,7 +69,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_memcached_group} \
       --no-create-home --home-dir /nonexistent \
-      --shell /bin/false \
+      --shell /sbin/nologin \
       ${app_memcached_user};
 
 # Supervisor

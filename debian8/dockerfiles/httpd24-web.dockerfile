@@ -95,7 +95,7 @@ RUN printf "Adding users and groups...\n"; \
     useradd \
       --system --gid ${app_httpd_global_group} \
       --no-create-home --home-dir /var/www \
-      --shell /bin/false \
+      --shell /usr/sbin/nologin \
       ${app_httpd_global_user};
 
 # Supervisor
