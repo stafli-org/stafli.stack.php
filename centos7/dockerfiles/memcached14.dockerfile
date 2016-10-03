@@ -135,7 +135,32 @@ RUN printf "Updading Logrotate configuration...\n"; \
 # Memcached
 RUN printf "Updading Memcached configuration...\n"; \
     \
-    # ignoring /etc/sysconfig/memcached \
+    # /etc/sysconfig/memcached \
+    file="/etc/sysconfig/memcached"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable daemon/run in foreground \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"#-d >" ${file}; \
+    # run as user \
+    perl -0p -i -e "s>USER=.*>USER=\"${app_memcached_user}\">" ${file}; \
+    # change log level \
+    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_loglevel_ovr} >" ${file}; \
+    # change interface \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-l ${app_memcached_listen_addr} >" ${file}; \
+    # change port \
+    perl -0p -i -e "s>PORT=.*>PORT=\"${app_memcached_listen_port}\">" ${file}; \
+    # change backlog queue limit \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-b ${app_memcached_limit_backlog} >" ${file}; \
+    # change max concurrent connections \
+    perl -0p -i -e "s>MAXCONN=.*>MAXCONN=\"${app_memcached_limit_concurent}\">" ${file}; \
+    # change max memory \
+    perl -0p -i -e "s>CACHESIZE=.*>CACHESIZE=\"${app_memcached_limit_memory}\">" ${file}; \
+    # change protocol to auto \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-B ${app_memcached_listen_proto} >" ${file}; \
+    # change SASL authentication \
+    if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl=""; fi; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_auth_sasl} >" ${file}; \
+    printf "Done patching ${file}...\n"; \
     \
     # /etc/memcached.conf \
     file="/etc/memcached.conf"; \
@@ -147,8 +172,8 @@ RUN printf "Updading Memcached configuration...\n"; \
     # run as user \
     printf "\n# Specify which user to run memcache on.\n-u ${app_memcached_user}\n" >> ${file}; \
     # change log level \
-    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel="-vv"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel="-vv"; else app_memcached_loglevel=""; fi; \
-    printf "\n# Be verbose\n${app_memcached_loglevel}\n" >> ${file}; \
+    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi; \
+    printf "\n# Be verbose\n${app_memcached_loglevel_ovr}\n" >> ${file}; \
     # change interface \
     printf "\n# Specify which IP address to listen on.\n-l ${app_memcached_listen_addr}\n" >> ${file}; \
     # change port \

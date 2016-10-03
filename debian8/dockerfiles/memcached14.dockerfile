@@ -127,7 +127,12 @@ RUN printf "Updading Logrotate configuration...\n"; \
 # Memcached
 RUN printf "Updading Memcached configuration...\n"; \
     \
-    # ignoring /etc/default/memcached \
+    # /etc/default/memcached \
+    file="/etc/default/memcached"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # enable memcached \
+    perl -0p -i -e "s>ENABLE_MEMCACHED=.*>ENABLE_MEMCACHED=yes>" ${file}; \
+    printf "Done patching ${file}...\n"; \
     \
     # /etc/memcached.conf \
     file="/etc/memcached.conf"; \
@@ -137,8 +142,8 @@ RUN printf "Updading Memcached configuration...\n"; \
     # run as user \
     perl -0p -i -e "s># -u command is present in this config file\n.*-u .*\n># -u command is present in this config file\n-u ${app_memcached_user}\n>" ${file}; \
     # change log level \
-    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel="-vv"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel="-vv"; else app_memcached_loglevel=""; fi; \
-    perl -0p -i -e "s># Be verbose\n.*-v\n># Be verbose\n${app_memcached_loglevel}\n>" ${file}; \
+    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi; \
+    perl -0p -i -e "s># Be verbose\n.*-v\n># Be verbose\n${app_memcached_loglevel_ovr}\n>" ${file}; \
     # change interface \
     perl -0p -i -e "s># it's listening on a firewalled interface.\n.*-l .*\n># it's listening on a firewalled interface.\n-l ${app_memcached_listen_addr}\n>" ${file}; \
     # change port \
