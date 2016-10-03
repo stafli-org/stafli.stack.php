@@ -108,13 +108,13 @@ RUN printf "Updading Redis configuration...\n"; \
     # change log level \
     perl -0p -i -e "s># warning (only very important / critical messages are logged)\nloglevel .*\n># warning (only very important / critical messages are logged)\nloglevel ${app_redis_loglevel}\n>" ${file}; \
     # change interface \
-    perl -0p -i -e "s># bind 192.168.1.100 10.0.0.1\nbind .*\n># bind 192.168.1.100 10.0.0.1\nbind ${app_redis_listen_addr}\n>" ${file}; \
+    perl -0p -i -e "s># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind .*\n># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind ${app_redis_listen_addr}\n>" ${file}; \
     # change port \
     perl -0p -i -e "s># If port 0 is specified Redis will not listen on a TCP socket.\nport .*\n># If port 0 is specified Redis will not listen on a TCP socket.\nport ${app_redis_listen_port}\n>" ${file}; \
     # change timeout \
     perl -0p -i -e "s># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout .*\n># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout ${app_redis_listen_timeout}\n>" ${file}; \
     # change keepalive \
-    perl -0p -i -e "s># A reasonable value for this option is 60 seconds.\ntcp-keepalive .*\n># A reasonable value for this option is 60 seconds.\ntcp-keepalive ${app_redis_listen_keepalive}\n>" ${file}; \
+    perl -0p -i -e "s># A reasonable value for this option is 300 seconds, which is the new\n# Redis default starting with Redis 3.2.1.\ntcp-keepalive .*\n># A reasonable value for this option is 300 seconds, which is the new\n# Redis default starting with Redis 3.2.1.\ntcp-keepalive ${app_redis_listen_keepalive}\n>" ${file}; \
     # change backlog \
     perl -0p -i -e "s># in order to get the desired effect.\ntcp-backlog .*\n># in order to get the desired effect.\ntcp-backlog ${app_redis_limit_backlog}\n>" ${file}; \
     # change max clients \
