@@ -112,11 +112,11 @@ RUN printf "Updading MySQL configuration...\n"; \
     file="/etc/my.cnf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # run as user \
-    perl -0p -i -e "s>user = .*>user = ${app_mysql_user}>" ${file}; \
+    perl -0p -i -e "s>user=.*>user = ${app_mysql_user}>" ${file}; \
     # change interface \
-    perl -0p -i -e "s>user>bind-address = ${app_mysql_listen_addr}\nuser>" ${file}; \
+    perl -0p -i -e "s># Settings user and group are ignored>bind-address = ${app_mysql_listen_addr}\n# Settings user and group are ignored>" ${file}; \
     # change port \
-    perl -0p -i -e "s>user>port = ${app_mysql_listen_port}\nuser>" ${file}; \
+    perl -0p -i -e "s># Settings user and group are ignored>port = ${app_mysql_listen_port}\n\n# Settings user and group are ignored>" ${file}; \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
