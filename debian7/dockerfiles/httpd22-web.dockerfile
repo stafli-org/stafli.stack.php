@@ -31,6 +31,7 @@ ARG app_httpd_global_mods_extra_dis="authnz_external"
 ARG app_httpd_global_mods_extra_en="upload_progress xsendfile proxy_fcgi"
 ARG app_httpd_global_user="www-data"
 ARG app_httpd_global_group="www-data"
+ARG app_httpd_global_home="/var/www"
 ARG app_httpd_global_loglevel="warn"
 ARG app_httpd_global_listen_addr="0.0.0.0"
 ARG app_httpd_global_listen_port_http="80"
@@ -39,6 +40,10 @@ ARG app_httpd_global_listen_timeout="140"
 ARG app_httpd_global_listen_keepalive_status="On"
 ARG app_httpd_global_listen_keepalive_requests="100"
 ARG app_httpd_global_listen_keepalive_timeout="5"
+ARG app_httpd_vhost_id="default"
+ARG app_httpd_vhost_user="www-data"
+ARG app_httpd_vhost_group="www-data"
+ARG app_httpd_vhost_home="default"
 
 #
 # Packages
@@ -105,15 +110,43 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
+    # HTTPd daemon \
     id -g ${app_httpd_global_user} || \
     groupadd \
       --system ${app_httpd_global_group} && \
-    id -u ${app_httpd_global_user} || \
+    id -u ${app_httpd_global_user} && \
+    usermod \
+      --gid ${app_httpd_global_group} \
+      --home ${app_httpd_global_home} \
+      --shell /usr/sbin/nologin \
+      ${app_httpd_global_user} \
+    || \
     useradd \
       --system --gid ${app_httpd_global_group} \
-      --no-create-home --home-dir /var/www \
+      --no-create-home --home-dir ${app_httpd_global_home} \
       --shell /usr/sbin/nologin \
-      ${app_httpd_global_user};
+      ${app_httpd_global_user}; \
+    \
+    # HTTPd vhost \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
+    id -g ${app_httpd_vhost_user} || \
+    groupadd \
+      --system ${app_httpd_vhost_group} && \
+    id -u ${app_httpd_vhost_user} && \
+    usermod \
+      --gid ${app_httpd_global_group} \
+      --home ${app_httpd_vhost_home} \
+      --shell /usr/sbin/nologin \
+      ${app_httpd_global_user} \
+    || \
+    useradd \
+      --system --gid ${app_httpd_vhost_group} \
+      --create-home --home-dir ${app_httpd_vhost_home} \
+      --shell /usr/sbin/nologin \
+      ${app_httpd_vhost_user}; \
+    mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html; \
+    chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
+    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -173,7 +206,7 @@ RUN printf "Updading HTTPd configuration...\n"; \
 
 RUN printf "Preparing demo...\n"; \
     # HTTPd vhost \
-    app_httpd_vhost_home="/var/www"; \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
     \
     # ${app_httpd_vhost_home}/html/index.php \
     file="${app_httpd_vhost_home}/html/index.php"; \

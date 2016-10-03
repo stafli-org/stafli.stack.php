@@ -40,6 +40,7 @@ services:
       args:
         app_memcached_user: "${service_memcached14_args_app_memcached_user}"
         app_memcached_group: "${service_memcached14_args_app_memcached_group}"
+        app_memcached_home: "${service_memcached14_args_app_memcached_home}"
         app_memcached_loglevel: "${service_memcached14_args_app_memcached_loglevel}"
         app_memcached_auth_sasl: "${service_memcached14_args_app_memcached_auth_sasl}"
         app_memcached_listen_proto: "${service_memcached14_args_app_memcached_listen_proto}"
@@ -72,6 +73,7 @@ services:
       args:
         app_redis_user: "${service_redis30_args_app_redis_user}"
         app_redis_group: "${service_redis30_args_app_redis_group}"
+        app_redis_home: "${service_redis30_args_app_redis_home}"
         app_redis_loglevel: "${service_redis30_args_app_redis_loglevel}"
         app_redis_listen_addr: "${service_redis30_args_app_redis_listen_addr}"
         app_redis_listen_port: "${service_redis30_args_app_redis_listen_port}"
@@ -104,6 +106,7 @@ services:
       args:
         app_mysql_user: "${service_mysql55_args_app_mysql_user}"
         app_mysql_group: "${service_mysql55_args_app_mysql_group}"
+        app_mysql_home: "${service_mysql55_args_app_mysql_home}"
         app_mysql_listen_addr: "${service_mysql55_args_app_mysql_listen_addr}"
         app_mysql_listen_port: "${service_mysql55_args_app_mysql_listen_port}"
     logging:
@@ -139,13 +142,14 @@ services:
         app_php_global_limit_memory: "${service_php56_args_app_php_global_limit_memory}"
         app_fpm_global_user: "${service_php56_args_app_fpm_global_user}"
         app_fpm_global_group: "${service_php56_args_app_fpm_global_group}"
+        app_fpm_global_home: "${service_php56_args_app_fpm_global_home}"
         app_fpm_global_log_level: "${service_php56_args_app_fpm_global_log_level}"
         app_fpm_global_limit_descriptors: "${service_php56_args_app_fpm_global_limit_descriptors}"
         app_fpm_global_limit_processes: "${service_php56_args_app_fpm_global_limit_processes}"
-        app_fpm_global_home: "${service_php56_args_app_fpm_global_home}"
         app_fpm_pool_id: "${service_php56_args_app_fpm_pool_id}"
         app_fpm_pool_user: "${service_php56_args_app_fpm_pool_user}"
         app_fpm_pool_group: "${service_php56_args_app_fpm_pool_group}"
+        app_fpm_pool_home: "${service_php56_args_app_fpm_pool_home}"
         app_fpm_pool_listen_wlist: "${service_php56_args_app_fpm_pool_listen_wlist}"
         app_fpm_pool_listen_addr: "${service_php56_args_app_fpm_pool_listen_addr}"
         app_fpm_pool_listen_port: "${service_php56_args_app_fpm_pool_listen_port}"
@@ -195,6 +199,7 @@ services:
         app_httpd_global_mods_extra_en: "${service_httpd24_web_args_app_httpd_mods_extra_en}"
         app_httpd_global_user: "${service_httpd24_web_args_app_httpd_global_user}"
         app_httpd_global_group: "${service_httpd24_web_args_app_httpd_global_group}"
+        app_httpd_global_home: "${service_httpd24_web_args_app_httpd_global_home}"
         app_httpd_global_loglevel: "${service_httpd24_web_args_app_httpd_global_loglevel}"
         app_httpd_global_listen_addr: "${service_httpd24_web_args_app_httpd_global_listen_addr}"
         app_httpd_global_listen_port_http: "${service_httpd24_web_args_app_httpd_global_listen_port_http}"
@@ -203,6 +208,10 @@ services:
         app_httpd_global_listen_keepalive_status: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_status}"
         app_httpd_global_listen_keepalive_requests: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_requests}"
         app_httpd_global_listen_keepalive_timeout: "${service_httpd24_web_args_app_httpd_global_listen_keepalive_timeout}"
+        app_httpd_vhost_id: "${service_httpd24_web_args_app_httpd_vhost_id}"
+        app_httpd_vhost_user: "${service_httpd24_web_args_app_httpd_vhost_user}"
+        app_httpd_vhost_group: "${service_httpd24_web_args_app_httpd_vhost_group}"
+        app_httpd_vhost_home: "${service_httpd24_web_args_app_httpd_vhost_home}"
     depends_on:
       - php56
     links:
@@ -237,6 +246,7 @@ services:
         app_httpd_global_mods_extra_en: "${service_httpd24_proxy_args_app_httpd_mods_extra_en}"
         app_httpd_global_user: "${service_httpd24_proxy_args_app_httpd_global_user}"
         app_httpd_global_group: "${service_httpd24_proxy_args_app_httpd_global_group}"
+        app_httpd_global_home: "${service_httpd24_proxy_args_app_httpd_global_home}"
         app_httpd_global_loglevel: "${service_httpd24_proxy_args_app_httpd_global_loglevel}"
         app_httpd_global_listen_addr: "${service_httpd24_proxy_args_app_httpd_global_listen_addr}"
         app_httpd_global_listen_port_http: "${service_httpd24_proxy_args_app_httpd_global_listen_port_http}"
@@ -245,6 +255,10 @@ services:
         app_httpd_global_listen_keepalive_status: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_status}"
         app_httpd_global_listen_keepalive_requests: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_requests}"
         app_httpd_global_listen_keepalive_timeout: "${service_httpd24_proxy_args_app_httpd_global_listen_keepalive_timeout}"
+        app_httpd_vhost_id: "${service_httpd24_proxy_args_app_httpd_vhost_id}"
+        app_httpd_vhost_user: "${service_httpd24_proxy_args_app_httpd_vhost_user}"
+        app_httpd_vhost_group: "${service_httpd24_proxy_args_app_httpd_vhost_group}"
+        app_httpd_vhost_home: "${service_httpd24_proxy_args_app_httpd_vhost_home}"
     depends_on:
       - httpd24_web
     links:

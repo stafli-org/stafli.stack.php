@@ -27,6 +27,7 @@ MAINTAINER Luís Pedro Algarvio <lp.algarvio@gmail.com>
 
 ARG app_mysql_user="mysql"
 ARG app_mysql_group="mysql"
+ARG app_mysql_home="/var/lib/mysql"
 ARG app_mysql_listen_addr="0.0.0.0"
 ARG app_mysql_listen_port="3306"
 
@@ -61,10 +62,16 @@ RUN printf "Adding users and groups...\n"; \
     id -g ${app_mysql_user} || \
     groupadd \
       --system ${app_mysql_group} && \
-    id -u ${app_mysql_user} || \
+    id -u ${app_mysql_user} && \
+    usermod \
+      --gid ${app_mysql_group} \
+      --home ${app_mysql_home} \
+      --shell /sbin/nologin \
+      ${app_mysql_user} \
+    || \
     useradd \
       --system --gid ${app_mysql_group} \
-      --no-create-home --home-dir /var/lib/mysql \
+      --no-create-home --home-dir ${app_mysql_home} \
       --shell /sbin/nologin \
       ${app_mysql_user};
 
@@ -93,8 +100,8 @@ autorestart=true\n\
     printf "\n# Applying configuration for ${file}...\n"; \
     perl -0p -i -e "s>\nexit 0>>" ${file}; \
     printf "# Install MySQL\n\
-if [ ! -d \"/var/lib/mysql/mysql\" ]; then\n\
-  \$(which mysql_install_db) --user=mysql --ldata=/var/lib/mysql;\n\
+if [ ! -d \"${app_mysql_home}/mysql\" ]; then\n\
+  \$(which mysql_install_db) --user=${app_mysql_user} --ldata=${app_mysql_home};\n\
 fi;\n\
 \n\
 exit 0\n" >> ${file}; \

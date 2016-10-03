@@ -27,6 +27,7 @@ MAINTAINER Luís Pedro Algarvio <lp.algarvio@gmail.com>
 
 ARG app_redis_user="redis"
 ARG app_redis_group="redis"
+ARG app_redis_home="/var/lib/redis"
 ARG app_redis_loglevel="notice"
 ARG app_redis_listen_addr="0.0.0.0"
 ARG app_redis_listen_port="6379"
@@ -66,10 +67,16 @@ RUN printf "Adding users and groups...\n"; \
     id -g ${app_redis_user} || \
     groupadd \
       --system ${app_redis_group} && \
-    id -u ${app_redis_user} || \
+    id -u ${app_redis_user} && \
+    usermod \
+      --gid ${app_redis_group} \
+      --home ${app_redis_home} \
+      --shell /usr/sbin/nologin \
+      ${app_redis_user} \
+    || \
     useradd \
       --system --gid ${app_redis_group} \
-      --no-create-home --home-dir /var/lib/redis \
+      --no-create-home --home-dir ${app_redis_home} \
       --shell /usr/sbin/nologin \
       ${app_redis_user};
 

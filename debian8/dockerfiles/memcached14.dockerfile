@@ -27,6 +27,7 @@ MAINTAINER Luís Pedro Algarvio <lp.algarvio@gmail.com>
 
 ARG app_memcached_user="memcache"
 ARG app_memcached_group="memcache"
+ARG app_memcached_home="/run/memcached"
 ARG app_memcached_loglevel="notice"
 ARG app_memcached_auth_sasl="no"
 ARG app_memcached_listen_proto="auto"
@@ -57,10 +58,16 @@ RUN printf "Adding users and groups...\n"; \
     id -g ${app_memcached_user} || \
     groupadd \
       --system ${app_memcached_group} && \
-    id -u ${app_memcached_user} || \
+    id -u ${app_memcached_user} && \
+    usermod \
+      --gid ${app_memcached_group} \
+      --home ${app_memcached_home} \
+      --shell /usr/sbin/nologin \
+      ${app_memcached_user} \
+    || \
     useradd \
       --system --gid ${app_memcached_group} \
-      --no-create-home --home-dir /nonexistent \
+      --no-create-home --home-dir ${app_memcached_home} \
       --shell /usr/sbin/nologin \
       ${app_memcached_user};
 
@@ -107,11 +114,10 @@ RUN printf "Updading Logrotate configuration...\n"; \
     rotate 4\n\
     dateext\n\
     missingok\n\
-    create 0640 memcache memcache\n\
+    create 0640 ${app_memcached_user} ${app_memcached_group}\n\
     compress\n\
     delaycompress\n\
     postrotate\n\
-        #service restart memcached\n\
         supervisorctl restart memcached\n\
     endscript\n\
 }\n\

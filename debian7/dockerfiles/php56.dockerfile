@@ -36,13 +36,14 @@ ARG app_php_global_limit_timeout="120"
 ARG app_php_global_limit_memory="134217728"
 ARG app_fpm_global_user="www-data"
 ARG app_fpm_global_group="www-data"
+ARG app_fpm_global_home="/var/www"
 ARG app_fpm_global_log_level="notice"
 ARG app_fpm_global_limit_descriptors="1024"
 ARG app_fpm_global_limit_processes="128"
-ARG app_fpm_global_home="/var"
-ARG app_fpm_pool_id="www"
+ARG app_fpm_pool_id="default"
 ARG app_fpm_pool_user="www-data"
 ARG app_fpm_pool_group="www-data"
+ARG app_fpm_pool_home="default"
 ARG app_fpm_pool_listen_wlist="0.0.0.0"
 ARG app_fpm_pool_listen_addr="0.0.0.0"
 ARG app_fpm_pool_listen_port="9000"
@@ -212,10 +213,16 @@ RUN printf "Adding users and groups...\n"; \
     id -g ${app_fpm_global_user} || \
     groupadd \
       --system ${app_fpm_global_group} && \
-    id -u ${app_fpm_global_user} || \
+    id -u ${app_fpm_global_user} && \
+    usermod \
+      --gid ${app_fpm_global_group} \
+      --home ${app_fpm_global_home} \
+      --shell /usr/sbin/nologin \
+      ${app_fpm_global_user} \
+    || \
     useradd \
       --system --gid ${app_fpm_global_group} \
-      --no-create-home --home-dir /var/www \
+      --no-create-home --home-dir ${app_fpm_global_home} \
       --shell /usr/sbin/nologin \
       ${app_fpm_global_user}; \
     \
@@ -224,7 +231,13 @@ RUN printf "Adding users and groups...\n"; \
     id -g ${app_fpm_pool_user} || \
     groupadd \
       --system ${app_fpm_pool_group} && \
-    id -u ${app_fpm_pool_user} || \
+    id -u ${app_fpm_pool_user} && \
+    usermod \
+      --gid ${app_fpm_global_group} \
+      --home ${app_fpm_pool_home} \
+      --shell /usr/sbin/nologin \
+      ${app_fpm_global_user} \
+    || \
     useradd \
       --system --gid ${app_fpm_pool_group} \
       --create-home --home-dir ${app_fpm_pool_home} \
@@ -323,6 +336,9 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change maximum processes \
     perl -0p -i -e "s>; Default Value: 0\n; process.max = .*>; Default Value: 0\nprocess.max = ${app_fpm_global_limit_processes}>" ${file}; \
     printf "Done patching ${file}...\n"; \
+    \
+    # PHP-FPM Pool \
+    app_fpm_pool_home="${app_fpm_global_home}/${app_fpm_pool_id}"; \
     \
     # /etc/php5/fpm/pool.d/${app_fpm_pool_id}.conf \
     file="/etc/php5/fpm/pool.d/${app_fpm_pool_id}.conf"; \
