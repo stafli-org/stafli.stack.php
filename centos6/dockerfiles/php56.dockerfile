@@ -297,7 +297,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change i18n \
     perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
     perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"UTC\">" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/php-fpm.ini \
@@ -321,7 +321,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change i18n \
     perl -0p -i -e "s>; http://php.net/default-mimetype\ndefault_mimetype = .*>; http://php.net/default-mimetype\ndefault_mimetype = \"text/html\">" ${file}; \
     perl -0p -i -e "s>; http://php.net/default-charset\ndefault_charset =.*>; http://php.net/default-charset\ndefault_charset = \"UTF-8\">" ${file}; \
-    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"Etc/UTC\">" ${file}; \
+    perl -0p -i -e "s>; http://php.net/date.timezone\n;date.timezone =.*>; http://php.net/date.timezone\ndate.timezone = \"UTC\">" ${file}; \
     # change CGI \
     perl -0p -i -e "s>; http://php.net/cgi.force-redirect\n;cgi.force_redirect = .*>; http://php.net/cgi.force-redirect\ncgi.force_redirect = 1>" ${file}; \
     perl -0p -i -e "s>; http://php.net/cgi.fix-pathinfo\n;cgi.fix_pathinfo=.*>; http://php.net/cgi.fix-pathinfo\ncgi.fix_pathinfo = 1>" ${file}; \
@@ -352,6 +352,11 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     file="/etc/php-fpm.d/${app_fpm_pool_id}.conf"; \
     cp "/etc/php-fpm.d/www.conf" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # delete bad defaults \
+    perl -0p -i -e "s>php_admin_flag\[.*>>g" ${file}; \
+    perl -0p -i -e "s>php_flag\[.*>>g" ${file}; \
+    perl -0p -i -e "s>php_admin_value\[.*>>g" ${file}; \
+    perl -0p -i -e "s>php_value\[.*>>g" ${file}; \
     # rename pool \
     perl -0p -i -e "s>; pool name \(\'www\' here\)\n\[www\]>; pool name ('www' here)\n[${app_fpm_pool_id}]>" ${file}; \
     # change pool prefix \
@@ -359,23 +364,23 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # run as user/group \
     perl -0p -i -e "s>user = .*\ngroup = .*>user = ${app_fpm_pool_user}\ngroup = ${app_fpm_pool_group}>" ${file}; \
     # listen as user/group \
-    perl -0p -i -e "s>listen.owner = .*\nlisten.group = .*\n;listen.mode = .*>listen.owner = ${app_fpm_pool_user}\nlisten.group = ${app_fpm_pool_group}\nlisten.mode = 0660>" ${file}; \
+    perl -0p -i -e "s>;listen.owner = .*\n;listen.group = .*\n;listen.mode = .*>listen.owner = ${app_fpm_pool_user}\nlisten.group = ${app_fpm_pool_group}\nlisten.mode = 0660>" ${file}; \
     # change logging \
-    printf "\n; Error log path\nphp_admin_value[error_log] = \$prefix/log/\$pool.error.log\n" >> ${file}; \
+    printf "\n; Error log path\nphp_admin_value[error_log] = ${app_fpm_pool_home}/log/${app_fpm_pool_id}.error.log\n" >> ${file}; \
     perl -0p -i -e "s>; Default: not set\n;access.log = .*>; Default: not set\naccess.log = log/\\\$pool.access.log>" ${file}; \
-    perl -0p -i -e "s>; Note: slowlog is mandatory if request_slowlog_timeout is set\n;slowlog = .*>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = log/\\\$pool.slow.log>" ${file}; \
+    perl -0p -i -e "s>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = .*>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = log/\\\$pool.slow.log>" ${file}; \
     # change status \
-    perl -0p -i -e "s>; Default Value: not set \n;pm.status_path = .*>; Default Value: not set\npm.status_path = /fpm-status>" ${file}; \
+    perl -0p -i -e "s>; Default Value: not set\n;pm.status_path = .*>; Default Value: not set\npm.status_path = /fpm-status>" ${file}; \
     perl -0p -i -e "s>; Default Value: not set\n;ping.path = .*>; Default Value: not set\nping.path = /fpm-ping>" ${file}; \
     perl -0p -i -e "s>; Default Value: pong\n;ping.response = .*>; Default Value: pong\nping.response = pong>" ${file}; \
     # change whitelist \
-    perl -0p -i -e "s>; Default Value: any\n;listen.allowed_clients = .*>; Default Value: any\nlisten.allowed_clients = ${app_fpm_pool_listen_wlist}>" ${file}; \
+    perl -0p -i -e "s>; Default Value: any\nlisten.allowed_clients = .*>; Default Value: any\n;listen.allowed_clients = ${app_fpm_pool_listen_wlist}>" ${file}; \
     # change interface and port \
     perl -0p -i -e "s>; Note: This value is mandatory.\nlisten = .*>; Note: This value is mandatory.\nlisten = ${app_fpm_pool_listen_addr}:${app_fpm_pool_listen_port}>" ${file}; \
     # change maximum file open limit \
     perl -0p -i -e "s>; Default Value: system defined value\n;rlimit_files = .*>; Default Value: system defined value\nrlimit_files = ${app_fpm_pool_limit_descriptors}>" ${file};\
     # change backlog queue limit \
-    perl -0p -i -e "s>; Default Value: 65535 \(-1 on FreeBSD and OpenBSD\)\n;listen.backlog = .*>; Default Value: 65535 \(-1 on FreeBSD and OpenBSD\)\nlisten.backlog = ${app_fpm_pool_limit_backlog}>" ${file}; \
+    perl -0p -i -e "s>; Default Value: 65535\n;listen.backlog = .*>; Default Value: 65535 \(-1 on FreeBSD and OpenBSD\)\nlisten.backlog = ${app_fpm_pool_limit_backlog}>" ${file}; \
     # change process manager \
     perl -0p -i -e "s>; Note: This value is mandatory.\npm = .*>; Note: This value is mandatory.\npm = ${app_fpm_pool_pm_method}>" ${file}; \
     perl -0p -i -e "s>; Note: This value is mandatory.\npm.max_children = .*>; Note: This value is mandatory.\npm.max_children = ${app_fpm_pool_pm_max_children}>" ${file}; \
@@ -387,25 +392,33 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change timeouts \
     perl -0p -i -e "s>; Default Value: 0\n;request_slowlog_timeout = .*>; Default Value: 0\nrequest_slowlog_timeout = $((${app_php_global_limit_timeout}+5))>" ${file}; \
     perl -0p -i -e "s>; Default Value: 0\n;request_terminate_timeout = .*>; Default Value: 0\nrequest_terminate_timeout = $((${app_php_global_limit_timeout}+10))>" ${file}; \
+    # change chroot \
+    perl -0p -i -e "s>; Default Value: not set\n;chroot = .*>; Default Value: not set\n;chroot = ${app_fpm_pool_home}>" ${file}; \
+    # change chdir \
+    perl -0p -i -e "s>; Default Value: current directory or / when chroot\n;chdir = .*>; Default Value: current directory or / when chroot\n;chdir = /html/>" ${file}; \
     # change allowed extensions \
     perl -0p -i -e "s>; Default Value: .php\n;security.limit_extensions = .*>; Default Value: .php\nsecurity.limit_extensions = .php>" ${file}; \
     # change temporary files \
-    printf "\n; Temporary files path\nphp_admin_value[upload_tmp_dir] = \$prefix/tmp\n" >> ${file}; \
+    printf "\n; Temporary files path\nphp_admin_value[upload_tmp_dir] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
     # change session \
     printf "\n; Session handler\nphp_admin_value[session.save_handler] = files\n" >> ${file}; \
-    printf "\n; Session path\nphp_admin_value[session.save_path] = \$prefix/tmp\n" >> ${file}; \
+    printf "\n; Session path\nphp_admin_value[session.save_path] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
     # change environment \
     perl -0p -i -e "s>; Default Value: clean env>; Default Value: clean env\n\n; Main variables>" ${file}; \
     perl -0p -i -e "s>;env\[HOSTNAME\] = .*>env\[HOSTNAME\] = \\\$HOSTNAME>" ${file}; \
     perl -0p -i -e "s>;env\[PATH\] = .*>env\[PATH\] = \\\$PATH>" ${file}; \
-    perl -0p -i -e "s>;env\[TMP\] = .*>env\[TMP\] = \\\$prefix/tmp>" ${file}; \
-    perl -0p -i -e "s>;env\[TMPDIR\] = .*>env\[TMPDIR\] = \\\$prefix/tmp>" ${file}; \
-    perl -0p -i -e "s>;env\[TEMP\] = .*>env\[TEMP\] = \\\$prefix/tmp>" ${file}; \
+    perl -0p -i -e "s>;env\[TMP\] = .*>env\[TMP\] = ${app_fpm_pool_home}/tmp>" ${file}; \
+    perl -0p -i -e "s>;env\[TMPDIR\] = .*>env\[TMPDIR\] = ${app_fpm_pool_home}/tmp>" ${file}; \
+    perl -0p -i -e "s>;env\[TEMP\] = .*>env\[TEMP\] = ${app_fpm_pool_home}/tmp>" ${file}; \
     perl -0p -i -e "s>; Additional php.ini defines, specific to this pool of workers>; Proxy variables\n\n; Additional php.ini defines, specific to this pool of workers>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[ftp_proxy\] = \\\$ftp_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[https_proxy\] = \\\$https_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[http_proxy\] = \\\$http_proxy\n>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/php-fpm.d/www.conf \
+    # Disable original configuration \
+    mv "/etc/php-fpm.d/www.conf" "/etc/php-fpm.d/www.conf.orig";
 
 #
 # Demo
