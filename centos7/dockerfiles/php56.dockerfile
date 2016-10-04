@@ -246,7 +246,7 @@ RUN printf "Adding users and groups...\n"; \
       --create-home --home-dir ${app_fpm_pool_home} \
       --shell /sbin/nologin \
       ${app_fpm_pool_user}; \
-    mkdir -p ${app_fpm_pool_home}/bin ${app_fpm_pool_home}/log ${app_fpm_pool_home}/html; \
+    mkdir -p ${app_fpm_pool_home}/bin ${app_fpm_pool_home}/log ${app_fpm_pool_home}/html ${app_fpm_pool_home}/tmp; \
     chown -R ${app_fpm_global_user}:${app_fpm_global_group} ${app_fpm_pool_home}; \
     chmod -R ug=rwX,o=rX ${app_fpm_pool_home};
 

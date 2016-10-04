@@ -131,7 +131,7 @@ RUN printf "Adding users and groups...\n"; \
       --create-home --home-dir ${app_httpd_vhost_home} \
       --shell /usr/sbin/nologin \
       ${app_httpd_vhost_user}; \
-    mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html; \
+    mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html ${app_httpd_vhost_home}/tmp; \
     chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
     chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
 
