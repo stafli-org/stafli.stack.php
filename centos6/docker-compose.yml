@@ -212,6 +212,13 @@ services:
         app_httpd_vhost_user: "${service_httpd22_web_args_app_httpd_vhost_user}"
         app_httpd_vhost_group: "${service_httpd22_web_args_app_httpd_vhost_group}"
         app_httpd_vhost_home: "${service_httpd22_web_args_app_httpd_vhost_home}"
+        app_httpd_vhost_listen_addr: "${service_httpd22_web_args_app_httpd_vhost_listen_addr}"
+        app_httpd_vhost_listen_port_http: "${service_httpd22_web_args_app_httpd_vhost_listen_port_http}"
+        app_httpd_vhost_listen_port_https: "${service_httpd22_web_args_app_httpd_vhost_listen_port_https}"
+        app_httpd_vhost_httpd_wlist: "${service_httpd22_web_args_app_httpd_vhost_httpd_wlist}"
+        app_httpd_vhost_fpm_wlist: "${service_httpd22_web_args_app_httpd_vhost_fpm_wlist}"
+        app_httpd_vhost_fpm_addr: "${service_httpd22_web_args_app_httpd_vhost_fpm_addr}"
+        app_httpd_vhost_fpm_port: "${service_httpd22_web_args_app_httpd_vhost_fpm_port}"
     depends_on:
       - php56
     links:
@@ -259,6 +266,10 @@ services:
         app_httpd_vhost_user: "${service_httpd22_proxy_args_app_httpd_vhost_user}"
         app_httpd_vhost_group: "${service_httpd22_proxy_args_app_httpd_vhost_group}"
         app_httpd_vhost_home: "${service_httpd22_proxy_args_app_httpd_vhost_home}"
+        app_httpd_vhost_listen_addr: "${service_httpd22_proxy_args_app_httpd_vhost_listen_addr}"
+        app_httpd_vhost_listen_port_http: "${service_httpd22_proxy_args_app_httpd_vhost_listen_port_http}"
+        app_httpd_vhost_listen_port_https: "${service_httpd22_proxy_args_app_httpd_vhost_listen_port_https}"
+        app_httpd_vhost_httpd_wlist: "${service_httpd22_proxy_args_app_httpd_vhost_httpd_wlist}"
     depends_on:
       - httpd22_web
     links:
