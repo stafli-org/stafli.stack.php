@@ -64,6 +64,7 @@ ARG app_httpd_vhost_fpm_port="9000"
 # - mod_authnz_external: the External Authentication DSO module
 # - mod_xsendfile: the X-Sendfile DSO module
 RUN printf "# Install the HTTPd packages...\n" && \
+    rpm --rebuilddb && \
     yum makecache && yum install -y \
       httpd \
       httpd-tools apachetop \
@@ -81,12 +82,148 @@ RUN printf "# Install the HTTPd packages...\n" && \
 RUN printf "# Start installing modules...\n" && \
     \
     printf "# Enabling/disabling modules...\n" && \
-    # Core modules \
-    echo "a2dismod -f ${app_httpd_global_mods_core_dis}" && \
-    echo "a2enmod -f ${app_httpd_global_mods_core_en}" && \
-    # Extra modules \
-    echo "a2dismod -f ${app_httpd_global_mods_extra_dis}" && \
-    echo "a2enmod -f ${app_httpd_global_mods_extra_en}" && \
+    \
+    # /etc/httpd/conf.modules.d/00-base.conf \
+    file="/etc/httpd/conf.modules.d/00-base.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule access_compat_module>LoadModule access_compat_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule actions_module>LoadModule actions_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule alias_module>LoadModule alias_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule allowmethods_module>LoadModule allowmethods_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule auth_basic_module>LoadModule auth_basic_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule auth_digest_module>#LoadModule auth_digest_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_anon_module>#LoadModule authn_anon_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_core_module>LoadModule authn_core_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_dbd_module>#LoadModule authn_dbd_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_dbm_module>#LoadModule authn_dbm_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_file_module>LoadModule authn_file_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authn_socache_module>#LoadModule authn_socache_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_core_module>LoadModule authz_core_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_dbd_module>#LoadModule authz_dbd_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_dbm_module>#LoadModule authz_dbm_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_groupfile_module>LoadModule authz_groupfile_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_host_module>LoadModule authz_host_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_owner_module>LoadModule authz_owner_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule authz_user_module>LoadModule authz_user_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule autoindex_module>LoadModule autoindex_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule cache_module>#LoadModule cache_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule cache_disk_module>#LoadModule cache_disk_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule data_module>#LoadModule data_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dbd_module>#LoadModule dbd_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule deflate_module>LoadModule deflate_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dir_module>LoadModule dir_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dumpio_module>#LoadModule dumpio_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule echo_module>#LoadModule echo_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule env_module>LoadModule env_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule expires_module>LoadModule expires_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule ext_filter_module>LoadModule ext_filter_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule filter_module>LoadModule filter_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule headers_module>LoadModule headers_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule include_module>#LoadModule include_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule info_module>LoadModule info_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule log_config_module>LoadModule log_config_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule logio_module>LoadModule logio_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule mime_magic_module>#LoadModule mime_magic_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule mime_module>LoadModule mime_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule negotiation_module>#LoadModule negotiation_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule remoteip_module>#LoadModule remoteip_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule reqtimeout_module>#LoadModule reqtimeout_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule rewrite_module>LoadModule rewrite_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule setenvif_module>LoadModule setenvif_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule slotmem_plain_module>#LoadModule slotmem_plain_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule slotmem_shm_module>#LoadModule slotmem_shm_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule socache_dbm_module>#LoadModule socache_dbm_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule socache_memcache_module>#LoadModule socache_memcache_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule socache_shmcb_module>LoadModule socache_shmcb_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule status_module>LoadModule status_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule substitute_module>#LoadModule substitute_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule suexec_module>#LoadModule suexec_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule unique_id_module>#LoadModule unique_id_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule unixd_module>LoadModule unixd_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule userdir_module>#LoadModule userdir_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule version_module>LoadModule version_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule vhost_alias_module>#LoadModule vhost_alias_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule buffer_module>#LoadModule buffer_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule watchdog_module>#LoadModule watchdog_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule heartbeat_module>#LoadModule heartbeat_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule heartmonitor_module>#LoadModule heartmonitor_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule usertrack_module>#LoadModule usertrack_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dialup_module>#LoadModule dialup_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule charset_lite_module>#LoadModule charset_lite_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule log_debug_module>#LoadModule log_debug_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule ratelimit_module>#LoadModule ratelimit_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule reflector_module>#LoadModule reflector_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule request_module>#LoadModule request_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule sed_module>#LoadModule sed_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule speling_module>#LoadModule speling_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-dav.conf \
+    file="/etc/httpd/conf.modules.d/00-dav.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule dav_module>#LoadModule dav_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dav_fs_module>#LoadModule dav_fs_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule dav_lock_module>#LoadModule dav_lock_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-lua.conf \
+    file="/etc/httpd/conf.modules.d/00-lua.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule lua_module>#LoadModule lua_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-mpm.conf \
+    file="/etc/httpd/conf.modules.d/00-mpm.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule mpm_prefork_module>#LoadModule mpm_prefork_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule mpm_worker_module>#LoadModule mpm_worker_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule mpm_event_module>LoadModule mpm_event_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-proxy.conf \
+    file="/etc/httpd/conf.modules.d/00-proxy.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule proxy_module>LoadModule proxy_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule lbmethod_bybusyness_module>#LoadModule lbmethod_bybusyness_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule lbmethod_byrequests_module>#LoadModule lbmethod_byrequests_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule lbmethod_bytraffic_module>#LoadModule lbmethod_bytraffic_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule lbmethod_heartbeat_module>#LoadModule lbmethod_heartbeat_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_ajp_module>LoadModule proxy_ajp_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_balancer_module>#LoadModule proxy_balancer_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_connect_module>#LoadModule proxy_connect_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_express_module>#LoadModule proxy_express_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_fcgi_module>LoadModule proxy_fcgi_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_fdpass_module>#LoadModule proxy_fdpass_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_ftp_module>#LoadModule proxy_ftp_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_http_module>LoadModule proxy_http_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_scgi_module>#LoadModule proxy_scgi_module>" ${file}; \
+    perl -0p -i -e "s>.*LoadModule proxy_wstunnel_module>#LoadModule proxy_wstunnel_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-ssl.conf \
+    file="/etc/httpd/conf.modules.d/00-ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule ssl_module>LoadModule ssl_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-systemd.conf \
+    file="/etc/httpd/conf.modules.d/00-systemd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule systemd_module>LoadModule systemd_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/01-cgi.conf \
+    file="/etc/httpd/conf.modules.d/01-cgi.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule cgid_module>#LoadModule cgid_module>g" ${file}; \
+    perl -0p -i -e "s>.*LoadModule cgi_module>#LoadModule cgi_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/xsendfile.conf \
+    file="/etc/httpd/conf.modules.d/xsendfile.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>.*LoadModule      xsendfile_module>LoadModule      xsendfile_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
     \
     printf "# Finished installing modules...\n";
 
@@ -157,15 +294,11 @@ autorestart=true\n\
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
     \
-    touch /etc/httpd/ports.conf; \
-    mkdir /etc/httpd/sites.d; \
-    mkdir /etc/httpd/incl.d; \
-    \
     # /etc/httpd/conf/httpd.conf \
     file="/etc/httpd/conf/httpd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # run as user/group \
-    perl -0p -i -e "s>#  don't use Group #-1 on these systems!\n#\nUser = .*\nGroup = .*>#  don't use Group #-1 on these systems!\n#\nUser = ${app_httpd_global_user}\nGroup = ${app_httpd_global_group}>" ${file}; \
+    perl -0p -i -e "s>#  don't use Group #-1 on these systems!\n#\nUser .*\nGroup .*>#  don't use Group #-1 on these systems!\n#\nUser ${app_httpd_global_user}\nGroup ${app_httpd_global_group}>" ${file}; \
     # change log level \
     perl -0p -i -e "s># alert, emerg.\n#\nLogLevel .*># alert, emerg.\n#\nLogLevel ${app_httpd_global_loglevel}>" ${file}; \
     # change config directory \
@@ -191,6 +324,7 @@ Include sites.d/*.conf\n\
     \
     # /etc/httpd/ports.conf \
     file="/etc/httpd/ports.conf"; \
+    touch ${file}; \
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "\
 # If you just change the port or add more ports here, you will likely also\n\
@@ -209,76 +343,121 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
 " > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # Additional configuration files \
+    mkdir /etc/httpd/incl.d; \
+    \
     # HTTPd vhost \
     app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
     \
-    # /etc/httpd/incl.d/000-php-fpm.conf \
-    file="/etc/httpd/incl.d/000-php-fpm.conf"; \
+    # /etc/httpd/incl.d/${app_httpd_vhost_id}-httpd.conf \
+    file="/etc/httpd/incl.d/${app_httpd_vhost_id}-httpd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# Pool for PHP-FPM\n\
-<IfModule proxy_fcgi_module>\n\
-DirectoryIndex index.php\n\
-ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://centos7_php56_1:9000/\$1\n\
+    printf "# HTTPd info and status\n\
+<IfModule info_module>\n\
+  # HTTPd info
+  <Location /server-info>\n\
+    SetHandler server-info\n\
+    Require ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+<IfModule status_module>\n\
+  # HTTPd status
+  <Location /server-status>\n\
+    SetHandler server-status\n\
+    Require ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
 </IfModule>\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /etc/httpd/sites.d/000-default.conf \
-    file="/etc/httpd/sites.d/000-default.conf"; \
+    # /etc/httpd/incl.d/${app_httpd_vhost_id}-php-fpm.conf \
+    file="/etc/httpd/incl.d/${app_httpd_vhost_id}-php-fpm.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "\
-<VirtualHost *:80>\n\
-        # ServerName www.example.com\n\
-\n\
-        ServerAdmin webmaster@localhost\n\
-        DocumentRoot ${app_httpd_vhost_home}/html\n\
-\n\
-        ErrorLog logs/error_log\n\
-        TransferLog logs/access_log\n\
-        LogLevel warn\n\
-</VirtualHost>\n\
+    printf "# Pool for PHP-FPM\n\
+<IfModule proxy_fcgi_module>\n\
+  DirectoryIndex index.php\n\
+  ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
+  # PHP-FPM status and ping\n\
+  <LocationMatch /(fpm-status|fpm-ping)>\n\
+    ProxyPassMatch fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
+    Require ${app_httpd_vhost_fpm_wlist}\n\
+  </LocationMatch>\n\
+</IfModule>\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # Vhost configuration files \
+    mkdir /etc/httpd/sites.d; \
     \
-    # /etc/httpd/sites.d/000-default_ssl.conf \
-    file="/etc/httpd/sites.d/000-default_ssl.conf"; \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # writing base configuration \
     printf "\
-<VirtualHost *:443>\n\
+<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_http}>\n\
         # ServerName www.example.com\n\
 \n\
         ServerAdmin webmaster@localhost\n\
         DocumentRoot ${app_httpd_vhost_home}/html\n\
 \n\
-        ErrorLog logs/ssl_error_log\n\
-        TransferLog logs/ssl_access_log\n\
+        ErrorLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.error.log\n\
+        TransferLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log\n\
         LogLevel warn\n\
+\n\
+        <Directory ${app_httpd_vhost_home}/html>\n\
+          Options Indexes FollowSymLinks\n\
+          AllowOverride all\n\
+          Require all granted\n\
+        </Directory>\n\
+</VirtualHost>\n\
+\n" > ${file}; \
+    # add httpd include \
+    perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
+        # HTTPd info and status\n\
+        Include incl.d/${app_httpd_vhost_id}-httpd.conf\
+>" ${file}; \
+    # add php-fpm include \
+    perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
+        # PHP-FPM proxy\n\
+        Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
+>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # writing base configuration \
+    printf "\
+<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_https}>\n\
+        # ServerName www.example.com\n\
+\n\
+        ServerAdmin webmaster@localhost\n\
+        DocumentRoot ${app_httpd_vhost_home}/html\n\
+\n\
+        ErrorLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.error.log\n\
+        TransferLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log\n\
+        LogLevel warn\n\
+\n\
+        <Directory ${app_httpd_vhost_home}/html>\n\
+          Options Indexes FollowSymLinks\n\
+          AllowOverride all\n\
+          Require all granted\n\
+        </Directory>\n\
 \n\
         SSLEngine on\n\
         SSLCertificateFile /etc/pki/tls/certs/localhost.crt\n\
         SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\n\
 </VirtualHost>\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/sites.d/000-default.conf \
-    file="/etc/httpd/sites.d/000-default.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    # add php-fpm include \
+    # add httpd include \
     perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
-        # Worker for PHP-FPM\n\
-        Include incl.d/000-php-fpm.conf\
+        # HTTPd info and status\n\
+        Include incl.d/${app_httpd_vhost_id}-httpd.conf\
 >" ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/sites.d/000-default_ssl.conf \
-    file="/etc/httpd/sites.d/000-default_ssl.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
     # add php-fpm include \
     perl -0p -i -e "s>LogLevel warn>LogLevel warn\n\n\
-        # Worker for PHP-FPM\n\
-        Include incl.d/000-php-fpm.conf\
+        # PHP-FPM proxy\n\
+        Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
 >" ${file}; \
     printf "Done patching ${file}...\n";
 

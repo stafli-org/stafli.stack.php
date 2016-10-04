@@ -161,16 +161,20 @@ autorestart=true\n\
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
     \
-    mkdir /etc/apache2/incl.d; \
+    # /etc/apache2/envvars \
+    file="/etc/apache2/envvars"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # run as user/group \
+    perl -0p -i -e "s>APACHE_RUN_USER=.*>APACHE_RUN_USER=${app_httpd_global_user}>" ${file}; \
+    perl -0p -i -e "s>APACHE_RUN_GROUP=.*>APACHE_RUN_GROUP=${app_httpd_global_group}>" ${file}; \
+    printf "Done patching ${file}...\n"; \
     \
     # /etc/apache2/apache2.conf \
     file="/etc/apache2/apache2.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    # run as user/group \
-    perl -0p -i -e "s># These need to be set in /etc/apache2/envvars\nUser = .*\nGroup = .*># These need to be set in /etc/apache2/envvars\nUser = \${APACHE_RUN_USER}\nGroup = \${APACHE_RUN_GROUP}>" ${file}; \
     # change log level \
     perl -0p -i -e "s># alert, emerg.\n#\nLogLevel .*># alert, emerg.\n#\nLogLevel ${app_httpd_global_loglevel}>" ${file}; \
-    # change config directories \
+    # change config directory \
     perl -0p -i -e "s># Do NOT add a slash at the end of the directory path.\n#\nServerRoot .*># Do NOT add a slash at the end of the directory path.\n#\nServerRoot \"/etc/apache2\">" ${file}; \
     # change timeout \
     perl -0p -i -e "s># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout .*># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout ${app_httpd_global_listen_timeout}>" ${file}; \
@@ -187,34 +191,110 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>Listen 443>Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /etc/apache2/incl.d/000-php-fpm.conf \
-    file="/etc/apache2/incl.d/000-php-fpm.conf"; \
+    # Additional configuration files \
+    mkdir /etc/apache2/incl.d; \
+    \
+    # HTTPd vhost \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
+    \
+    # /etc/apache2/incl.d/${app_httpd_vhost_id}-httpd.conf \
+    file="/etc/apache2/incl.d/${app_httpd_vhost_id}-httpd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# Pool for PHP-FPM\n\
-<IfModule proxy_fcgi_module>\n\
-DirectoryIndex index.php\n\
-ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://debian8_php56_1:9000/\$1\n\
+    printf "# HTTPd info and status\n\
+<IfModule info_module>\n\
+  # HTTPd info
+  <Location /server-info>\n\
+    SetHandler server-info\n\
+    Require ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+<IfModule status_module>\n\
+  # HTTPd status
+  <Location /server-status>\n\
+    SetHandler server-status\n\
+    Require ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
 </IfModule>\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /etc/apache2/sites-available/000-default.conf \
-    file="/etc/apache2/sites-available/000-default.conf"; \
+    # /etc/apache2/incl.d/${app_httpd_vhost_id}-php-fpm.conf \
+    file="/etc/apache2/incl.d/${app_httpd_vhost_id}-php-fpm.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# Pool for PHP-FPM\n\
+<IfModule proxy_fcgi_module>\n\
+  DirectoryIndex index.php\n\
+  ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
+  # PHP-FPM status and ping\n\
+  <LocationMatch /(fpm-status|fpm-ping)>\n\
+    ProxyPassMatch fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
+    Require ${app_httpd_vhost_fpm_wlist}\n\
+  </LocationMatch>\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf \
+    file="/etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf"; \
+    cp "/etc/apache2/sites-available/000-default.conf" $file; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # change address and port
+    perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_http}\>>" ${file}; \
+    # change logging
+    perl -0p -i -e "s>ErrorLog .*>ErrorLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.error.log>" ${file}; \
+    perl -0p -i -e "s>CustomLog .*>CustomLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log combined>" ${file}; \
+    # change document root
+    perl -0p -i -e "s>DocumentRoot .*>DocumentRoot ${app_httpd_vhost_home}/html>" ${file}; \
+    # add directory directives
+    perl -0p -i -e "s>\</VirtualHost\>>\n\
+        \<Directory ${app_httpd_vhost_home}/html\>\n\
+          Options Indexes FollowSymLinks\n\
+          AllowOverride all\n\
+          Require all granted\n\
+        \</Directory\>\n\
+\</VirtualHost\>\n\
+>" ${file}; \
+    # add httpd include \
+    perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
+        # HTTPd info and status\n\
+        Include incl.d/${app_httpd_vhost_id}-httpd.conf\
+>" ${file}; \
     # add php-fpm include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-        # Worker for PHP-FPM\n\
-        Include incl.d/000-php-fpm.conf\
+        # PHP-FPM proxy\n\
+        Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /etc/apache2/sites-available/default-ssl.conf \
-    file="/etc/apache2/sites-available/default-ssl.conf"; \
+    # /etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf \
+    file="/etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf"; \
+    cp "/etc/apache2/sites-available/default-ssl.conf" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # change address and port
+    perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_https}\>>" ${file}; \
+    # change logging
+    perl -0p -i -e "s>ErrorLog .*>ErrorLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.error.log>" ${file}; \
+    perl -0p -i -e "s>CustomLog .*>CustomLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log combined>" ${file}; \
+    # change document root
+    perl -0p -i -e "s>DocumentRoot .*>DocumentRoot ${app_httpd_vhost_home}/html>" ${file}; \
+    # add directory directives
+    perl -0p -i -e "s>\</VirtualHost\>>\n\
+                \<Directory ${app_httpd_vhost_home}/html\>\n\
+                  Options Indexes FollowSymLinks\n\
+                  AllowOverride all\n\
+                  Require all granted\n\
+                \</Directory\>\n\
+\</VirtualHost\>\n\
+>" ${file}; \
+    # add httpd include \
+    perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
+        # HTTPd info and status\n\
+        Include incl.d/${app_httpd_vhost_id}-httpd.conf\
+>" ${file}; \
     # add php-fpm include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-                # Worker for PHP-FPM\n\
-                Include incl.d/000-php-fpm.conf\
+        # PHP-FPM proxy\n\
+        Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
@@ -222,8 +302,12 @@ ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://debian8_php56_1:9000/\$1\n\
     make-ssl-cert generate-default-snakeoil --force-overwrite; \
     \
     printf "\n# Enable sites...\n"; \
-    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/000-default-ssl.conf; \
-    a2ensite 000-default 000-default-ssl;
+    a2dissite 000-default.conf default-ssl.conf; \
+    a2ensite ${app_httpd_vhost_id}-http ${app_httpd_vhost_id}-https; \
+    \
+    # Disable original configuration \
+    mv /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig; \
+    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/000-default-ssl.conf.orig;
 
 #
 # Demo
