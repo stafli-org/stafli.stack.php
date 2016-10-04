@@ -62,13 +62,15 @@ ARG app_httpd_vhost_httpd_wlist="127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/
 # - pwauth: for pwauth, the authenticator for mod_authnz_external
 # - libapache2-mod-xsendfile: the X-Sendfile DSO module
 # - libapache2-mod-upload-progress: the Upload Progress DSO module
+# - ssl-cert: for make-ssl-cert, to generate certificates
 RUN printf "# Install the HTTPd packages...\n" && \
     apt-get update && apt-get install -qy \
       apache2 \
       apache2-utils apachetop \
       apache2-mpm-worker \
       libapache2-mod-authnz-external pwauth \
-      libapache2-mod-xsendfile libapache2-mod-upload-progress && \
+      libapache2-mod-xsendfile libapache2-mod-upload-progress \
+      ssl-cert && \
     printf "# Cleanup the Package Manager...\n" && \
     apt-get clean && rm -rf /var/lib/apt/lists/*;
 
@@ -156,19 +158,25 @@ autorestart=true\n\
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
     \
+    # /etc/apache2/envvars \
+    file="/etc/apache2/envvars"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # run as user/group \
+    perl -0p -i -e "s>APACHE_RUN_USER=.*>APACHE_RUN_USER=${app_httpd_global_user}>" ${file}; \
+    perl -0p -i -e "s>APACHE_RUN_GROUP=.*>APACHE_RUN_GROUP=${app_httpd_global_group}>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     # /etc/apache2/apache2.conf \
     file="/etc/apache2/apache2.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    # run as user/group \
-    perl -0p -i -e "s># These need to be set in /etc/apache2/envvars\nUser = .*\nGroup = .*># These need to be set in /etc/apache2/envvars\nUser = \${APACHE_RUN_USER}\nGroup = \${APACHE_RUN_GROUP}>" ${file}; \
     # change log level \
     perl -0p -i -e "s># alert, emerg.\n#\nLogLevel .*># alert, emerg.\n#\nLogLevel ${app_httpd_global_loglevel}>" ${file}; \
-    # change config directories \
+    # change config directory \
     perl -0p -i -e "s># Do NOT add a slash at the end of the directory path.\n#\nServerRoot .*># Do NOT add a slash at the end of the directory path.\n#\nServerRoot \"/etc/apache2\">" ${file}; \
     # replace optional config files \
     perl -0p -i -e "s># Include generic snippets of statements\nInclude conf.d/># Include generic snippets of statements\nInclude conf.d/\*.conf>" ${file}; \
     # replace vhost config files \
-    perl -0p -i -e "s># Include the virtual host configurations:\nInclude sites-enabled/># Include the virtual host configurations:\nInclude sites-enabled/\*.conf>" ${file}; \
+    perl -0p -i -e "s># Include the virtual host configurations:\nInclude sites-enabled/># Include the virtual host configurations:\nInclude sites-enabled/\*.conf\n>" ${file}; \
     # change timeout \
     perl -0p -i -e "s># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout .*># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout ${app_httpd_global_listen_timeout}>" ${file}; \
     # change keepalive \
@@ -180,8 +188,72 @@ RUN printf "Updading HTTPd configuration...\n"; \
     # /etc/apache2/ports.conf \
     file="/etc/apache2/ports.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    perl -0p -i -e "s>NameVirtualHost \*:80>NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}>g" ${file}; \
     perl -0p -i -e "s>Listen 80>Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}>g" ${file}; \
-    perl -0p -i -e "s>NameVirtualHost *:80>NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}>g" ${file}; \
-    perl -0p -i -e "s>Listen 443>NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\nListen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
-    printf "Done patching ${file}...\n";
+    perl -0p -i -e "s>    Listen 443>    NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n    Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/mods-available/proxy_fcgi.load \
+    file="/etc/apache2/mods-available/proxy_fcgi.load"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# Depends: proxy\n\
+LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
+\n" > ${file}; \
+    \
+    # /etc/apache2/conf.d/* \
+    # Rename configuration files \
+    mv /etc/apache2/conf.d/charset /etc/apache2/conf.d/charset.conf; \
+    mv /etc/apache2/conf.d/localized-error-pages /etc/apache2/conf.d/localized-error-pages.conf; \
+    mv /etc/apache2/conf.d/other-vhosts-access-log /etc/apache2/conf.d/other-vhosts-access-log.conf; \
+    mv /etc/apache2/conf.d/security /etc/apache2/conf.d/security.conf; \
+    \
+    # Additional configuration files \
+    mkdir /etc/apache2/incl.d; \
+    \
+    # HTTPd vhost \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
+    \
+    # /etc/apache2/incl.d/${app_httpd_vhost_id}-httpd.conf \
+    file="/etc/apache2/incl.d/${app_httpd_vhost_id}-httpd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# HTTPd info and status\n\
+<IfModule info_module>\n\
+  # HTTPd info
+  <Location /server-info>\n\
+    SetHandler server-info\n\
+    Allow from ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+<IfModule status_module>\n\
+  # HTTPd status
+  <Location /server-status>\n\
+    SetHandler server-status\n\
+    Allow from ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf \
+    file="/etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf"; \
+    cp "/etc/apache2/sites-available/default" $file; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf \
+    file="/etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf"; \
+    cp "/etc/apache2/sites-available/default-ssl" $file; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "\n# Generate certificates...\n"; \
+    make-ssl-cert generate-default-snakeoil --force-overwrite; \
+    \
+    printf "\n# Enable sites...\n"; \
+    a2dissite default default-ssl; \
+    a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
+    \
+    # Disable original configuration \
+    mv /etc/apache2/sites-available/default /etc/apache2/sites-available/default.orig; \
+    mv /etc/apache2/sites-available/default-ssl /etc/apache2/sites-available/default-ssl.orig;
 

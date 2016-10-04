@@ -78,81 +78,7 @@ RUN printf "# Install the HTTPd packages...\n" && \
 # Enable/Disable HTTPd modules
 RUN printf "# Start installing modules...\n" && \
     \
-    printf "# Enabling/disabling modules...\n" && \
-    # Core modules \
-    echo "a2dismod -f ${app_httpd_global_mods_core_dis}" && \
-    echo "a2enmod -f ${app_httpd_global_mods_core_en}" && \
-    # Extra modules \
-    echo "a2dismod -f ${app_httpd_global_mods_extra_dis}" && \
-    echo "a2enmod -f ${app_httpd_global_mods_extra_en}" && \
-    \
-    printf "# Finished installing modules...\n";
-
-#
-# Configuration
-#
-
-# Add users and groups
-RUN printf "Adding users and groups...\n"; \
-    # HTTPd daemon \
-    id -g ${app_httpd_global_user} || \
-    groupadd \
-      --system ${app_httpd_global_group} && \
-    id -u ${app_httpd_global_user} && \
-    usermod \
-      --gid ${app_httpd_global_group} \
-      --home ${app_httpd_global_home} \
-      --shell /sbin/nologin \
-      ${app_httpd_global_user} \
-    || \
-    useradd \
-      --system --gid ${app_httpd_global_group} \
-      --no-create-home --home-dir ${app_httpd_global_home} \
-      --shell /sbin/nologin \
-      ${app_httpd_global_user}; \
-    \
-    # HTTPd vhost \
-    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
-    id -g ${app_httpd_vhost_user} || \
-    groupadd \
-      --system ${app_httpd_vhost_group} && \
-    id -u ${app_httpd_vhost_user} && \
-    usermod \
-      --gid ${app_httpd_global_group} \
-      --home ${app_httpd_vhost_home} \
-      --shell /sbin/nologin \
-      ${app_httpd_global_user} \
-    || \
-    useradd \
-      --system --gid ${app_httpd_vhost_group} \
-      --create-home --home-dir ${app_httpd_vhost_home} \
-      --shell /sbin/nologin \
-      ${app_httpd_vhost_user}; \
-    mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html; \
-    chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
-    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
-
-# Supervisor
-RUN printf "Updading Supervisor configuration...\n"; \
-    \
-    # init is not working at this point \
-    \
-    # /etc/supervisord.conf \
-    file="/etc/supervisord.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# httpd\n\
-[program:httpd]\n\
-command=/bin/bash -c \"\$(which apachectl) -d /etc/httpd -f /etc/httpd/conf/httpd.conf -D FOREGROUND\"\n\
-autostart=true\n\
-autorestart=true\n\
-\n" >> ${file}; \
-    printf "Done patching ${file}...\n";
-
-# HTTPd
-RUN printf "Updading HTTPd configuration...\n"; \
-    \
-    touch /etc/httpd/ports.conf; \
-    mkdir /etc/httpd/sites.d; \
+    # Module configuration files \
     mkdir /etc/httpd/conf.modules.d; \
     touch /etc/httpd/conf.modules.d/00-dav.conf; \
     touch /etc/httpd/conf.modules.d/00-proxy.conf; \
@@ -160,92 +86,7 @@ RUN printf "Updading HTTPd configuration...\n"; \
     touch /etc/httpd/conf.modules.d/01-cgi.conf; \
     touch /etc/httpd/conf.modules.d/00-base.conf; \
     \
-    # /etc/httpd/conf/httpd.conf \
-    file="/etc/httpd/conf/httpd.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    # run as user/group \
-    perl -0p -i -e "s>#  don't use Group #-1 on these systems!\n#\nUser = .*\nGroup = .*>#  don't use Group #-1 on these systems!\n#\nUser = ${app_httpd_global_user}\nGroup = ${app_httpd_global_group}>" ${file}; \
-    # change log level \
-    perl -0p -i -e "s># alert, emerg.\n#\nLogLevel .*># alert, emerg.\n#\nLogLevel ${app_httpd_global_loglevel}>" ${file}; \
-    # change config directory \
-    perl -0p -i -e "s># Do NOT add a slash at the end of the directory path.\n#\nServerRoot .*># Do NOT add a slash at the end of the directory path.\n#\nServerRoot \"/etc/httpd\">" ${file}; \
-    # replace optional config files \
-    perl -0p -i -e "s>#\n# Load config files from the config directory \"/etc/httpd/conf.d\".\n#\nInclude conf.d/*.conf>>" ${file}; \
-    printf "\n\
-# Supplemental configuration\n\
-#\n\
-# Load config files in the \"/etc/httpd/conf.d\" directory, if any.\n\
-Include conf.d/*.conf\n\
-" >> ${file}; \
-    # replace ports with config file \
-    perl -0p -i -e "s>#\n# Listen: Allows you to bind Apache to specific IP addresses and/or\n# ports, in addition to the default. See also the \<VirtualHost\>\n# directive.\n#\n# Change this to Listen on specific IP addresses as shown below to \n# prevent Apache from glomming onto all bound IP addresses \(0.0.0.0\)\n#\n#Listen 12.34.56.78:80\nListen 80\n\n>>" ${file}; \
-    printf "\n\
-# Include list of ports to listen on\n\
-Include ports.conf\n\
-" >> ${file}; \
-    # add vhost config files \
-    printf "\n\
-# Include the virtual host configurations\n\
-Include sites.d/*.conf\n\
-" >> ${file}; \
-    # change timeout \
-    perl -0p -i -e "s># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout .*># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout ${app_httpd_global_listen_timeout}>" ${file}; \
-    # change keepalive \
-    perl -0p -i -e "s># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive .*># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive ${app_httpd_global_listen_keepalive_status}>" ${file}; \
-    perl -0p -i -e "s># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests .*># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests ${app_httpd_global_listen_keepalive_requests}>" ${file}; \
-    perl -0p -i -e "s># same client on the same connection.\n#\nKeepAliveTimeout .*># same client on the same connection.\n#\nKeepAliveTimeout ${app_httpd_global_listen_keepalive_timeout}>" ${file}; \
-    # replace load modules \
-    perl -0p -i -e "s># LoadModule foo_module modules/mod_foo.so\n#\n># LoadModule foo_module modules/mod_foo.so\n#\nInclude conf.modules.d/*.conf\n\n>" ${file}; \
-    perl -0p -i -e "s>\nLoadModule .*>>g" ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/conf.modules.d/00-dav.conf \
-    file="/etc/httpd/conf.modules.d/00-dav.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "\
-LoadModule dav_module modules/mod_dav.so\n\
-LoadModule dav_fs_module modules/mod_dav_fs.so\n\
-" > ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/conf.modules.d/00-proxy.conf \
-    file="/etc/httpd/conf.modules.d/00-proxy.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "\
-# This file configures all the proxy modules:\n\
-LoadModule proxy_module modules/mod_proxy.so\n\
-LoadModule proxy_ajp_module modules/mod_proxy_ajp.so\n\
-LoadModule proxy_balancer_module modules/mod_proxy_balancer.so\n\
-LoadModule proxy_connect_module modules/mod_proxy_connect.so\n\
-LoadModule proxy_ftp_module modules/mod_proxy_ftp.so\n\
-LoadModule proxy_http_module modules/mod_proxy_http.so\n\
-" > ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/conf.modules.d/00-ssl.conf \
-    file="/etc/httpd/conf.modules.d/00-ssl.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "\
-LoadModule ssl_module modules/mod_ssl.so\n\
-" > ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/conf.modules.d/01-cgi.conf \
-    file="/etc/httpd/conf.modules.d/01-cgi.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "\
-# This configuration file loads a CGI module appropriate to the MPM\n\
-# which has been configured in 00-mpm.conf.  mod_cgid should be used\n\
-# with a threaded MPM; mod_cgi with the prefork MPM.\n\
-\n\
-<IfModule mpm_worker_module>\n\
-   LoadModule cgid_module modules/mod_cgid.so\n\
-</IfModule>\n\
-<IfModule mpm_prefork_module>\n\
-   LoadModule cgi_module modules/mod_cgi.so\n\
-</IfModule>\n\
-" > ${file}; \
-    printf "Done patching ${file}...\n"; \
+    printf "# Enabling/disabling modules...\n" && \
     \
     # /etc/httpd/conf.modules.d/00-base.conf \
     file="/etc/httpd/conf.modules.d/00-base.conf"; \
@@ -312,8 +153,161 @@ LoadModule vhost_alias_module modules/mod_vhost_alias.so\n\
 " > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # /etc/httpd/conf.modules.d/00-dav.conf \
+    file="/etc/httpd/conf.modules.d/00-dav.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+LoadModule dav_module modules/mod_dav.so\n\
+LoadModule dav_fs_module modules/mod_dav_fs.so\n\
+" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-proxy.conf \
+    file="/etc/httpd/conf.modules.d/00-proxy.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+# This file configures all the proxy modules:\n\
+LoadModule proxy_module modules/mod_proxy.so\n\
+LoadModule proxy_ajp_module modules/mod_proxy_ajp.so\n\
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so\n\
+LoadModule proxy_connect_module modules/mod_proxy_connect.so\n\
+LoadModule proxy_ftp_module modules/mod_proxy_ftp.so\n\
+LoadModule proxy_http_module modules/mod_proxy_http.so\n\
+" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/00-ssl.conf \
+    file="/etc/httpd/conf.modules.d/00-ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+LoadModule ssl_module modules/mod_ssl.so\n\
+" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/01-cgi.conf \
+    file="/etc/httpd/conf.modules.d/01-cgi.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "\
+# This configuration file loads a CGI module appropriate to the MPM\n\
+# which has been configured in 00-mpm.conf.  mod_cgid should be used\n\
+# with a threaded MPM; mod_cgi with the prefork MPM.\n\
+\n\
+<IfModule mpm_worker_module>\n\
+   LoadModule cgid_module modules/mod_cgid.so\n\
+</IfModule>\n\
+<IfModule mpm_prefork_module>\n\
+   LoadModule cgi_module modules/mod_cgi.so\n\
+</IfModule>\n\
+" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "# Finished installing modules...\n";
+
+#
+# Configuration
+#
+
+# Add users and groups
+RUN printf "Adding users and groups...\n"; \
+    # HTTPd daemon \
+    id -g ${app_httpd_global_user} || \
+    groupadd \
+      --system ${app_httpd_global_group} && \
+    id -u ${app_httpd_global_user} && \
+    usermod \
+      --gid ${app_httpd_global_group} \
+      --home ${app_httpd_global_home} \
+      --shell /sbin/nologin \
+      ${app_httpd_global_user} \
+    || \
+    useradd \
+      --system --gid ${app_httpd_global_group} \
+      --no-create-home --home-dir ${app_httpd_global_home} \
+      --shell /sbin/nologin \
+      ${app_httpd_global_user}; \
+    \
+    # HTTPd vhost \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
+    id -g ${app_httpd_vhost_user} || \
+    groupadd \
+      --system ${app_httpd_vhost_group} && \
+    id -u ${app_httpd_vhost_user} && \
+    usermod \
+      --gid ${app_httpd_global_group} \
+      --home ${app_httpd_vhost_home} \
+      --shell /sbin/nologin \
+      ${app_httpd_global_user} \
+    || \
+    useradd \
+      --system --gid ${app_httpd_vhost_group} \
+      --create-home --home-dir ${app_httpd_vhost_home} \
+      --shell /sbin/nologin \
+      ${app_httpd_vhost_user}; \
+    mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html; \
+    chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
+    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
+
+# Supervisor
+RUN printf "Updading Supervisor configuration...\n"; \
+    \
+    # init is not working at this point \
+    \
+    # /etc/supervisord.conf \
+    file="/etc/supervisord.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# httpd\n\
+[program:httpd]\n\
+command=/bin/bash -c \"\$(which apachectl) -d /etc/httpd -f /etc/httpd/conf/httpd.conf -D FOREGROUND\"\n\
+autostart=true\n\
+autorestart=true\n\
+\n" >> ${file}; \
+    printf "Done patching ${file}...\n";
+
+# HTTPd
+RUN printf "Updading HTTPd configuration...\n"; \
+    \
+    # /etc/httpd/conf/httpd.conf \
+    file="/etc/httpd/conf/httpd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # run as user/group \
+    perl -0p -i -e "s>#  don't use Group #-1 on these systems!\n#\nUser .*\nGroup .*>#  don't use Group #-1 on these systems!\n#\nUser ${app_httpd_global_user}\nGroup ${app_httpd_global_group}>" ${file}; \
+    # change log level \
+    perl -0p -i -e "s># alert, emerg.\n#\nLogLevel .*># alert, emerg.\n#\nLogLevel ${app_httpd_global_loglevel}>" ${file}; \
+    # change config directory \
+    perl -0p -i -e "s># Do NOT add a slash at the end of the directory path.\n#\nServerRoot .*># Do NOT add a slash at the end of the directory path.\n#\nServerRoot \"/etc/httpd\">" ${file}; \
+    # replace optional config files \
+    perl -0p -i -e "s>#\n# Load config files from the config directory \"/etc/httpd/conf.d\".\n#\nInclude conf.d/*.conf>>" ${file}; \
+    printf "\n\
+# Supplemental configuration\n\
+#\n\
+# Load config files in the \"/etc/httpd/conf.d\" directory, if any.\n\
+Include conf.d/*.conf\n\
+" >> ${file}; \
+    # replace ports with config file \
+    perl -0p -i -e "s>#\n# Listen: Allows you to bind Apache to specific IP addresses and/or\n# ports, in addition to the default. See also the \<VirtualHost\>\n# directive.\n#\n# Change this to Listen on specific IP addresses as shown below to \n# prevent Apache from glomming onto all bound IP addresses \(0.0.0.0\)\n#\n#Listen 12.34.56.78:80\nListen 80\n\n>>" ${file}; \
+    printf "\n\
+# Include list of ports to listen on\n\
+Include ports.conf\n\
+" >> ${file}; \
+    # add vhost config files \
+    printf "\n\
+# Include the virtual host configurations\n\
+Include sites.d/*.conf\n\
+" >> ${file}; \
+    # change timeout \
+    perl -0p -i -e "s># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout .*># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout ${app_httpd_global_listen_timeout}>" ${file}; \
+    # change keepalive \
+    perl -0p -i -e "s># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive .*># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive ${app_httpd_global_listen_keepalive_status}>" ${file}; \
+    perl -0p -i -e "s># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests .*># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests ${app_httpd_global_listen_keepalive_requests}>" ${file}; \
+    perl -0p -i -e "s># same client on the same connection.\n#\nKeepAliveTimeout .*># same client on the same connection.\n#\nKeepAliveTimeout ${app_httpd_global_listen_keepalive_timeout}>" ${file}; \
+    # replace load modules \
+    perl -0p -i -e "s># LoadModule foo_module modules/mod_foo.so\n#\n># LoadModule foo_module modules/mod_foo.so\n#\nInclude conf.modules.d/*.conf\n\n>" ${file}; \
+    perl -0p -i -e "s>\nLoadModule .*>>g" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     # /etc/httpd/ports.conf \
     file="/etc/httpd/ports.conf"; \
+    touch ${file}; \
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "\
 # If you just change the port or add more ports here, you will likely also\n\
@@ -338,5 +332,45 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}\n\
 </IfModule>\n\
 " > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # Additional configuration files \
+    mkdir /etc/httpd/incl.d; \
+    \
+    # HTTPd vhost \
+    app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
+    \
+    # /etc/httpd/incl.d/${app_httpd_vhost_id}-httpd.conf \
+    file="/etc/httpd/incl.d/${app_httpd_vhost_id}-httpd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "# HTTPd info and status\n\
+<IfModule info_module>\n\
+  # HTTPd info
+  <Location /server-info>\n\
+    SetHandler server-info\n\
+    Allow from ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+<IfModule status_module>\n\
+  # HTTPd status
+  <Location /server-status>\n\
+    SetHandler server-status\n\
+    Allow from ${app_httpd_vhost_httpd_wlist}\n\
+  </Location>\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # Vhost configuration files \
+    mkdir /etc/httpd/sites.d; \
+    \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
     printf "Done patching ${file}...\n";
 
