@@ -105,15 +105,23 @@ RUN printf "Updading MySQL configuration...\n"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # run as user \
     perl -0p -i -e "s>user\t\t= .*>user\t\t= ${app_mysql_user}>" ${file}; \
+    # change logging \
+    perl -0p -i -e "s>\[mysqld_safe\]>\[mysqld_safe\]\nlog-error       = /var/log/mysql/error.log>" ${file}; \
+    perl -0p -i -e "s># Error log - should be very few entries.\n#\nlog_error = .*># Error log - should be very few entries.\n#\nlog_error                = /var/log/mysql/error.log>" ${file}; \
     # change interface \
     perl -0p -i -e "s>bind-address\t\t= .*>bind-address\t\t= ${app_mysql_listen_addr}>" ${file}; \
     # change port \
-    perl -0p -i -e "s>port\t\t= .*>port\t\t= ${app_mysql_listen_port}>" ${file}; \
+    perl -0p -i -e "s>port\t\t= .*>port\t\t= ${app_mysql_listen_port}>g" ${file}; \
+    # change protocol \
+    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol        = tcp>" ${file}; \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
+    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Engine and Collation\n#\ndefault-storage-engine = InnoDB\ncharacter-set-server   = utf8\ncollation-server       = utf8_general_ci>" ${file}; \
     perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file}; \
-    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Engine and Collation\n#\ndefault-storage-engine = InnoDB\ncharacter-set-server = utf8\ncollation-server = utf8_general_ci>" ${file}; \
+    # change performance settings \
+    perl -0p -i -e "s>max_allowed_packet      = .*\nthread_stack>max_allowed_packet      = 128M\nthread_stack>" ${file}; \
+    perl -0p -i -e "s>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet      = .*\n>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M\n>" ${file}; \
     printf "Done patching ${file}...\n";
 

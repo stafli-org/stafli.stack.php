@@ -111,18 +111,29 @@ RUN printf "Updading MySQL configuration...\n"; \
     # /etc/my.cnf \
     file="/etc/my.cnf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # add missing sections \
+    perl -0p -i -e "s>#\n# include all files from the config directory>[mysqldump]\n#\n# include all files from the config directory>" ${file}; \
+    perl -0p -i -e "s>#\n# include all files from the config directory>[client]\n\n#\n# include all files from the config directory>" ${file}; \
     # run as user \
     perl -0p -i -e "s>user=.*>user = ${app_mysql_user}>" ${file}; \
+    # change logging \
+    perl -0p -i -e "s>\[mysqld_safe\]\nlog-error=.*>\[mysqld_safe\]\nlog-error = /var/log/mysqld.log>" ${file}; \
+    perl -0p -i -e "s>\n# Disabling symbolic-links is recommended to prevent assorted security risks>log-error = /var/log/mysqld.log\n\n# Disabling symbolic-links is recommended to prevent assorted security risks>" ${file}; \
     # change interface \
     perl -0p -i -e "s># Settings user and group are ignored>bind-address = ${app_mysql_listen_addr}\n# Settings user and group are ignored>" ${file}; \
     # change port \
     perl -0p -i -e "s># Settings user and group are ignored>port = ${app_mysql_listen_port}\n\n# Settings user and group are ignored>" ${file}; \
+    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mysql_listen_port}>" ${file}; \
+    # change protocol \
+    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file}; \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    printf "\n[client]\n" >> ${file}; \
+    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Engine and Collation\n#\ndefault-storage-engine = InnoDB\ncharacter-set-server   = utf8\ncollation-server       = utf8_general_ci\n>" ${file}; \
     perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file}; \
-    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\ndefault-storage-engine = InnoDB\ncharacter-set-server = utf8\ncollation-server = utf8_general_ci>" ${file}; \
+    # change performance settings \
+    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Performance\n#\nmax_allowed_packet = 1G\n>" ${file}; \
+    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M\n>" ${file}; \
     printf "Done patching ${file}...\n";
 
