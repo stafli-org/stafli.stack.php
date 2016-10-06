@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/mysql55.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable mariadb.service;
+
+# Start daemon
+systemctl restart mariadb.service;
+

@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/php56.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable php5-fpm.service;
+
+# Start daemon
+systemctl restart php5-fpm.service;
+

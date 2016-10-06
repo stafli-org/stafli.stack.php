@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/mysql56.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+update-rc.d mysql enable;
+
+# Start daemon
+service mysql restart;
+

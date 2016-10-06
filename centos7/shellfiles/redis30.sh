@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/redis30.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable redis.service;
+
+# Start daemon
+systemctl restart redis.service;
+

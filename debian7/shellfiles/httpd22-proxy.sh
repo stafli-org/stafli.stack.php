@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/httpd22-proxy.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+update-rc.d apache2 enable;
+
+# Start daemon
+service apache2 restart;
+

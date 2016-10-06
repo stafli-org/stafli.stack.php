@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/httpd22-web.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+chkconfig httpd on;
+
+# Start daemon
+service httpd restart;
+

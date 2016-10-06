@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/mysql51.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+chkconfig mysqld on;
+
+# Start daemon
+service mysqld restart;
+

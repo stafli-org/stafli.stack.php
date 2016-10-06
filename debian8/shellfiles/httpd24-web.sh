@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/httpd24-web.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable apache2.service;
+
+# Start daemon
+systemctl restart apache2.service;
+

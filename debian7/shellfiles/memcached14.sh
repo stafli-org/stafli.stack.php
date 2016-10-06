@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/memcached14.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+update-rc.d memcached enable;
+
+# Start daemon
+service memcached restart;
+

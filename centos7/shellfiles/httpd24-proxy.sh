@@ -29,3 +29,13 @@ shopt -s expand_aliases;
 # Load dockerfile
 source "$(dirname $(readlink -f $0))/../dockerfiles/httpd24-proxy.dockerfile";
 
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable httpd.service;
+
+# Start daemon
+systemctl restart httpd.service;
+
