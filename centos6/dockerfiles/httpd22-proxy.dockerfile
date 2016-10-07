@@ -100,49 +100,49 @@ RUN printf "# Start installing modules...\n" && \
 LoadModule actions_module modules/mod_actions.so\n\
 LoadModule alias_module modules/mod_alias.so\n\
 LoadModule auth_basic_module modules/mod_auth_basic.so\n\
-LoadModule auth_digest_module modules/mod_auth_digest.so\n\
+#LoadModule auth_digest_module modules/mod_auth_digest.so\n\
 LoadModule authn_alias_module modules/mod_authn_alias.so\n\
-LoadModule authn_anon_module modules/mod_authn_anon.so\n\
-LoadModule authn_dbd_module modules/mod_authn_dbd.so\n\
-LoadModule authn_dbm_module modules/mod_authn_dbm.so\n\
+#LoadModule authn_anon_module modules/mod_authn_anon.so\n\
+#LoadModule authn_dbd_module modules/mod_authn_dbd.so\n\
+#LoadModule authn_dbm_module modules/mod_authn_dbm.so\n\
 LoadModule authn_default_module modules/mod_authn_default.so\n\
 LoadModule authn_file_module modules/mod_authn_file.so\n\
-LoadModule authz_dbm_module modules/mod_authz_dbm.so\n\
+#LoadModule authz_dbm_module modules/mod_authz_dbm.so\n\
 LoadModule authz_default_module modules/mod_authz_default.so\n\
 LoadModule authz_groupfile_module modules/mod_authz_groupfile.so\n\
 LoadModule authz_host_module modules/mod_authz_host.so\n\
 LoadModule authz_owner_module modules/mod_authz_owner.so\n\
 LoadModule authz_user_module modules/mod_authz_user.so\n\
-LoadModule authnz_ldap_module modules/mod_authnz_ldap.so\n\
+#LoadModule authnz_ldap_module modules/mod_authnz_ldap.so\n\
 LoadModule autoindex_module modules/mod_autoindex.so\n\
-LoadModule cache_module modules/mod_cache.so\n\
-LoadModule disk_cache_module modules/mod_disk_cache.so\n\
-LoadModule dbd_module modules/mod_dbd.so\n\
+#LoadModule cache_module modules/mod_cache.so\n\
+#LoadModule disk_cache_module modules/mod_disk_cache.so\n\
+#LoadModule dbd_module modules/mod_dbd.so\n\
 LoadModule deflate_module modules/mod_deflate.so\n\
 LoadModule dir_module modules/mod_dir.so\n\
-LoadModule dumpio_module modules/mod_dumpio.so\n\
+#LoadModule dumpio_module modules/mod_dumpio.so\n\
 LoadModule env_module modules/mod_env.so\n\
 LoadModule expires_module modules/mod_expires.so\n\
-LoadModule ext_filter_module modules/mod_ext_filter.so\n\
+#LoadModule ext_filter_module modules/mod_ext_filter.so\n\
 LoadModule filter_module modules/mod_filter.so\n\
 LoadModule headers_module modules/mod_headers.so\n\
-LoadModule include_module modules/mod_include.so\n\
+#LoadModule include_module modules/mod_include.so\n\
 LoadModule info_module modules/mod_info.so\n\
-LoadModule ldap_module modules/mod_ldap.so\n\
+#LoadModule ldap_module modules/mod_ldap.so\n\
 LoadModule log_config_module modules/mod_log_config.so\n\
 LoadModule logio_module modules/mod_logio.so\n\
-LoadModule mime_magic_module modules/mod_mime_magic.so\n\
+#LoadModule mime_magic_module modules/mod_mime_magic.so\n\
 LoadModule mime_module modules/mod_mime.so\n\
-LoadModule negotiation_module modules/mod_negotiation.so\n\
+#LoadModule negotiation_module modules/mod_negotiation.so\n\
 LoadModule rewrite_module modules/mod_rewrite.so\n\
 LoadModule setenvif_module modules/mod_setenvif.so\n\
 LoadModule status_module modules/mod_status.so\n\
-LoadModule substitute_module modules/mod_substitute.so\n\
-LoadModule suexec_module modules/mod_suexec.so\n\
-LoadModule unique_id_module modules/mod_unique_id.so\n\
-LoadModule userdir_module modules/mod_userdir.so\n\
+#LoadModule substitute_module modules/mod_substitute.so\n\
+#LoadModule suexec_module modules/mod_suexec.so\n\
+#LoadModule unique_id_module modules/mod_unique_id.so\n\
+#LoadModule userdir_module modules/mod_userdir.so\n\
 LoadModule version_module modules/mod_version.so\n\
-LoadModule vhost_alias_module modules/mod_vhost_alias.so\n\
+#LoadModule vhost_alias_module modules/mod_vhost_alias.so\n\
 \n\
 #LoadModule asis_module modules/mod_asis.so\n\
 #LoadModule cern_meta_module modules/mod_cern_meta.so\n\
@@ -157,8 +157,8 @@ LoadModule vhost_alias_module modules/mod_vhost_alias.so\n\
     file="/etc/httpd/conf.modules.d/00-dav.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "\
-LoadModule dav_module modules/mod_dav.so\n\
-LoadModule dav_fs_module modules/mod_dav_fs.so\n\
+#LoadModule dav_module modules/mod_dav.so\n\
+#LoadModule dav_fs_module modules/mod_dav_fs.so\n\
 " > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
@@ -168,10 +168,10 @@ LoadModule dav_fs_module modules/mod_dav_fs.so\n\
     printf "\
 # This file configures all the proxy modules:\n\
 LoadModule proxy_module modules/mod_proxy.so\n\
-LoadModule proxy_ajp_module modules/mod_proxy_ajp.so\n\
-LoadModule proxy_balancer_module modules/mod_proxy_balancer.so\n\
-LoadModule proxy_connect_module modules/mod_proxy_connect.so\n\
-LoadModule proxy_ftp_module modules/mod_proxy_ftp.so\n\
+#LoadModule proxy_ajp_module modules/mod_proxy_ajp.so\n\
+#LoadModule proxy_balancer_module modules/mod_proxy_balancer.so\n\
+#LoadModule proxy_connect_module modules/mod_proxy_connect.so\n\
+#LoadModule proxy_ftp_module modules/mod_proxy_ftp.so\n\
 LoadModule proxy_http_module modules/mod_proxy_http.so\n\
 " > ${file}; \
     printf "Done patching ${file}...\n"; \
@@ -193,12 +193,27 @@ LoadModule ssl_module modules/mod_ssl.so\n\
 # with a threaded MPM; mod_cgi with the prefork MPM.\n\
 \n\
 <IfModule mpm_worker_module>\n\
-   LoadModule cgid_module modules/mod_cgid.so\n\
+#   LoadModule cgid_module modules/mod_cgid.so\n\
 </IfModule>\n\
 <IfModule mpm_prefork_module>\n\
-   LoadModule cgi_module modules/mod_cgi.so\n\
+#   LoadModule cgi_module modules/mod_cgi.so\n\
 </IfModule>\n\
 " > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/ssl.conf \
+    file="/etc/httpd/conf.d/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
+    perl -0p -i -e "s>LoadModule ssl_module modules/mod_ssl.so>\<IfModule ssl_module\>>" ${file}; \
+    printf "</IfModule>" >> ${file}; \
+    \
+    # /etc/httpd/conf/httpd.conf \
+    file="/etc/httpd/conf/httpd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add load module \
+    perl -0p -i -e "s>LanguagePriority en .*>\<IfModule negotiation_module\>\nLanguagePriority en ca cs da de el eo es et fr he hr it ja ko ltz nl nn no pl pt pt-BR ru sv zh-CN zh-TW\n\</IfModule\>>" ${file}; \
+    perl -0p -i -e "s>ForceLanguagePriority Prefer Fallback>\<IfModule negotiation_module\>\nForceLanguagePriority Prefer Fallback\n\</IfModule\>>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     printf "# Finished installing modules...\n";
@@ -303,6 +318,8 @@ Include sites.d/*.conf\n\
     # replace load modules \
     perl -0p -i -e "s># LoadModule foo_module modules/mod_foo.so\n#\n># LoadModule foo_module modules/mod_foo.so\n#\nInclude conf.modules.d/*.conf\n\n>" ${file}; \
     perl -0p -i -e "s>\nLoadModule .*>>g" ${file}; \
+    perl -0p -i -e "s>#\n\# The following modules are not loaded by default:\n\#\n\#\n\n\n>>" ${file}; \
+    perl -0p -i -e "s>\n#LoadModule .*>>g" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/ports.conf \
