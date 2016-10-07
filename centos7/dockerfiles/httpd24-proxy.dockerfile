@@ -378,5 +378,68 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     # /etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf \
     file="/etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf/httpd.conf \
+    file="/etc/httpd/conf/httpd.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable badly configured default virtualhost \
+    perl -0p -i -e "s>.*ServerAdmin root@localhost>#ServerAdmin root@localhost>" ${file}; \
+    perl -0p -i -e "s>.*ServerName www.example.com:80>#ServerName www.example.com:80>" ${file}; \
+    perl -0p -i -e "s>\<Directory /\>\n\
+    AllowOverride none\n\
+    Require all denied\n\
+\</Directory\>>\<Directory /\>\n\
+    Options FollowSymLinks\n\
+    AllowOverride None\n\
+    Require all denied\n\
+\</Directory\>\
+>" ${file}; \
+    perl -0p -i -e "s>.*DocumentRoot \"/var/www/html\">#DocumentRoot \"/var/www/html\">" ${file}; \
+    perl -0p -i -e "s>\<Directory \"/var/www/html\"\>>#\<Directory \"/var/www/html\"\>>" ${file}; \
+    perl -0p -i -e "s>#\n    Options Indexes FollowSymLinks>#\n#    Options Indexes FollowSymLinks>" ${file}; \
+    perl -0p -i -e "s>#\n    AllowOverride None>#\n#    AllowOverride None>" ${file}; \
+    perl -0p -i -e "s>#\n    Require all granted\n\</Directory\>>#\n#    Require all granted\n#\</Directory\>>" ${file}; \
+    perl -0p -i -e "s>    ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\">#    ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\">" ${file}; \
+    perl -0p -i -e "s>\<Directory \"/var/www/cgi-bin\"\>\n\
+    AllowOverride None\n\
+    Options None\n\
+    Require all granted\n\
+\</Directory\>>#\<Directory \"/var/www/cgi-bin\"\>\n\
+#    AllowOverride None\n\
+#    Options None\n\
+#    Require all granted\n\
+#\</Directory\>\
+>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/ssl.conf \
+    file="/etc/httpd/conf.d/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable badly configured default virtualhost \
+    perl -0p -i -e "s>Listen 443 https>#Listen 443 https>" ${file}; \
+    perl -0p -i -e "s>\<VirtualHost _default_:443\>>#\<VirtualHost _default_:443\>>" ${file}; \
+    perl -0p -i -e "s>.*DocumentRoot \"/var/www/html\">#DocumentRoot \"/var/www/html\">" ${file}; \
+    perl -0p -i -e "s>.*ServerAdmin root@localhost>#ServerAdmin root@localhost>" ${file}; \
+    perl -0p -i -e "s>.*ServerName www.example.com:443>#ServerName www.example.com:443>" ${file}; \
+    perl -0p -i -e "s>.*ErrorLog logs/ssl_error_log\nTransferLog logs/ssl_access_log\nLogLevel warn>#ErrorLog logs/ssl_error_log\n#TransferLog logs/ssl_access_log\n#LogLevel warn>" ${file}; \
+    perl -0p -i -e "s>.*SSLEngine on>#SSLEngine on>" ${file}; \
+    perl -0p -i -e "s>.*SSLProtocol all -SSLv2>SSLProtocol all -SSLv2 -SSLv3>" ${file}; \
+    perl -0p -i -e "s>.*SSLCertificateFile /etc/pki/tls/certs/localhost.crt>#SSLCertificateFile /etc/pki/tls/certs/localhost.crt>" ${file}; \
+    perl -0p -i -e "s>.*SSLCertificateKeyFile /etc/pki/tls/private/localhost.key>#SSLCertificateKeyFile /etc/pki/tls/private/localhost.key>" ${file}; \
+    perl -0p -i -e "s>.*SSLCertificateChainFile /etc/pki/tls/certs/server-chain.crt>#SSLCertificateChainFile /etc/pki/tls/certs/server-chain.crt>" ${file}; \
+    perl -0p -i -e "s>.*SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt>#SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt>" ${file}; \
+    perl -0p -i -e "s>\<Files ~>#\<Files ~>" ${file}; \
+    perl -0p -i -e "s>    SSLOptions \+StdEnvVars>#    SSLOptions \+StdEnvVars>" ${file}; \
+    perl -0p -i -e "s>\</Files\>>#\</Files\>>" ${file}; \
+    perl -0p -i -e "s>\<Directory \"/var/www/cgi-bin\"\>\n\
+    SSLOptions \+StdEnvVars\n\
+\</Directory\>>#\<Directory \"/var/www/cgi-bin\"\>\n\
+#    SSLOptions \+StdEnvVars\n\
+#\</Directory\>\
+>" ${file}; \
+    perl -0p -i -e "s>CustomLog logs/ssl_request_log>#CustomLog logs/ssl_request_log>" ${file}; \
+    perl -0p -i -e "s>          \"%t>#          \"%t>" ${file}; \
+    perl -0p -i -e "s>\</VirtualHost\>>#\</VirtualHost\>>" ${file}; \
     printf "Done patching ${file}...\n";
 
