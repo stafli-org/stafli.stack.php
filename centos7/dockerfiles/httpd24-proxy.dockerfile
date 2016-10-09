@@ -83,6 +83,7 @@ RUN printf "# Start installing modules...\n" && \
     # /etc/httpd/conf.modules.d/00-base.conf \
     file="/etc/httpd/conf.modules.d/00-base.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule access_compat_module>LoadModule access_compat_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule actions_module>LoadModule actions_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule alias_module>LoadModule alias_module>" ${file}; \
@@ -158,6 +159,7 @@ RUN printf "# Start installing modules...\n" && \
     # /etc/httpd/conf.modules.d/00-dav.conf \
     file="/etc/httpd/conf.modules.d/00-dav.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule dav_module>#LoadModule dav_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule dav_fs_module>#LoadModule dav_fs_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule dav_lock_module>#LoadModule dav_lock_module>" ${file}; \
@@ -166,12 +168,14 @@ RUN printf "# Start installing modules...\n" && \
     # /etc/httpd/conf.modules.d/00-lua.conf \
     file="/etc/httpd/conf.modules.d/00-lua.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule lua_module>#LoadModule lua_module>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/conf.modules.d/00-mpm.conf \
     file="/etc/httpd/conf.modules.d/00-mpm.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule mpm_prefork_module>#LoadModule mpm_prefork_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule mpm_worker_module>#LoadModule mpm_worker_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule mpm_event_module>LoadModule mpm_event_module>" ${file}; \
@@ -180,6 +184,7 @@ RUN printf "# Start installing modules...\n" && \
     # /etc/httpd/conf.modules.d/00-proxy.conf \
     file="/etc/httpd/conf.modules.d/00-proxy.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule proxy_module>LoadModule proxy_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule lbmethod_bybusyness_module>#LoadModule lbmethod_bybusyness_module>" ${file}; \
     perl -0p -i -e "s>.*LoadModule lbmethod_byrequests_module>#LoadModule lbmethod_byrequests_module>" ${file}; \
@@ -200,26 +205,61 @@ RUN printf "# Start installing modules...\n" && \
     # /etc/httpd/conf.modules.d/00-ssl.conf \
     file="/etc/httpd/conf.modules.d/00-ssl.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule ssl_module>LoadModule ssl_module>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/conf.modules.d/00-systemd.conf \
     file="/etc/httpd/conf.modules.d/00-systemd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule systemd_module>LoadModule systemd_module>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/conf.modules.d/01-cgi.conf \
     file="/etc/httpd/conf.modules.d/01-cgi.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
     perl -0p -i -e "s>.*LoadModule cgid_module>#LoadModule cgid_module>g" ${file}; \
     perl -0p -i -e "s>.*LoadModule cgi_module>#LoadModule cgi_module>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.modules.d/authnz_external.conf \
+    file="/etc/httpd/conf.modules.d/authnz_external.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add load module \
+    printf "LoadModule      authnz_external_module  modules/mod_authnz_external.so\n\n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/conf.modules.d/xsendfile.conf \
     file="/etc/httpd/conf.modules.d/xsendfile.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    perl -0p -i -e "s>.*LoadModule      xsendfile_module>LoadModule      xsendfile_module>" ${file}; \
+    # replace load module \
+    perl -0p -i -e "s>.*LoadModule .*>LoadModule      xsendfile_module  modules/mod_xsendfile.so>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/ssl.conf \
+    file="/etc/httpd/conf.d/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add ifmodule \
+    perl -0p -i -e "s>#>\<IfModule ssl_module\>\n#>" ${file}; \
+    printf "</IfModule>" >> ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/autoindex.conf \
+    file="/etc/httpd/conf.d/autoindex.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add ifmodule \
+    perl -0p -i -e "s>#>\<IfModule autoindex_module\>\n#>" ${file}; \
+    printf "</IfModule>" >> ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/authnz_external.conf \
+    file="/etc/httpd/conf.d/authnz_external.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
+    perl -0p -i -e "s>LoadModule .*>\<IfModule authnz_external_module\>>" ${file}; \
+    printf "</IfModule>" >> ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     printf "# Finished installing modules...\n";
@@ -309,7 +349,7 @@ Include ports.conf\n\
     # add vhost config files \
     printf "\n\
 # Include the virtual host configurations\n\
-Include sites.d/*.conf\n\
+IncludeOptional sites.d/*.conf\n\
 " >> ${file}; \
     # change timeout \
     perl -0p -i -e "s># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout .*># Timeout: The number of seconds before receives and sends time out.\n#\nTimeout ${app_httpd_global_listen_timeout}>" ${file}; \
@@ -317,6 +357,34 @@ Include sites.d/*.conf\n\
     perl -0p -i -e "s># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive .*># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive ${app_httpd_global_listen_keepalive_status}>" ${file}; \
     perl -0p -i -e "s># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests .*># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests ${app_httpd_global_listen_keepalive_requests}>" ${file}; \
     perl -0p -i -e "s># same client on the same connection.\n#\nKeepAliveTimeout .*># same client on the same connection.\n#\nKeepAliveTimeout ${app_httpd_global_listen_keepalive_timeout}>" ${file}; \
+    # add/replace main directory directives \
+    perl -0p -i -e "s>\<Directory /\>\n\
+    AllowOverride none\n\
+    Require all denied\n\
+\</Directory\>>\<Directory /\>\n\
+    Options FollowSymLinks\n\
+    AllowOverride None\n\
+    Require all denied\n\
+\</Directory\>\
+>" ${file}; \
+    perl -0p -i -e "s>\<Directory \"/var/www\"\>\n\
+    AllowOverride None\n\
+    \# Allow open access:\n\
+    Require all granted\n\
+\</Directory\>>\<Directory \"/var/www\"\>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride None\n\
+    \# Allow open access:\n\
+    Require all granted\n\
+\</Directory\>\n\
+\n\
+\#\<Directory /srv/\>\n\
+\#    Options Indexes FollowSymLinks\n\
+\#    AllowOverride None\n\
+\#    \# Allow open access:\n\
+\#    Require all granted\n\
+\#\</Directory\>\n\
+>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/ports.conf \
@@ -340,6 +408,72 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
 " > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # /etc/httpd/conf.d/serve-cgi-bin.conf \
+    file="/etc/httpd/conf.d/serve-cgi-bin.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add universal cgi-bin configuration \
+    printf "<IfModule alias_module>\n\
+    ScriptAlias /cgi-bin/ /var/www/cgi-bin/\n\
+    <Directory \"/var/www/cgi-bin\">\n\
+        AllowOverride None\n\
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch\n\
+        Require all granted\n\
+    </Directory>\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/security.conf \
+    file="/etc/httpd/conf.d/security.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add security settings \
+    printf "\n\
+# Changing the following options will not really affect the security of the\n\
+# server, but might make attacks slightly more difficult in some cases.\n\
+\n\
+#\n\
+# ServerTokens\n\
+# This directive configures what you return as the Server HTTP response\n\
+# Header. The default is 'Full' which sends information about the OS-Type\n\
+# and compiled in modules.\n\
+# Set to one of:  Full | OS | Minimal | Minor | Major | Prod\n\
+# where Full conveys the most information, and Prod the least.\n\
+ServerTokens Minor\n\
+\n\
+#\n\
+# Optionally add a line containing the server version and virtual host\n\
+# name to server-generated pages (internal error documents, FTP directory\n\
+# listings, mod_status and mod_info output etc., but not CGI generated\n\
+# documents or custom error documents).\n\
+# Set to \"EMail\" to also include a mailto: link to the ServerAdmin.\n\
+# Set to one of:  On | Off | EMail\n\
+ServerSignature On\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/conf.d/ssl.conf \
+    file="/etc/httpd/conf.d/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable/replace badly configured defaults \
+    perl -0p -i -e "s>Listen 443 https>>" ${file}; \
+    perl -0p -i -e "s>.*SSLProtocol all .*>SSLProtocol all -SSLv3>" ${file}; \
+    perl -0p -i -e "s>.*SSLCipherSuite HIGH.*>SSLCipherSuite ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS>" ${file}; \
+    perl -0p -i -e "s>.*SSLHonorCipherOrder on>SSLHonorCipherOrder On>" ${file}; \
+    perl -0p -i -e "s>\n\</IfModule\>>\n\
+\# Additional security improvements\n\
+SSLCompression Off\n\
+\n\
+\# OCSP Stapling\n\
+SSLUseStapling On\n\
+SSLStaplingResponderTimeout 5\n\
+SSLStaplingReturnResponderErrors Off\n\
+SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
+\n\
+\# See more information at:\n\
+\# https://mozilla.github.io/server-side-tls/ssl-config-generator/\?server=apache-2.4.6\&openssl=1.0.1e\&hsts=no\&profile=intermediate\n\
+\n\</IfModule\>>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     # Additional configuration files \
     mkdir /etc/httpd/incl.d; \
     \
@@ -351,14 +485,14 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
-  # HTTPd info
+  # HTTPd info\n\
   <Location /server-info>\n\
     SetHandler server-info\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
-  # HTTPd status
+  # HTTPd status\n\
   <Location /server-status>\n\
     SetHandler server-status\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
@@ -370,61 +504,35 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     # Vhost configuration files \
     mkdir /etc/httpd/sites.d; \
     \
-    # /etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf \
-    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf \
-    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "Done patching ${file}...\n"; \
-    \
     # /etc/httpd/conf/httpd.conf \
     file="/etc/httpd/conf/httpd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    # disable badly configured default virtualhost \
+    # disable/replace badly configured default vhost \
     perl -0p -i -e "s>.*ServerAdmin root@localhost>#ServerAdmin root@localhost>" ${file}; \
     perl -0p -i -e "s>.*ServerName www.example.com:80>#ServerName www.example.com:80>" ${file}; \
-    perl -0p -i -e "s>\<Directory /\>\n\
-    AllowOverride none\n\
-    Require all denied\n\
-\</Directory\>>\<Directory /\>\n\
-    Options FollowSymLinks\n\
-    AllowOverride None\n\
-    Require all denied\n\
-\</Directory\>\
->" ${file}; \
     perl -0p -i -e "s>.*DocumentRoot \"/var/www/html\">#DocumentRoot \"/var/www/html\">" ${file}; \
     perl -0p -i -e "s>\<Directory \"/var/www/html\"\>>#\<Directory \"/var/www/html\"\>>" ${file}; \
     perl -0p -i -e "s>#\n    Options Indexes FollowSymLinks>#\n#    Options Indexes FollowSymLinks>" ${file}; \
     perl -0p -i -e "s>#\n    AllowOverride None>#\n#    AllowOverride None>" ${file}; \
     perl -0p -i -e "s>#\n    Require all granted\n\</Directory\>>#\n#    Require all granted\n#\</Directory\>>" ${file}; \
-    perl -0p -i -e "s>    ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\">#    ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\">" ${file}; \
+    perl -0p -i -e "s>    ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\">>" ${file}; \
     perl -0p -i -e "s>\<Directory \"/var/www/cgi-bin\"\>\n\
     AllowOverride None\n\
     Options None\n\
     Require all granted\n\
-\</Directory\>>#\<Directory \"/var/www/cgi-bin\"\>\n\
-#    AllowOverride None\n\
-#    Options None\n\
-#    Require all granted\n\
-#\</Directory\>\
->" ${file}; \
+\</Directory\>>>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/httpd/conf.d/ssl.conf \
     file="/etc/httpd/conf.d/ssl.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    # disable badly configured default virtualhost \
-    perl -0p -i -e "s>Listen 443 https>#Listen 443 https>" ${file}; \
+    # disable/replace badly configured default vhost \
     perl -0p -i -e "s>\<VirtualHost _default_:443\>>#\<VirtualHost _default_:443\>>" ${file}; \
     perl -0p -i -e "s>.*DocumentRoot \"/var/www/html\">#DocumentRoot \"/var/www/html\">" ${file}; \
     perl -0p -i -e "s>.*ServerAdmin root@localhost>#ServerAdmin root@localhost>" ${file}; \
     perl -0p -i -e "s>.*ServerName www.example.com:443>#ServerName www.example.com:443>" ${file}; \
     perl -0p -i -e "s>.*ErrorLog logs/ssl_error_log\nTransferLog logs/ssl_access_log\nLogLevel warn>#ErrorLog logs/ssl_error_log\n#TransferLog logs/ssl_access_log\n#LogLevel warn>" ${file}; \
     perl -0p -i -e "s>.*SSLEngine on>#SSLEngine on>" ${file}; \
-    perl -0p -i -e "s>.*SSLProtocol all -SSLv2>SSLProtocol all -SSLv2 -SSLv3>" ${file}; \
     perl -0p -i -e "s>.*SSLCertificateFile /etc/pki/tls/certs/localhost.crt>#SSLCertificateFile /etc/pki/tls/certs/localhost.crt>" ${file}; \
     perl -0p -i -e "s>.*SSLCertificateKeyFile /etc/pki/tls/private/localhost.key>#SSLCertificateKeyFile /etc/pki/tls/private/localhost.key>" ${file}; \
     perl -0p -i -e "s>.*SSLCertificateChainFile /etc/pki/tls/certs/server-chain.crt>#SSLCertificateChainFile /etc/pki/tls/certs/server-chain.crt>" ${file}; \
@@ -441,5 +549,18 @@ Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n\
     perl -0p -i -e "s>CustomLog logs/ssl_request_log>#CustomLog logs/ssl_request_log>" ${file}; \
     perl -0p -i -e "s>          \"%t>#          \"%t>" ${file}; \
     perl -0p -i -e "s>\</VirtualHost\>>#\</VirtualHost\>>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-http.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf \
+    file="/etc/httpd/sites.d/${app_httpd_vhost_id}-https.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "\n# Test configuration...\n"; \
+    apachectl configtest;
 

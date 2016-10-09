@@ -191,6 +191,36 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>Listen 443>Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # /etc/apache2/conf-available/security.conf \
+    file="/etc/apache2/conf-available/security.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable/replace badly configured defaults \
+    perl -0p -i -e "s>#ServerTokens Minimal\nServerTokens OS\n#ServerTokens Full>ServerTokens Minor>" ${file}; \
+    perl -0p -i -e "s>#ServerSignature Off\nServerSignature On>ServerSignature On>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/mods-available/ssl.conf \
+    file="/etc/apache2/mods-available/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable/replace badly configured defaults \
+    perl -0p -i -e "s>.*SSLProtocol all .*>        SSLProtocol all -SSLv3>" ${file}; \
+    perl -0p -i -e "s>.*SSLCipherSuite HIGH.*>        SSLCipherSuite ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS>" ${file}; \
+    perl -0p -i -e "s>.*SSLHonorCipherOrder on>        SSLHonorCipherOrder On>" ${file}; \
+    perl -0p -i -e "s>\n\</IfModule\>>\n\
+        \# Additional security improvements\n\
+        SSLCompression Off\n\
+\n\
+        \# OCSP Stapling\n\
+        SSLUseStapling On\n\
+        SSLStaplingResponderTimeout 5\n\
+        SSLStaplingReturnResponderErrors Off\n\
+        SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
+\n\
+        \# See more information at:\n\
+        \# https://mozilla.github.io/server-side-tls/ssl-config-generator/\?server=apache-2.4.18\&openssl=1.0.1p\&hsts=no\&profile=intermediate\n\
+\n\</IfModule\>>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     # Additional configuration files \
     mkdir /etc/apache2/incl.d; \
     \
@@ -202,14 +232,14 @@ RUN printf "Updading HTTPd configuration...\n"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
-  # HTTPd info
+  # HTTPd info\n\
   <Location /server-info>\n\
     SetHandler server-info\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
-  # HTTPd status
+  # HTTPd status\n\
   <Location /server-status>\n\
     SetHandler server-status\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
@@ -234,9 +264,13 @@ RUN printf "Updading HTTPd configuration...\n"; \
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # Rename original vhost configuration \
+    mv /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig; \
+    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/000-default-ssl.conf.orig; \
+    \
     # /etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf \
     file="/etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf"; \
-    cp "/etc/apache2/sites-available/000-default.conf" $file; \
+    cp "/etc/apache2/sites-available/000-default.conf.orig" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # change address and port
     perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_http}\>>" ${file}; \
@@ -249,26 +283,26 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>\</VirtualHost\>>\n\
         \<Directory ${app_httpd_vhost_home}/html\>\n\
           Options Indexes FollowSymLinks\n\
-          AllowOverride all\n\
+          AllowOverride All\n\
           Require all granted\n\
         \</Directory\>\n\
 \</VirtualHost\>\n\
 >" ${file}; \
     # add httpd include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-        # HTTPd info and status\n\
+        \# HTTPd info and status\n\
         Include incl.d/${app_httpd_vhost_id}-httpd.conf\
 >" ${file}; \
     # add php-fpm include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-        # PHP-FPM proxy\n\
+        \# PHP-FPM proxy\n\
         Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf \
     file="/etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf"; \
-    cp "/etc/apache2/sites-available/default-ssl.conf" $file; \
+    cp "/etc/apache2/sites-available/000-default-ssl.conf.orig" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # change address and port
     perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_https}\>>" ${file}; \
@@ -281,33 +315,32 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>\</VirtualHost\>>\n\
                 \<Directory ${app_httpd_vhost_home}/html\>\n\
                   Options Indexes FollowSymLinks\n\
-                  AllowOverride all\n\
+                  AllowOverride All\n\
                   Require all granted\n\
                 \</Directory\>\n\
 \</VirtualHost\>\n\
 >" ${file}; \
     # add httpd include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-        # HTTPd info and status\n\
-        Include incl.d/${app_httpd_vhost_id}-httpd.conf\
+                \# HTTPd info and status\n\
+                Include incl.d/${app_httpd_vhost_id}-httpd.conf\
 >" ${file}; \
     # add php-fpm include \
     perl -0p -i -e "s>#Include conf-available/serve-cgi-bin.conf>#Include conf-available/serve-cgi-bin.conf\n\n\
-        # PHP-FPM proxy\n\
-        Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
+                \# PHP-FPM proxy\n\
+                Include incl.d/${app_httpd_vhost_id}-php-fpm.conf\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     printf "\n# Generate certificates...\n"; \
     make-ssl-cert generate-default-snakeoil --force-overwrite; \
     \
-    printf "\n# Enable sites...\n"; \
-    a2dissite 000-default.conf default-ssl.conf; \
+    printf "\n# Enable/Disable vhosts...\n"; \
+    a2dissite 000-default; \
     a2ensite ${app_httpd_vhost_id}-http ${app_httpd_vhost_id}-https; \
     \
-    # Disable original configuration \
-    mv /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.orig; \
-    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/000-default-ssl.conf.orig;
+    printf "\n# Test configuration...\n"; \
+    apache2ctl configtest;
 
 #
 # Demo

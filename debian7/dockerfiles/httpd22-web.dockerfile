@@ -111,6 +111,15 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     a2dismod -f ${app_httpd_global_mods_extra_dis} && \
     a2enmod -f ${app_httpd_global_mods_extra_en} && \
     \
+    # /etc/apache2/mods-available/proxy_fcgi.load \
+    file="/etc/apache2/mods-available/proxy_fcgi.load"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # replace load module \
+    printf "# Depends: proxy\n\
+LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
     printf "# Finished installing modules...\n";
 
 #
@@ -205,6 +214,37 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive .*># one request per connection\). Set to \"Off\" to deactivate.\n#\nKeepAlive ${app_httpd_global_listen_keepalive_status}>" ${file}; \
     perl -0p -i -e "s># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests .*># We recommend you leave this number high, for maximum performance.\n#\nMaxKeepAliveRequests ${app_httpd_global_listen_keepalive_requests}>" ${file}; \
     perl -0p -i -e "s># same client on the same connection.\n#\nKeepAliveTimeout .*># same client on the same connection.\n#\nKeepAliveTimeout ${app_httpd_global_listen_keepalive_timeout}>" ${file}; \
+    # add main directory directives \
+    perl -0p -i -e "s>Include ports.conf>Include ports.conf\n\n\
+\# Sets the default security model of the Apache2 HTTPD server. It does\n\
+\# not allow access to the root filesystem outside of /usr/share and /var/www.\n\
+\# The former is used by web applications packaged in Debian,\n\
+\# the latter may be used for local directories served by the web server. If\n\
+\# your system is serving content from a sub-directory in /srv you must allow\n\
+\# access here, or in any related virtual host.\n\
+\<Directory /\>\n\
+        Options FollowSymLinks\n\
+        AllowOverride None\n\
+        Allow from All\n\
+\</Directory\>\n\
+\n\
+\<Directory /usr/share\>\n\
+        AllowOverride None\n\
+        Allow from All\n\
+\</Directory\>\n\
+\n\
+\<Directory /var/www/\>\n\
+        Options Indexes FollowSymLinks\n\
+        AllowOverride None\n\
+        Allow from All\n\
+\</Directory\>\n\
+\n\
+\#\<Directory /srv/\>\n\
+\#       Options Indexes FollowSymLinks\n\
+\#       AllowOverride None\n\
+\#       Allow from All\n\
+\#\</Directory\>\n\
+>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
     # /etc/apache2/ports.conf \
@@ -215,19 +255,49 @@ RUN printf "Updading HTTPd configuration...\n"; \
     perl -0p -i -e "s>    Listen 443>    NameVirtualHost ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_http}\n    Listen ${app_httpd_global_listen_addr}:${app_httpd_global_listen_port_https}>g" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    # /etc/apache2/mods-available/proxy_fcgi.load \
-    file="/etc/apache2/mods-available/proxy_fcgi.load"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# Depends: proxy\n\
-LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
-\n" > ${file}; \
-    \
     # /etc/apache2/conf.d/* \
     # Rename configuration files \
     mv /etc/apache2/conf.d/charset /etc/apache2/conf.d/charset.conf; \
     mv /etc/apache2/conf.d/localized-error-pages /etc/apache2/conf.d/localized-error-pages.conf; \
     mv /etc/apache2/conf.d/other-vhosts-access-log /etc/apache2/conf.d/other-vhosts-access-log.conf; \
     mv /etc/apache2/conf.d/security /etc/apache2/conf.d/security.conf; \
+    \
+    # /etc/apache2/conf.d/serve-cgi-bin.conf \
+    file="/etc/apache2/conf.d/serve-cgi-bin.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add universal cgi-bin configuration \
+    printf "<IfModule alias_module>\n\
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/\n\
+    <Directory \"/usr/lib/cgi-bin\">\n\
+        AllowOverride None\n\
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch\n\
+        Order Allow,Deny\n\
+        Allow from All\n\
+    </Directory>\n\
+</IfModule>\n\
+\n" > ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/conf.d/security.conf \
+    file="/etc/apache2/conf.d/security.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable/replace badly configured defaults \
+    perl -0p -i -e "s>#ServerTokens Minimal\nServerTokens OS\n#ServerTokens Full>ServerTokens Minor>" ${file}; \
+    perl -0p -i -e "s>#ServerSignature Off\nServerSignature On>ServerSignature On>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/apache2/mods-available/ssl.conf \
+    file="/etc/apache2/mods-available/ssl.conf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # disable/replace badly configured defaults \
+    perl -0p -i -e "s>.*SSLProtocol all .*>SSLProtocol all -SSLv2 -SSLv3>" ${file}; \
+    perl -0p -i -e "s>.*SSLCipherSuite RC4.*>SSLCipherSuite ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS>" ${file}; \
+    perl -0p -i -e "s>.*SSLHonorCipherOrder on>SSLHonorCipherOrder On>" ${file}; \
+    perl -0p -i -e "s>\n\</IfModule\>>\n\
+\# See more information at:\n\
+\# https://mozilla.github.io/server-side-tls/ssl-config-generator/\?server=apache-2.2.22\&openssl=1.0.1p\&hsts=no\&profile=intermediate\n\
+\n\</IfModule\>>" ${file}; \
+    printf "Done patching ${file}...\n"; \
     \
     # Additional configuration files \
     mkdir /etc/apache2/incl.d; \
@@ -240,14 +310,14 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
-  # HTTPd info
+  # HTTPd info\n\
   <Location /server-info>\n\
     SetHandler server-info\n\
     Allow from ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
-  # HTTPd status
+  # HTTPd status\n\
   <Location /server-status>\n\
     SetHandler server-status\n\
     Allow from ${app_httpd_vhost_httpd_wlist}\n\
@@ -272,9 +342,13 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    # Rename original vhost configuration \
+    mv /etc/apache2/sites-available/default /etc/apache2/sites-available/000-default.conf.orig; \
+    mv /etc/apache2/sites-available/default-ssl /etc/apache2/sites-available/000-default-ssl.conf.orig; \
+    \
     # /etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf \
     file="/etc/apache2/sites-available/${app_httpd_vhost_id}-http.conf"; \
-    cp "/etc/apache2/sites-available/default" $file; \
+    cp "/etc/apache2/sites-available/000-default.conf.orig" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # change address and port
     perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_http}\>>" ${file}; \
@@ -283,12 +357,24 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     perl -0p -i -e "s>CustomLog .*>CustomLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log combined>" ${file}; \
     # change document root
     perl -0p -i -e "s>DocumentRoot .*>DocumentRoot ${app_httpd_vhost_home}/html>" ${file}; \
+    # remove old directory directives \
+    perl -0p -i -e "s>.*\<Directory /\>\n\
+.*Options FollowSymLinks\n\
+.*AllowOverride None\n\
+.*\</Directory\>\n\
+.*\<Directory /var/www/\>\n\
+.*Options Indexes FollowSymLinks MultiViews\n\
+.*AllowOverride None\n\
+.*Order allow,deny\n\
+.*allow from all\n\
+.*\</Directory\>\
+>>" ${file}; \
     # add directory directives
     perl -0p -i -e "s>\</VirtualHost\>>\n\
         \<Directory ${app_httpd_vhost_home}/html\>\n\
           Options Indexes FollowSymLinks\n\
-          AllowOverride all\n\
-          Allow from all\n\
+          AllowOverride All\n\
+          Allow from All\n\
         \</Directory\>\n\
 \</VirtualHost\>\n\
 >" ${file}; \
@@ -306,7 +392,7 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     \
     # /etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf \
     file="/etc/apache2/sites-available/${app_httpd_vhost_id}-https.conf"; \
-    cp "/etc/apache2/sites-available/default-ssl" $file; \
+    cp "/etc/apache2/sites-available/000-default-ssl.conf.orig" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # change address and port
     perl -0p -i -e "s>\<VirtualHost .*\>>\<VirtualHost ${app_httpd_vhost_listen_addr}:${app_httpd_vhost_listen_port_https}\>>" ${file}; \
@@ -315,12 +401,24 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     perl -0p -i -e "s>CustomLog .*>CustomLog ${app_httpd_vhost_home}/log/${app_httpd_vhost_id}.access.log combined>" ${file}; \
     # change document root
     perl -0p -i -e "s>DocumentRoot .*>DocumentRoot ${app_httpd_vhost_home}/html>" ${file}; \
+    # remove old directory directives \
+    perl -0p -i -e "s>.*\<Directory /\>\n\
+.*Options FollowSymLinks\n\
+.*AllowOverride None\n\
+.*\</Directory\>\n\
+.*\<Directory /var/www/\>\n\
+.*Options Indexes FollowSymLinks MultiViews\n\
+.*AllowOverride None\n\
+.*Order allow,deny\n\
+.*allow from all\n\
+.*\</Directory\>\
+>>" ${file}; \
     # add directory directives
     perl -0p -i -e "s>\</VirtualHost\>>\n\
         \<Directory ${app_httpd_vhost_home}/html\>\n\
           Options Indexes FollowSymLinks\n\
-          AllowOverride all\n\
-          Allow from all\n\
+          AllowOverride All\n\
+          Allow from All\n\
         \</Directory\>\n\
 \</VirtualHost\>\n\
 >" ${file}; \
@@ -339,13 +437,12 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
     printf "\n# Generate certificates...\n"; \
     make-ssl-cert generate-default-snakeoil --force-overwrite; \
     \
-    printf "\n# Enable sites...\n"; \
-    a2dissite default default-ssl; \
+    printf "\n# Enable/Disable vhosts...\n"; \
+    a2dissite 000-default; \
     a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
     \
-    # Disable original configuration \
-    mv /etc/apache2/sites-available/default /etc/apache2/sites-available/default.orig; \
-    mv /etc/apache2/sites-available/default-ssl /etc/apache2/sites-available/default-ssl.orig;
+    printf "\n# Test configuration...\n"; \
+    apache2ctl configtest;
 
 #
 # Demo
