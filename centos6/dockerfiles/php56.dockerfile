@@ -348,9 +348,12 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # PHP-FPM Pool \
     app_fpm_pool_home="${app_fpm_global_home}/${app_fpm_pool_id}"; \
     \
+    # Rename original pool configuration \
+    mv "/etc/php-fpm.d/www.conf" "/etc/php-fpm.d/www.conf.orig"; \
+    \
     # /etc/php-fpm.d/${app_fpm_pool_id}.conf \
     file="/etc/php-fpm.d/${app_fpm_pool_id}.conf"; \
-    cp "/etc/php-fpm.d/www.conf" $file; \
+    cp "/etc/php-fpm.d/www.conf.orig" $file; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # delete bad defaults \
     perl -0p -i -e "s>php_admin_flag\[.*>>g" ${file}; \
@@ -414,11 +417,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[ftp_proxy\] = \\\$ftp_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[https_proxy\] = \\\$https_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[http_proxy\] = \\\$http_proxy\n>" ${file}; \
-    printf "Done patching ${file}...\n"; \
-    \
-    # /etc/php-fpm.d/www.conf \
-    # Disable original configuration \
-    mv "/etc/php-fpm.d/www.conf" "/etc/php-fpm.d/www.conf.orig";
+    printf "Done patching ${file}...\n";
 
 #
 # Demo
