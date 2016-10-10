@@ -36,20 +36,20 @@ ARG app_mysql_listen_port="3306"
 #
 
 # Add foreign repositories and GPG keys
-#  - N/A: for Dotdeb
-# Install the MySQL packages
-#  - mysql-server-5.6: for mysqld, the MySQL relational database management system server
-#  - mysql-client-5.6: for mysql, the MySQL relational database management system client
+#  - N/A: for MariaDB
+# Install the MariaDB packages
+#  - mariadb-server: for mysqld, the MySQL relational database management system server
+#  - mariadb-client: for mysql, the MySQL relational database management system client
 #  - mytop: for mytop, the MySQL relational database management system top-like utility
 RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
-    printf "# Dotdeb repository\n\
-deb http://packages.dotdeb.org wheezy all\n\
-\n" > /etc/apt/sources.list.d/dotdeb.list && \
-    apt-key adv --fetch-keys http://www.dotdeb.org/dotdeb.gpg && \
+    printf "# MariaDB repository\n\
+deb http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/debian wheezy main\n\
+\n" > /etc/apt/sources.list.d/mariadb.list && \
+    apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db && \
     gpg --refresh-keys && \
     printf "# Install the MySQL packages...\n" && \
     apt-get update && apt-get install -qy \
-      mysql-server-5.6 mysql-client-5.6 mytop && \
+      mariadb-server mariadb-client mytop && \
     printf "# Cleanup the Package Manager...\n" && \
     apt-get clean && rm -rf /var/lib/apt/lists/*;
 
@@ -98,7 +98,7 @@ autorestart=true\n\
 # MySQL
 RUN printf "Updading MySQL configuration...\n"; \
     \
-    # ignoring /etc/default/mysql
+    # ignoring /etc/default/mysql \
     \
     # /etc/mysql/my.cnf \
     file="/etc/mysql/my.cnf"; \
@@ -106,22 +106,30 @@ RUN printf "Updading MySQL configuration...\n"; \
     # run as user \
     perl -0p -i -e "s>user\t\t= .*>user\t\t= ${app_mysql_user}>" ${file}; \
     # change logging \
-    perl -0p -i -e "s>\[mysqld_safe\]>\[mysqld_safe\]\nlog-error       = /var/log/mysql/error.log>" ${file}; \
-    perl -0p -i -e "s># Error log - should be very few entries.\n#\nlog_error = .*># Error log - should be very few entries.\n#\nlog_error                = /var/log/mysql/error.log>" ${file}; \
+    perl -0p -i -e "s>\[mysqld_safe\]>\[mysqld_safe\]\nlog-error       = /var/log/mysql/mariadb-error.log>" ${file}; \
+    perl -0p -i -e "s># Error logging goes to syslog due to /etc/mysql/conf.d/mysqld_safe_syslog.cnf.\n#># Error logging goes to syslog due to /etc/mysql/conf.d/mysqld_safe_syslog.cnf.\n#\nlog-error               = /var/log/mysql/mariadb-error.log>" ${file}; \
     # change interface \
     perl -0p -i -e "s>bind-address\t\t= .*>bind-address\t\t= ${app_mysql_listen_addr}>" ${file}; \
     # change port \
     perl -0p -i -e "s>port\t\t= .*>port\t\t= ${app_mysql_listen_port}>g" ${file}; \
     # change protocol \
     perl -0p -i -e "s>\[client\]>\[client\]\nprotocol        = tcp>" ${file}; \
+    # storage engine \
+    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\ndefault-storage-engine = InnoDB>" ${file}; \
+    # change performance settings \
+    perl -0p -i -e "s>max_allowed_packet\t= .*>max_allowed_packet\t= 128M>" ${file}; \
+    perl -0p -i -e "s>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet\t= .*>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet\t= 24M>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/mysql/conf.d/mariadb.cnf \
+    file="/etc/mysql/conf.d/mariadb.cnf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Engine and Collation\n#\ndefault-storage-engine = InnoDB\ncharacter-set-server   = utf8\ncollation-server       = utf8_general_ci>" ${file}; \
-    perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file}; \
-    # change performance settings \
-    perl -0p -i -e "s>max_allowed_packet      = .*\nthread_stack>max_allowed_packet      = 128M\nthread_stack>" ${file}; \
-    perl -0p -i -e "s>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet      = .*\n>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M\n>" ${file}; \
+    perl -0p -i -e "s>.*default-character-set = .*>default-character-set = utf8>" ${file}; \
+    perl -0p -i -e "s>.*character-set-server  = .*>character-set-server  = utf8>" ${file}; \
+    perl -0p -i -e "s>.*collation-server      = .*>collation-server      = utf8_general_ci>" ${file}; \
     printf "Done patching ${file}...\n";
 

@@ -36,20 +36,24 @@ ARG app_mysql_listen_port="3306"
 #
 
 # Add foreign repositories and GPG keys
-#  - remi-release: for Les RPM de remi pour Enterprise Linux 6 (Remi)
-# Install the MySQL packages
-#  - mysql-server: for mysqld, the MySQL relational database management system server
-#  - mysql: for mysql, the MySQL relational database management system client
+#  - N/A: for MariaDB
+# Install the MariaDB packages
+#  - MariaDB-server: for mysqld, the MySQL relational database management system server
+#  - MariaDB-client: for mysql, the MySQL relational database management system client
 #  - mytop: for mytop, the MySQL relational database management system top-like utility
 RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+    printf "# MariaDB repository\n\
+[mariadb]\n\
+name = MariaDB\n\
+baseurl = http://yum.mariadb.org/10.1/centos6-amd64\n\
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB\n\
+gpgcheck=1\n\
+\n" > /etc/yum.repos.d/mariadb.repo && \
+    rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB && \
+    printf "# Install the MySQL packages...\n" && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
-      http://rpms.remirepo.net/enterprise/remi-release-6.rpm && \
-    yum-config-manager --enable remi-safe remi && \
-    gpg --refresh-keys && \
-    printf "# Install the MySQL packages...\n" && \
-    yum makecache && yum install -y \
-      mysql-server mysql mytop && \
+      MariaDB-server MariaDB-client mytop && \
     printf "# Cleanup the Package Manager...\n" && \
     yum clean all && rm -Rf /var/lib/yum/*;
 
@@ -99,6 +103,8 @@ autorestart=true\n\
 if [ ! -d \"${app_mysql_home}/mysql\" ]; then\n\
   \$(which mysql_install_db) --user=${app_mysql_user} --ldata=${app_mysql_home};\n\
 fi;\n\
+mkdir -p /var/log/mysql;\n\
+chown ${app_mysql_user}:${app_mysql_group} /var/log/mysql;\n\
 \n\
 exit 0\n" >> ${file}; \
     printf "Done patching ${file}...\n";
@@ -106,34 +112,62 @@ exit 0\n" >> ${file}; \
 # MySQL
 RUN printf "Updading MySQL configuration...\n"; \
     \
-    # ignoring /etc/sysconfig/mysql
+    # ignoring /etc/sysconfig/mysql \
     \
-    # /etc/my.cnf \
-    file="/etc/my.cnf"; \
+    # ignoring /etc/my.cnf \
+    \
+    # /etc/my.cnf.d/server.cnf \
+    file="/etc/my.cnf.d/server.cnf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    # add missing sections \
-    perl -0p -i -e "s>#\n# include all files from the config directory>[mysqldump]\n#\n# include all files from the config directory>" ${file}; \
-    perl -0p -i -e "s>#\n# include all files from the config directory>[client]\n\n#\n# include all files from the config directory>" ${file}; \
     # run as user \
-    perl -0p -i -e "s>user=.*>user = ${app_mysql_user}>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nuser = ${app_mysql_user}>" ${file}; \
     # change logging \
-    perl -0p -i -e "s>\[mysqld_safe\]\nlog-error=.*>\[mysqld_safe\]\nlog-error = /var/log/mysqld.log>" ${file}; \
-    perl -0p -i -e "s>\n# Disabling symbolic-links is recommended to prevent assorted security risks>log-error = /var/log/mysqld.log\n\n# Disabling symbolic-links is recommended to prevent assorted security risks>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog-error = /var/log/mysql/mariadb-error.log>" ${file}; \
     # change interface \
-    perl -0p -i -e "s># Settings user and group are ignored>bind-address = ${app_mysql_listen_addr}\n# Settings user and group are ignored>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nbind-address = ${app_mysql_listen_addr}>" ${file}; \
     # change port \
-    perl -0p -i -e "s># Settings user and group are ignored>port = ${app_mysql_listen_port}\n\n# Settings user and group are ignored>" ${file}; \
-    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mysql_listen_port}>" ${file}; \
-    # change protocol \
-    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nport = ${app_mysql_listen_port}>" ${file}; \
+    # change performance settings \
+    perl -0p -i -e "s>\[server\]>\[server\]\nmax_allowed_packet = 128M>" ${file}; \
+    # storage engine \
+    perl -0p -i -e "s>\[server\]>\[server\]\ndefault-storage-engine = InnoDB>" ${file}; \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Engine and Collation\n#\ndefault-storage-engine = InnoDB\ncharacter-set-server   = utf8\ncollation-server       = utf8_general_ci\n>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\ncharacter-set-server = utf8>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\ncollation-server = utf8_general_ci>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/my.cnf.d/client.cnf \
+    file="/etc/my.cnf.d/client.cnf"; \
+    touch ${file}; \
+    printf "\n# Applying configuration for ${file}...\n"; \
+    # add missing sections \
+    printf "#\n\
+# These two groups are read by the client library\n\
+# Use it for options that affect all clients, but not the server\n\
+#\n\n\n\
+[client]\n\n\
+# This group is not read by mysql client library,\n\
+# If you use the same .cnf file for MySQL and MariaDB,\n\
+# use it for MariaDB-only client options\n\
+[client-mariadb]\n\n" >> ${file}; \
+    # change protocol \
+    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file}; \
+    # change port \
+    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mysql_listen_port}>" ${file}; \
+    # change engine and collation \
+    # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
+    # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
+    # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
     perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file}; \
+    printf "Done patching ${file}...\n"; \
+    \
+    # /etc/my.cnf.d/mysql-clients.cnf \
+    file="/etc/my.cnf.d/mysql-clients.cnf"; \
+    printf "\n# Applying configuration for ${file}...\n"; \
     # change performance settings \
-    perl -0p -i -e "s>\[mysqld\]>\[mysqld\]\n#\n# Performance\n#\nmax_allowed_packet = 1G\n>" ${file}; \
-    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M\n>" ${file}; \
+    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M>" ${file}; \
     printf "Done patching ${file}...\n";
 
