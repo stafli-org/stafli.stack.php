@@ -650,7 +650,7 @@ SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
     printf "Done patching ${file}...\n"; \
     \
     printf "\n# Test configuration...\n"; \
-    apachectl configtest;
+    $(which apachectl) configtest;
 
 #
 # Demo

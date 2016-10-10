@@ -659,7 +659,7 @@ ServerSignature On\n\
     printf "Done patching ${file}...\n"; \
     \
     printf "\n# Test configuration...\n"; \
-    apachectl configtest;
+    $(which apachectl) configtest;
 
 #
 # Demo

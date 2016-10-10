@@ -319,5 +319,5 @@ RUN printf "Updading HTTPd configuration...\n"; \
     a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
     \
     printf "\n# Test configuration...\n"; \
-    apache2ctl configtest;
+    $(which apache2ctl) configtest;
 

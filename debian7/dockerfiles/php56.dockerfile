@@ -409,7 +409,10 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[ftp_proxy\] = \\\$ftp_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[https_proxy\] = \\\$https_proxy\n>" ${file}; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[http_proxy\] = \\\$http_proxy\n>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "\n# Test configuration...\n"; \
+    $(which php5-fpm) --test;
 
 #
 # Demo
