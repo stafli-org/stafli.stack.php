@@ -62,10 +62,11 @@ ARG app_fpm_pool_pm_max_requests="5000"
 #
 
 # Add foreign repositories and GPG keys
+#  - N/A: for MariaDB
 #  - N/A: for Dotdeb
 # Install the Utilities and Clients packages
 # - apache2-utils: for ab and others, the HTTPd utilities
-# - mysql-client: for mysql, the MySQL client
+# - mariadb-client: for mysql, the MySQL client
 # - mytop: for mytop, the MySQL monitoring tool
 # - redis-tools: for redis-cli, the Redis client
 # Install the PHP packages
@@ -84,6 +85,10 @@ ARG app_fpm_pool_pm_max_requests="5000"
 # - libyaml-dev: the YAML library - development files
 # - libmemcached-dev: the Memcached library - development files
 RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+    printf "# MariaDB repository\n\
+deb http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/debian jessie main\n\
+\n" > /etc/apt/sources.list.d/mariadb.list && \
+    apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db && \
     printf "# Dotdeb repository\n\
 deb http://packages.dotdeb.org jessie all\n\
 \n" > /etc/apt/sources.list.d/dotdeb.list && \
@@ -92,7 +97,7 @@ deb http://packages.dotdeb.org jessie all\n\
     printf "# Install the Utilities and Clients packages...\n" && \
     apt-get update && apt-get install -qy \
       apache2-utils \
-      mysql-client mytop \
+      mariadb-client mytop \
       redis-tools && \
     printf "# Install the PHP packages...\n" && \
     apt-get update && apt-get install -qy \

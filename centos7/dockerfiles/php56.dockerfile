@@ -63,9 +63,10 @@ ARG app_fpm_pool_pm_max_requests="5000"
 
 # Add foreign repositories and GPG keys
 #  - remi-release: for Les RPM de remi pour Enterprise Linux 7 (Remi)
+#  - N/A: for MariaDB
 # Install the Utilities and Clients packages
 # - httpd-tools: for ab and others, the HTTPd utilities
-# - mysql: for mysql, the MySQL client
+# - MariaDB-client: for mysql, the MySQL client
 # - mytop: for mytop, the MySQL monitoring tool
 # Install the PHP packages
 # - php-common: the PHP common libraries and files
@@ -86,6 +87,14 @@ ARG app_fpm_pool_pm_max_requests="5000"
 # - libyaml-devel: the YAML library - development files
 # - libmemcached-devel: the Memcached library - development files
 RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+    printf "# MariaDB repository\n\
+[mariadb]\n\
+name = MariaDB\n\
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64\n\
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB\n\
+gpgcheck=1\n\
+\n" > /etc/yum.repos.d/mariadb.repo && \
+    rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
       http://rpms.remirepo.net/enterprise/remi-release-7.rpm && \
@@ -94,7 +103,7 @@ RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
     printf "# Install the Utilities and Clients packages...\n" && \
     yum makecache && yum install -y \
       httpd-tools \
-      mysql mytop && \
+      MariaDB-client mytop && \
     printf "# Install the PHP packages...\n" && \
     yum makecache && yum install -y \
       php-common php-devel php-pear \
