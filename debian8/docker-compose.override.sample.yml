@@ -1,0 +1,111 @@
+---
+#
+#    Debian 8 (jessie) compose.override.sample.yml
+#    Copyright (C) 2016 SOL-ICT
+#    This file is part of the Docker General Purpose System Distro.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# For Docker Compose v2+ only
+version: '2'
+
+#
+# Overridden services
+#
+services:
+
+  memcached14:
+    build:
+      args:
+        app_memcached_listen_port: "11211"
+        app_memcached_limit_backlog: "256"
+        app_memcached_limit_concurent: "256"
+        app_memcached_limit_memory: "128"
+    ports:
+      - "10022"
+      - "11211"
+
+  redis30:
+    build:
+      args:
+        app_redis_listen_port: "6379"
+        app_redis_listen_timeout: "5"
+        app_redis_limit_backlog: "256"
+        app_redis_limit_concurent: "256"
+        app_redis_limit_memory: "134217728"
+    ports:
+      - "10022"
+      - "6379"
+
+  mysql56:
+    build:
+      args:
+        app_mysql_listen_port: "3306"
+    ports:
+      - "10022"
+      - "3306"
+
+  php56:
+    build:
+      args:
+        app_php_global_limit_timeout: "120"
+        app_php_global_limit_memory: "134217728"
+        app_fpm_global_limit_processes: "128"
+        app_fpm_pool_listen_port: "9000"
+        app_fpm_pool_limit_backlog: "256"
+        app_fpm_pool_pm_method: "dynamic"
+        app_fpm_pool_pm_max_children: "100"
+        app_fpm_pool_pm_start_servers: "20"
+        app_fpm_pool_pm_min_spare_servers: "10"
+        app_fpm_pool_pm_max_spare_servers: "30"
+        app_fpm_pool_pm_process_idle_timeout: "10s"
+        app_fpm_pool_pm_max_requests: "5000"
+    ports:
+      - "10022"
+      - "9000"
+
+  httpd24_web:
+    build:
+      args:
+        app_httpd_global_listen_port_http: "8080"
+        app_httpd_global_listen_port_https: "8443"
+        app_httpd_global_listen_timeout: "140"
+        app_httpd_global_listen_keepalive_status: "On"
+        app_httpd_global_listen_keepalive_requests: "100"
+        app_httpd_global_listen_keepalive_timeout: "5"
+        app_httpd_vhost_listen_port_http: "8080"
+        app_httpd_vhost_listen_port_https: "8443"
+        app_httpd_vhost_fpm_port: "9000"
+    ports:
+      - "10022"
+      - "8080"
+      - "8443"
+
+  httpd24_proxy:
+    build:
+      args:
+        app_httpd_global_listen_port_http: "8080"
+        app_httpd_global_listen_port_https: "8443"
+        app_httpd_global_listen_timeout: "145"
+        app_httpd_global_listen_keepalive_status: "On"
+        app_httpd_global_listen_keepalive_requests: "100"
+        app_httpd_global_listen_keepalive_timeout: "5"
+        app_httpd_vhost_listen_port_http: "8080"
+        app_httpd_vhost_listen_port_https: "8443"
+    ports:
+      - "10022"
+      - "8080"
+      - "8443"
+

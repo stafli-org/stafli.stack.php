@@ -4,8 +4,8 @@ Continues on [Docker General Purpose System Distro](https://github.com/solict/do
 
 Requires [Docker Compose](https://docs.docker.com/compose/) 1.6.x or higher due to the [version 2](https://docs.docker.com/compose/compose-file/#versioning) format of the docker-compose.yml files.
 
-The docker-compose.yml are separated by distribution and require .env files to function properly.  
-A rudimentary script [docker-compose-helper.sh](../../tree/master/docker-compose-helper.sh) is provided to help with loading these.
+The docker-compose.yml are separated by distribution and may use docker-compose.override.yml or .env files to override configuration.
+An optional rudimentary script [docker-compose-helper.sh](../../tree/master/docker-compose-helper.sh) is provided to help with loading these.
 
 Scripts are also provided to help test and deploy the installation procedures in non-Docker environments.
 
