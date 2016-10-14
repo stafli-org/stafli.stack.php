@@ -66,7 +66,9 @@ ARG app_httpd_vhost_fpm_port="9000"
 # - libapache2-mod-xsendfile: the X-Sendfile DSO module
 # - libapache2-mod-upload-progress: the Upload Progress DSO module
 # - ssl-cert: for make-ssl-cert, to generate certificates
-RUN printf "# Install the HTTPd packages...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the HTTPd packages...\n" && \
     apt-get update && apt-get install -qy \
       apache2 apache2-threaded-dev \
       apache2-utils apachetop \
@@ -74,8 +76,10 @@ RUN printf "# Install the HTTPd packages...\n" && \
       libapache2-mod-authnz-external pwauth \
       libapache2-mod-xsendfile libapache2-mod-upload-progress \
       ssl-cert && \
-    printf "# Cleanup the Package Manager...\n" && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*;
+    printf "Cleanup the Package Manager...\n" && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # HTTPd DSO modules
@@ -84,9 +88,9 @@ RUN printf "# Install the HTTPd packages...\n" && \
 # Build and Install HTTPd modules
 # - Proxy FastCGI (mod_proxy_fcgi)
 # Enable/Disable HTTPd modules
-RUN printf "# Start installing modules...\n" && \
+RUN printf "Start installing modules...\n" && \
     \
-    printf "# Building the Proxy FastCGI (mod_proxy_fcgi) module...\n" && \
+    printf "Building the Proxy FastCGI (mod_proxy_fcgi) module...\n" && \
     ( \
       wget -qO- https://github.com/ceph/mod-proxy-fcgi/archive/master.tar.gz | tar xz && cd mod-proxy-fcgi-master && \
       ln -sf apxs2 /usr/bin/apxs && \
@@ -102,7 +106,7 @@ RUN printf "# Start installing modules...\n" && \
 LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 \n" > /etc/apache2/mods-available/proxy_fcgi.load && \
     \
-    printf "# Enabling/disabling modules...\n" && \
+    printf "Enabling/disabling modules...\n" && \
     # Core modules \
     a2dismod -f ${app_httpd_global_mods_core_dis} && \
     a2enmod -f ${app_httpd_global_mods_core_en} && \
@@ -119,7 +123,7 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "# Finished installing modules...\n";
+    printf "Finished installing modules...\n";
 
 #
 # Configuration
@@ -127,7 +131,8 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
-    # HTTPd daemon \
+    \
+    printf "Add httpd user and group...\n"; \
     id -g ${app_httpd_global_user} || \
     groupadd \
       --system ${app_httpd_global_group} && \
@@ -144,7 +149,7 @@ RUN printf "Adding users and groups...\n"; \
       --shell /usr/sbin/nologin \
       ${app_httpd_global_user}; \
     \
-    # HTTPd vhost \
+    printf "Add vhost user and group...\n"; \
     app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
     id -g ${app_httpd_vhost_user} || \
     groupadd \
@@ -161,9 +166,13 @@ RUN printf "Adding users and groups...\n"; \
       --create-home --home-dir ${app_httpd_vhost_home} \
       --shell /usr/sbin/nologin \
       ${app_httpd_vhost_user}; \
+    \
+    printf "Setting vhost ownership and permissions...\n"; \
     mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html ${app_httpd_vhost_home}/tmp; \
     chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
-    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
+    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -183,7 +192,9 @@ command=/bin/bash -c \"\$(which apache2ctl) -d /etc/apache2 -f /etc/apache2/apac
 autostart=false\n\
 autorestart=true\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
@@ -441,7 +452,10 @@ RUN printf "Updading HTTPd configuration...\n"; \
     a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
     \
     printf "\n# Test configuration...\n"; \
-    $(which apache2ctl) configtest;
+    $(which apache2ctl) configtest; \
+    printf "Done testing...\n"; \
+    \
+    printf "Finished updading HTTPd configuration...\n";
 
 #
 # Demo

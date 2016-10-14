@@ -41,7 +41,9 @@ ARG app_mysql_listen_port="3306"
 #  - MariaDB-server: for mysqld, the MySQL relational database management system server
 #  - MariaDB-client: for mysql, the MySQL relational database management system client
 #  - mytop: for mytop, the MySQL relational database management system top-like utility
-RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the repositories and refresh the GPG keys...\n" && \
     printf "# MariaDB repository\n\
 [mariadb]\n\
 name = MariaDB\n\
@@ -50,12 +52,14 @@ gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB\n\
 gpgcheck=1\n\
 \n" > /etc/yum.repos.d/mariadb.repo && \
     rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB && \
-    printf "# Install the MySQL packages...\n" && \
+    printf "Install the MySQL packages...\n" && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
       MariaDB-server MariaDB-client mytop && \
-    printf "# Cleanup the Package Manager...\n" && \
-    yum clean all && rm -Rf /var/lib/yum/*;
+    printf "Cleanup the Package Manager...\n" && \
+    yum clean all && rm -Rf /var/lib/yum/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # Configuration
@@ -63,6 +67,8 @@ gpgcheck=1\n\
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
+    \
+    printf "Add mysql user and group...\n"; \
     id -g ${app_mysql_user} || \
     groupadd \
       --system ${app_mysql_group} && \
@@ -77,7 +83,9 @@ RUN printf "Adding users and groups...\n"; \
       --system --gid ${app_mysql_group} \
       --no-create-home --home-dir ${app_mysql_home} \
       --shell /sbin/nologin \
-      ${app_mysql_user};
+      ${app_mysql_user}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -107,7 +115,9 @@ mkdir -p /var/log/mysql;\n\
 chown ${app_mysql_user}:${app_mysql_group} /var/log/mysql;\n\
 \n\
 exit 0\n" >> ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # MySQL
 RUN printf "Updading MySQL configuration...\n"; \
@@ -169,5 +179,7 @@ RUN printf "Updading MySQL configuration...\n"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     # change performance settings \
     perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading MySQL configuration...\n";
 

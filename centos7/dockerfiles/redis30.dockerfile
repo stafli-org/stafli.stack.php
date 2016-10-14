@@ -45,17 +45,21 @@ ARG app_redis_limit_memory="134217728"
 #  - remi-release: for Les RPM de remi pour Enterprise Linux 7 (Remi)
 # Install the Redis packages
 #  - redis: for redis-server and redis-cli, the Redis data structure server and client
-RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the repositories and refresh the GPG keys...\n" && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
       http://rpms.remirepo.net/enterprise/remi-release-7.rpm && \
     yum-config-manager --enable remi-safe remi && \
     gpg --refresh-keys && \
-    printf "# Install the Redis packages...\n" && \
+    printf "Install the Redis packages...\n" && \
     yum makecache && yum install -y \
       redis && \
-    printf "# Cleanup the Package Manager...\n" && \
-    yum clean all && rm -Rf /var/lib/yum/*;
+    printf "Cleanup the Package Manager...\n" && \
+    yum clean all && rm -Rf /var/lib/yum/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # Configuration
@@ -63,6 +67,8 @@ RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
+    \
+    printf "Add redis user and group...\n"; \
     id -g ${app_redis_user} || \
     groupadd \
       --system ${app_redis_group} && \
@@ -77,7 +83,9 @@ RUN printf "Adding users and groups...\n"; \
       --system --gid ${app_redis_group} \
       --no-create-home --home-dir ${app_redis_home} \
       --shell /sbin/nologin \
-      ${app_redis_user};
+      ${app_redis_user}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -97,7 +105,9 @@ command=/bin/bash -c \"\$(which redis-server) /etc/redis.conf --daemonize no\"\n
 autostart=false\n\
 autorestart=true\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # Redis
 RUN printf "Updading Redis configuration...\n"; \
@@ -125,5 +135,7 @@ RUN printf "Updading Redis configuration...\n"; \
     perl -0p -i -e "s># an error 'max number of clients reached'.\n#\n# maxclients 10000\n># an error 'max number of clients reached'.\n#\n# maxclients 10000\nmaxclients ${app_redis_limit_concurent}\n>" ${file}; \
     # change max memory \
     perl -0p -i -e "s># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>\nmaxmemory ${app_redis_limit_memory}>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Redis configuration...\n";
 

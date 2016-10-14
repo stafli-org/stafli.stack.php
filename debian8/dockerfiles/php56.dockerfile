@@ -83,7 +83,9 @@ ARG app_fpm_pool_pm_max_requests="5000"
 # - php5-odbc: the PHP ODBC extension
 # - libyaml-dev: the YAML library - development files
 # - libmemcached-dev: the Memcached library - development files
-RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the repositories and refresh the GPG keys...\n" && \
     printf "# MariaDB repository\n\
 deb http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/debian jessie main\n\
 \n" > /etc/apt/sources.list.d/mariadb.list && \
@@ -93,12 +95,12 @@ deb http://packages.dotdeb.org jessie all\n\
 \n" > /etc/apt/sources.list.d/dotdeb.list && \
     apt-key adv --fetch-keys http://www.dotdeb.org/dotdeb.gpg && \
     gpg --refresh-keys && \
-    printf "# Install the Utilities and Clients packages...\n" && \
+    printf "Install the Utilities and Clients packages...\n" && \
     apt-get update && apt-get install -qy \
       apache2-utils \
       mariadb-client mytop \
       redis-tools && \
-    printf "# Install the PHP packages...\n" && \
+    printf "Install the PHP packages...\n" && \
     apt-get update && apt-get install -qy \
       php5-common php5-dev php-pear \
       php5-cli php5-fpm \
@@ -107,7 +109,10 @@ deb http://packages.dotdeb.org jessie all\n\
       php5-ldap \
       php5-mysqlnd php5-odbc \
       libyaml-dev libmemcached-dev && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*;
+    printf "Cleanup the Package Manager...\n" && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # PHP extensions
@@ -124,40 +129,40 @@ deb http://packages.dotdeb.org jessie all\n\
 # - Redis
 # - Xdebug
 # - XHProf
-RUN printf "# Start installing extensions...\n" && \
+RUN printf "Start installing extensions...\n" && \
     \
-    printf "# Building the Binary API (deb: N/A) extension...\n" && \
+    printf "Building the Binary API (deb: N/A) extension...\n" && \
     pecl install igbinary-1.2.1 && \
     echo "extension=igbinary.so" > /etc/php5/mods-available/igbinary.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the MessagePack (deb: php5-msgpack) extension...\n" && \
+    printf "Building the MessagePack (deb: php5-msgpack) extension...\n" && \
     pecl install msgpack-0.5.7 && \
     echo "extension=msgpack.so" > /etc/php5/mods-available/msgpack.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the YAML (deb: N/A) extension...\n" && \
+    printf "Building the YAML (deb: N/A) extension...\n" && \
     pecl install yaml-1.2.0 && \
     echo "extension=yaml.so" > /etc/php5/mods-available/yaml.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the Solr (deb: php5-solr) extension...\n" && \
+    printf "Building the Solr (deb: php5-solr) extension...\n" && \
     pecl install solr-2.4.0 && \
     echo "extension=solr.so" > /etc/php5/mods-available/solr.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the MongoDB (deb: php5-mongo) extension...\n" && \
+    printf "Building the MongoDB (deb: php5-mongo) extension...\n" && \
     pecl install mongodb-1.1.6 && \
     echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the Memcache (deb: php5-memcache) extension...\n" && \
+    printf "Building the Memcache (deb: php5-memcache) extension...\n" && \
     pecl install memcache-2.2.7 && \
     pecl install memcache-3.0.8 && \
     echo "extension=memcache.so" > /etc/php5/mods-available/memcache.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the Memcached (deb: php5-memcached) extension...\n" && \
+    printf "Building the Memcached (deb: php5-memcached) extension...\n" && \
     ( \
       wget -qO- https://github.com/php-memcached-dev/php-memcached/archive/2.2.0.tar.gz | tar xz && cd php-memcached-2.2.0 && \
       perl -0p -i -e "s><extsrcrelease\>><extsrcrelease\>\n\
@@ -173,7 +178,7 @@ RUN printf "# Start installing extensions...\n" && \
     ) && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the Redis (deb: php5-redis) extension...\n" && \
+    printf "Building the Redis (deb: php5-redis) extension...\n" && \
     ( \
       wget -qO- https://github.com/phpredis/phpredis/archive/2.2.7.tar.gz | tar xz && cd phpredis-2.2.7 && \
       perl -0p -i -e "s>2.2.5>2.2.7>g" package.xml rpm/php-redis.spec && \
@@ -186,17 +191,17 @@ RUN printf "# Start installing extensions...\n" && \
     echo "extension=redis.so" > /etc/php5/mods-available/redis.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the Xdebug (deb: php5-xdebug) extension...\n" && \
+    printf "Building the Xdebug (deb: php5-xdebug) extension...\n" && \
     pecl install xdebug-2.4.0 && \
     echo "zend_extension=xdebug.so" > /etc/php5/mods-available/xdebug.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Building the XHProf (deb: php5-xhprof) extension...\n" && \
+    printf "Building the XHProf (deb: php5-xhprof) extension...\n" && \
     pecl install xhprof-0.9.4 && \
     echo "extension=xhprof.so" > /etc/php5/mods-available/xhprof.ini && \
     rm -rf /tmp/pear && \
     \
-    printf "# Enabling/disabling extensions...\n" && \
+    printf "Enabling/disabling extensions...\n" && \
     # Core extensions \
     php5dismod -f ${app_php_exts_core_dis} && \
     php5enmod -f ${app_php_exts_core_en} && \
@@ -204,7 +209,7 @@ RUN printf "# Start installing extensions...\n" && \
     php5dismod -f ${app_php_exts_extra_dis} && \
     php5enmod -f ${app_php_exts_extra_en} && \
     \
-    printf "# Finished installing extensions...\n";
+    printf "Finished installing extensions...\n";
 
 #
 # Configuration
@@ -212,7 +217,8 @@ RUN printf "# Start installing extensions...\n" && \
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
-    # PHP-FPM daemon \
+    \
+    printf "Add php-fpm user and group...\n"; \
     id -g ${app_fpm_global_user} || \
     groupadd \
       --system ${app_fpm_global_group} && \
@@ -229,7 +235,7 @@ RUN printf "Adding users and groups...\n"; \
       --shell /usr/sbin/nologin \
       ${app_fpm_global_user}; \
     \
-    # PHP-FPM Pool \
+    printf "Add pool user and group...\n"; \
     app_fpm_pool_home="${app_fpm_global_home}/${app_fpm_pool_id}"; \
     id -g ${app_fpm_pool_user} || \
     groupadd \
@@ -246,9 +252,13 @@ RUN printf "Adding users and groups...\n"; \
       --create-home --home-dir ${app_fpm_pool_home} \
       --shell /usr/sbin/nologin \
       ${app_fpm_pool_user}; \
+    \
+    printf "Setting pool ownership and permissions...\n"; \
     mkdir -p ${app_fpm_pool_home}/bin ${app_fpm_pool_home}/log ${app_fpm_pool_home}/html ${app_fpm_pool_home}/tmp; \
     chown -R ${app_fpm_global_user}:${app_fpm_global_group} ${app_fpm_pool_home}; \
-    chmod -R ug=rwX,o=rX ${app_fpm_pool_home};
+    chmod -R ug=rwX,o=rX ${app_fpm_pool_home}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -268,7 +278,9 @@ command=/bin/bash -c \"\$(which php5-fpm) -y /etc/php5/fpm/php-fpm.conf -c /etc/
 autostart=false\n\
 autorestart=true\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # PHP / PHP-FPM
 RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
@@ -415,7 +427,10 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     printf "Done patching ${file}...\n"; \
     \
     printf "\n# Test configuration...\n"; \
-    $(which php5-fpm) --test;
+    $(which php5-fpm) --test; \
+    printf "Done testing...\n"; \
+    \
+    printf "Finished updading PHP and PHP-FPM configuration...\n";
 
 #
 # Demo

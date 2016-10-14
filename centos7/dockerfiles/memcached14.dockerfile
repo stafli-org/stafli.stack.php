@@ -45,17 +45,21 @@ ARG app_memcached_limit_memory="128"
 #  - remi-release: for Les RPM de remi pour Enterprise Linux 7 (Remi)
 # Install the Memcached packages
 #  - memcached: for memcached, the Memcached distributed memory object caching system server
-RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the repositories and refresh the GPG keys...\n" && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
       http://rpms.remirepo.net/enterprise/remi-release-7.rpm && \
     yum-config-manager --enable remi-safe remi && \
     gpg --refresh-keys && \
-    printf "# Install the Memcached packages...\n" && \
+    printf "Install the Memcached packages...\n" && \
     yum makecache && yum install -y \
       memcached && \
-    printf "# Cleanup the Package Manager...\n" && \
-    yum clean all && rm -Rf /var/lib/yum/*;
+    printf "Cleanup the Package Manager...\n" && \
+    yum clean all && rm -Rf /var/lib/yum/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # Configuration
@@ -63,6 +67,8 @@ RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
+    \
+    printf "Add memcached user and group...\n"; \
     id -g ${app_memcached_user} || \
     groupadd \
       --system ${app_memcached_group} && \
@@ -77,7 +83,9 @@ RUN printf "Adding users and groups...\n"; \
       --system --gid ${app_memcached_group} \
       --no-create-home --home-dir ${app_memcached_home} \
       --shell /sbin/nologin \
-      ${app_memcached_user};
+      ${app_memcached_user}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -97,7 +105,9 @@ command=/bin/bash -c \"opts=\$(grep -o '^[^#]*' /etc/memcached.conf) && exec \$(
 autostart=false\n\
 autorestart=true\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # Rsyslogd
 RUN printf "Updading Rsyslogd configuration...\n"; \
@@ -108,7 +118,9 @@ RUN printf "Updading Rsyslogd configuration...\n"; \
     printf "# memcached\n\
 local1.debug  /var/log/memcached.log\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Rsyslogd configuration...\n";
 
 # Logrotate
 RUN printf "Updading Logrotate configuration...\n"; \
@@ -130,7 +142,9 @@ RUN printf "Updading Logrotate configuration...\n"; \
     endscript\n\
 }\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Logrotate configuration...\n";
 
 # Memcached
 RUN printf "Updading Memcached configuration...\n"; \
@@ -189,5 +203,7 @@ RUN printf "Updading Memcached configuration...\n"; \
     # change SASL authentication \
     if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl="#-S"; fi; \
     printf "\n# Turn on SASL authentication\n${app_memcached_auth_sasl}\n" >> ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Memcached configuration...\n";
 

@@ -63,7 +63,9 @@ ARG app_httpd_vhost_fpm_port="9000"
 # - mod_authnz_external: the External Authentication DSO module
 # - mod_xsendfile: the X-Sendfile DSO module
 # - mod_proxy_fcgi: the FastCGI DSO sub-module for Proxy DSO module
-RUN printf "# Install the HTTPd packages...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the HTTPd packages...\n" && \
     rpm --rebuilddb && \
     yum makecache && yum install -y \
       httpd \
@@ -72,15 +74,17 @@ RUN printf "# Install the HTTPd packages...\n" && \
       mod_authnz_external pwauth \
       mod_xsendfile \
       mod_proxy_fcgi && \
-    printf "# Cleanup the Package Manager...\n" && \
-    yum clean all && rm -Rf /var/lib/yum/*;
+    printf "Cleanup the Package Manager...\n" && \
+    yum clean all && rm -Rf /var/lib/yum/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # HTTPd DSO modules
 #
 
 # Enable/Disable HTTPd modules
-RUN printf "# Start installing modules...\n" && \
+RUN printf "Start installing modules...\n" && \
     \
     # Module configuration files \
     mkdir /etc/httpd/conf.modules.d; \
@@ -90,7 +94,7 @@ RUN printf "# Start installing modules...\n" && \
     touch /etc/httpd/conf.modules.d/01-cgi.conf; \
     touch /etc/httpd/conf.modules.d/00-base.conf; \
     \
-    printf "# Enabling/disabling modules...\n" && \
+    printf "Enabling/disabling modules...\n" && \
     \
     # /etc/httpd/conf.modules.d/00-base.conf \
     file="/etc/httpd/conf.modules.d/00-base.conf"; \
@@ -272,7 +276,7 @@ LoadModule ssl_module modules/mod_ssl.so\n\
     rm -f ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "# Finished installing modules...\n";
+    printf "Finished installing modules...\n";
 
 #
 # Configuration
@@ -280,7 +284,8 @@ LoadModule ssl_module modules/mod_ssl.so\n\
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
-    # HTTPd daemon \
+    \
+    printf "Add httpd user and group...\n"; \
     id -g ${app_httpd_global_user} || \
     groupadd \
       --system ${app_httpd_global_group} && \
@@ -297,7 +302,7 @@ RUN printf "Adding users and groups...\n"; \
       --shell /sbin/nologin \
       ${app_httpd_global_user}; \
     \
-    # HTTPd vhost \
+    printf "Add vhost user and group...\n"; \
     app_httpd_vhost_home="${app_httpd_global_home}/${app_httpd_vhost_id}"; \
     id -g ${app_httpd_vhost_user} || \
     groupadd \
@@ -314,9 +319,13 @@ RUN printf "Adding users and groups...\n"; \
       --create-home --home-dir ${app_httpd_vhost_home} \
       --shell /sbin/nologin \
       ${app_httpd_vhost_user}; \
+    \
+    printf "Setting vhost ownership and permissions...\n"; \
     mkdir -p ${app_httpd_vhost_home}/bin ${app_httpd_vhost_home}/log ${app_httpd_vhost_home}/html ${app_httpd_vhost_home}/tmp; \
     chown -R ${app_httpd_global_user}:${app_httpd_global_group} ${app_httpd_vhost_home}; \
-    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home};
+    chmod -R ug=rwX,o=rX ${app_httpd_vhost_home}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -332,7 +341,9 @@ command=/bin/bash -c \"\$(which apachectl) -d /etc/httpd -f /etc/httpd/conf/http
 autostart=true\n\
 autorestart=true\n\
 \n" >> ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # HTTPd
 RUN printf "Updading HTTPd configuration...\n"; \
@@ -658,7 +669,10 @@ ServerSignature On\n\
     printf "Done patching ${file}...\n"; \
     \
     printf "\n# Test configuration...\n"; \
-    $(which apachectl) configtest;
+    $(which apachectl) configtest; \
+    printf "Done testing...\n"; \
+    \
+    printf "Finished updading HTTPd configuration...\n";
 
 #
 # Demo

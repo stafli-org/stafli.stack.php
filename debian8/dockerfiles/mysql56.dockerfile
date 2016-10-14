@@ -41,17 +41,21 @@ ARG app_mysql_listen_port="3306"
 #  - mariadb-server: for mysqld, the MySQL relational database management system server
 #  - mariadb-client: for mysql, the MySQL relational database management system client
 #  - mytop: for mytop, the MySQL relational database management system top-like utility
-RUN printf "# Install the repositories and refresh the GPG keys...\n" && \
+RUN printf "Installing repositories and packages...\n" && \
+    \
+    printf "Install the repositories and refresh the GPG keys...\n" && \
     printf "# MariaDB repository\n\
 deb http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/debian jessie main\n\
 \n" > /etc/apt/sources.list.d/mariadb.list && \
     apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db && \
     gpg --refresh-keys && \
-    printf "# Install the MySQL packages...\n" && \
+    printf "Install the MySQL packages...\n" && \
     apt-get update && apt-get install -qy \
       mariadb-server mariadb-client mytop && \
-    printf "# Cleanup the Package Manager...\n" && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*;
+    printf "Cleanup the Package Manager...\n" && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    \
+    printf "Finished installing repositories and packages...\n";
 
 #
 # Configuration
@@ -59,6 +63,8 @@ deb http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/debian jessie main\n\
 
 # Add users and groups
 RUN printf "Adding users and groups...\n"; \
+    \
+    printf "Add mysql user and group...\n"; \
     id -g ${app_mysql_user} || \
     groupadd \
       --system ${app_mysql_group} && \
@@ -73,7 +79,9 @@ RUN printf "Adding users and groups...\n"; \
       --system --gid ${app_mysql_group} \
       --no-create-home --home-dir ${app_mysql_home} \
       --shell /usr/sbin/nologin \
-      ${app_mysql_user};
+      ${app_mysql_user}; \
+    \
+    printf "Finished adding users and groups...\n";
 
 # Supervisor
 RUN printf "Updading Supervisor configuration...\n"; \
@@ -93,7 +101,9 @@ command=/bin/bash -c \"\$(which mysqld_safe) --defaults-file=/etc/mysql/my.cnf\"
 autostart=false\n\
 autorestart=true\n\
 \n" > ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading Supervisor configuration...\n";
 
 # MySQL
 RUN printf "Updading MySQL configuration...\n"; \
@@ -131,5 +141,7 @@ RUN printf "Updading MySQL configuration...\n"; \
     perl -0p -i -e "s>.*default-character-set = .*>default-character-set = utf8>" ${file}; \
     perl -0p -i -e "s>.*character-set-server  = .*>character-set-server  = utf8>" ${file}; \
     perl -0p -i -e "s>.*collation-server      = .*>collation-server      = utf8_general_ci>" ${file}; \
-    printf "Done patching ${file}...\n";
+    printf "Done patching ${file}...\n"; \
+    \
+    printf "Finished updading MySQL configuration...\n";
 
