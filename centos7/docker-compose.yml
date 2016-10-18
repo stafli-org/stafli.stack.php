@@ -28,11 +28,19 @@ services:
 
   memcached14:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_memcached14.description=High Performance PHP Stack - Memcached 1.4.x profile, based on General Purpose System Distro - Standard service"
-      - "org.sol-ict.high-performance-php-stack.centos7_memcached14.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_memcached14.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_memcached14.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_memcached14.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - Memcached 1.4.x service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_memcached14"
     build:
       context: "./dockerfiles"
@@ -61,11 +69,19 @@ services:
 
   redis30:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_redis30.description=High Performance PHP Stack - Redis 3.0.x profile, based on General Purpose System Distro - Standard service"
-      - "org.sol-ict.high-performance-php-stack.centos7_redis30.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_redis30.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_redis30.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_redis30.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - Redis 3.0.x service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_redis30"
     build:
       context: "./dockerfiles"
@@ -94,11 +110,19 @@ services:
 
   mysql55:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_mysql55.description=High Performance PHP Stack - MySQL 5.5.x profile, based on General Purpose System Distro - Standard service"
-      - "org.sol-ict.high-performance-php-stack.centos7_mysql55.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_mysql55.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_mysql55.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_mysql55.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - MySQL 5.5.x service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_mysql55"
     build:
       context: "./dockerfiles"
@@ -121,11 +145,19 @@ services:
 
   php56:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_php56.description=High Performance PHP Stack - PHP 5.6.x profile, based on General Purpose System Distro - Devel service"
-      - "org.sol-ict.high-performance-php-stack.centos7_php56.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_php56.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_php56.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_php56.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - PHP 5.6.x service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Devel service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_php56"
     build:
       context: "./dockerfiles"
@@ -182,11 +214,19 @@ services:
 
   httpd24_web:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_web.description=High Performance PHP Stack - HTTPd 2.4.x Web profile, based on General Purpose System Distro - Devel service"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_web.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_web.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_web.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_web.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - HTTPd 2.4.x Web service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_httpd24_web"
     build:
       context: "./dockerfiles"
@@ -235,11 +275,19 @@ services:
 
   httpd24_proxy:
     labels:
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_proxy.description=High Performance PHP Stack - HTTPd 2.4.x Proxy profile, based on General Purpose System Distro - Devel service"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_proxy.vendor=SOL-ICT"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_proxy.license=GPLv3"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_proxy.architecture=amd64"
-      - "org.sol-ict.high-performance-php-stack.centos7_httpd24_proxy.version=1.0"
+      - "org.label-schema.schema-version=1.0"
+      - "org.label-schema.name=$PROJECT_NAME - HTTPd 2.4.x Proxy service"
+      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
+      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.url=$PROJECT_URL"
+      - "license=$PROJECT_LICENSE"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-url=$VCS_URL"
+      - "os-id=$OS_ID"
+      - "os-version-id=$OS_VERSION_ID"
+      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.version=$BUILD_VERSION"
+      - "org.label-schema.build-date=$BUILD_DATE"
     image: "solict/high-performance-php-stack:centos7_httpd24_proxy"
     build:
       context: "./dockerfiles"
