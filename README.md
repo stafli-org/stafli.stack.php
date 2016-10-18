@@ -4,15 +4,15 @@ Continues on [Docker General Purpose System Distro](https://github.com/solict/do
 
 Requires [Docker Compose](https://docs.docker.com/compose/) 1.6.x or higher due to the [version 2](https://docs.docker.com/compose/compose-file/#versioning) format of the docker-compose.yml files.
 
-The docker-compose.yml are separated by distribution and may use docker-compose.override.yml or .env files to override configuration.
-An optional rudimentary script [docker-compose-helper.sh](../../tree/master/docker-compose-helper.sh) is provided to help with loading these.
+There are docker-compose.yml files per distribution, as well as docker-compose.override.yml and .env files, which may be used to override configuration.
+An optional Makefile [Makefile](../../tree/master/Makefile) is provided to help with loading these with ease and perform commands in batch.
 
-Scripts are also provided to help test and deploy the installation procedures in non-Docker environments.
+Scripts are also provided for each distribution to help test and deploy the installation procedures in non-Docker environments.
 
 The images are automatically built at a [repository](https://hub.docker.com/r/solict/high-performance-php-stack) in the Docker Hub registry.
 
 ## Distributions
-The profiles use custom images as a starting point:
+The services use custom images as a starting point:
 - __Debian__, from the [Docker General Purpose System Distro](https://github.com/solict/docker-general-purpose-system-distro)
   - [Debian 8 (jessie)](../../tree/master/debian8)
   - [Debian 7 (wheezy)](../../tree/master/debian7)
@@ -20,76 +20,76 @@ The profiles use custom images as a starting point:
   - [CentOS 7 (centos7)](../../tree/master/centos7)
   - [CentOS 6 (centos6)](../../tree/master/centos6)
 
-## Profiles
-These are the profiles described by the dockerfiles:
-- Memcached 1.4.x, adds Memcached on top of upstream Standard profile
-- Redis 3.0.x, adds Redis on top of upstream Standard profile
-- MySQL 5.5.x/5.6.x/MariaDB 10.x, adds MySQL/MariaDB on top of upstream Standard profile
-- PHP 5.6.x, adds PHP on top of upstream Devel profile
-- HTTPd 2.x.x Web, adds HTTPd on top of upstream Devel profile
-- HTTPd 2.x.x Proxy, adds HTTPd on top of upstream Standard profile
+## Services
+These are the services described by the dockerfile and dockercompose files:
+- Memcached 1.4.x, adds Memcached on top of upstream Standard service
+- Redis 3.0.x, adds Redis on top of upstream Standard service
+- MySQL 5.5.x/5.6.x/MariaDB 10.x, adds MySQL/MariaDB on top of upstream Standard service
+- PHP 5.6.x, adds PHP on top of upstream Devel service
+- HTTPd 2.x.x Web, adds HTTPd on top of upstream Devel service
+- HTTPd 2.x.x Proxy, adds HTTPd on top of upstream Standard service
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/solict/high-performance-php-stack/tags/) upon building:
-- Memcached 1.4.x profile:
+- Memcached 1.4.x service:
   - solict/high-performance-php-stack:debian8_memcached14
   - solict/high-performance-php-stack:debian7_memcached14
   - solict/high-performance-php-stack:centos7_memcached14
   - solict/high-performance-php-stack:centos6_memcached14
-- Redis 3.0.x profile:
+- Redis 3.0.x service:
   - solict/high-performance-php-stack:debian8_redis30
   - solict/high-performance-php-stack:debian7_redis30
   - solict/high-performance-php-stack:centos7_redis30
   - solict/high-performance-php-stack:centos6_redis30
-- MySQL 5.5.x/5.6.x/MariaDB 10.x profile:
+- MySQL 5.5.x/5.6.x/MariaDB 10.x service:
   - solict/high-performance-php-stack:debian8_mysql56
   - solict/high-performance-php-stack:debian7_mysql56
   - solict/high-performance-php-stack:centos7_mysql55
   - solict/high-performance-php-stack:centos6_mysql55
-- PHP 5.6.x profile:
+- PHP 5.6.x service:
   - solict/high-performance-php-stack:debian8_php56
   - solict/high-performance-php-stack:debian7_php56
   - solict/high-performance-php-stack:centos7_php56
   - solict/high-performance-php-stack:centos6_php56
-- HTTPd 2.x.x Web profile:
+- HTTPd 2.x.x Web service:
   - solict/high-performance-php-stack:debian8_httpd24_web
   - solict/high-performance-php-stack:debian7_httpd22_web
   - solict/high-performance-php-stack:centos7_httpd24_web
   - solict/high-performance-php-stack:centos6_httpd22_web
-- HTTPd 2.x.x Proxy profile:
+- HTTPd 2.x.x Proxy service:
   - solict/high-performance-php-stack:debian8_httpd24_proxy
   - solict/high-performance-php-stack:debian7_httpd22_proxy
   - solict/high-performance-php-stack:centos7_httpd24_proxy
   - solict/high-performance-php-stack:centos6_httpd22_proxy
 
 ## Containers
-These containers are generated upon issuing a create:
-- Memcached 1.4.x profile:
+These containers can be created from the images:
+- Memcached 1.4.x service:
   - debian8_memcached14_xxx
   - debian7_memcached14_xxx
   - centos7_memcached14_xxx
   - centos6_memcached14_xxx
-- Redis 3.0.x profile:
+- Redis 3.0.x service:
   - debian8_redis30_xxx
   - debian7_redis30_xxx
   - centos7_redis30_xxx
   - centos6_redis30_xxx
-- MySQL 5.5.x/5.6.x/MariaDB 10.x profile:
+- MySQL 5.5.x/5.6.x/MariaDB 10.x service:
   - debian8_mysql56_xxx
   - debian7_mysql56_xxx
   - centos7_mysql55_xxx
   - centos6_mysql55_xxx
-- PHP 5.6.x profile:
+- PHP 5.6.x service:
   - debian8_php56_xxx
   - debian7_php56_xxx
   - centos7_php56_xxx
   - centos6_php56_xxx
-- HTTPd 2.x.x Web profile:
+- HTTPd 2.x.x Web service:
   - debian8_httpd24_web_xxx
   - debian7_httpd22_web_xxx
   - centos7_httpd24_web_xxx
   - centos6_httpd22_web_xxx
-- HTTPd 2.x.x Proxy profile:
+- HTTPd 2.x.x Proxy service:
   - debian8_httpd24_proxy_xxx
   - debian7_httpd22_proxy_xxx
   - centos7_httpd24_proxy_xxx
@@ -97,7 +97,7 @@ These containers are generated upon issuing a create:
 
 ## Usage
 
-### From Docker Hub repository (basics)
+### From Docker Hub repository (manual)
 
 Note: this method will not allow you to use the docker-compose files nor the script.
 
@@ -108,32 +108,41 @@ Note: this method will not allow you to use the docker-compose files nor the scr
 
 Where <image_url> is the full image url (lookup the image list above).
 
-Examples:
+Example:
 ```
-docker pull solict/high-performance-php-stack:debian7_memcached14
-docker pull solict/high-performance-php-stack:debian7_redis30
-docker pull solict/high-performance-php-stack:debian7_mysql56
-docker pull solict/high-performance-php-stack:debian7_php56
-docker pull solict/high-performance-php-stack:debian7_httpd22_web
-docker pull solict/high-performance-php-stack:debian7_httpd22_proxy
+docker pull solict/high-performance-php-stack:debian8_memcached14
+docker pull solict/high-performance-php-stack:debian8_redis30
+docker pull solict/high-performance-php-stack:debian8_mysql56
+docker pull solict/high-performance-php-stack:debian8_php56
+docker pull solict/high-performance-php-stack:debian8_httpd24_web
+docker pull solict/high-performance-php-stack:debian8_httpd24_proxy
+
+docker run -ti solict/high-performance-php-stack:debian8_memcached14 /bin/bash
 ```
 
-### From GitHub repository (advanced)
+### From GitHub repository (automated)
 
 1. Download the repository [zip file](https://github.com/solict/docker-high-performance-php-stack/archive/master.zip) and unpack it or clone the repository using:  
 `git clone https://github.com/solict/docker-high-performance-php-stack.git`
-2. Navigate to the project directory with a terminal and type:  
-`docker-compose-helper --project=<distro> <operation>`
+2. Navigate to the project directory through the terminal:  
+`cd docker-high-performance-php-stack`
+3. Type in the desired operation through the terminal:  
+`make <operation> DISTRO=<distro>`
 
 Where <distro> is the distribution/directory and <operation> is the desired docker-compose operation.
 
-Examples:
+Example:
 ```
-./docker-compose-helper.sh --project=debian7 build
-./docker-compose-helper.sh --project=debian7 create
-./docker-compose-helper.sh --project=debian7 start
-./docker-compose-helper.sh --project=debian7 stop
-./docker-compose-helper.sh --project=debian7 rm
+git clone https://github.com/solict/docker-high-performance-php-stack.git
+cd docker-high-performance-php-stack
+make build DISTRO=debian8
+make netup DISTRO=debian8
+make create DISTRO=debian8
+make start DISTRO=debian8
+make ps DISTRO=debian8
+make stop DISTRO=debian8
+make rm DISTRO=debian8
+make netdown DISTRO=debian8
 ```
 
 ## Credits
