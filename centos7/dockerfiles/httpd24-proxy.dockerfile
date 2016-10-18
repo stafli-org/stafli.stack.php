@@ -1,6 +1,6 @@
 
 #
-#    CentOS 7 (centos7) HTTPd24 Proxy profile (dockerfile)
+#    CentOS 7 (centos7) HTTPd24 Proxy service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

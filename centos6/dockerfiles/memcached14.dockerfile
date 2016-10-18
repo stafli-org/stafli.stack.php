@@ -1,6 +1,6 @@
 
 #
-#    CentOS 6 (centos6) Memcached14 profile (dockerfile)
+#    CentOS 6 (centos6) Memcached14 service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 7 (wheezy) HTTPD22-proxy profile (shell)
+#    Debian 7 (wheezy) HTTPD22-proxy service (shell script)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker General Purpose System Distro.
 #

@@ -1,6 +1,6 @@
 
 #
-#    CentOS 6 (centos6) HTTPd22 Web profile (dockerfile)
+#    CentOS 6 (centos6) HTTPd22 Web service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

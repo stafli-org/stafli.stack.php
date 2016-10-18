@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) PHP56 profile (dockerfile)
+#    Debian 8 (jessie) PHP56 service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

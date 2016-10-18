@@ -1,6 +1,6 @@
 
 #
-#    CentOS 7 (centos7) PHP56 profile (dockerfile)
+#    CentOS 7 (centos7) PHP56 service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

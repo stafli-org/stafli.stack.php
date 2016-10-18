@@ -1,6 +1,6 @@
 
 #
-#    Debian 7 (wheezy) Memcached14 profile (dockerfile)
+#    Debian 7 (wheezy) Memcached14 service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #

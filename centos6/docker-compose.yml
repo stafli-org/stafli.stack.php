@@ -22,7 +22,7 @@
 version: '2'
 
 #
-# Services/profiles
+# Services
 #
 services:
 

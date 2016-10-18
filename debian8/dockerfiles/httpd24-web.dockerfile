@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) HTTPd24 Web profile (dockerfile)
+#    Debian 8 (jessie) HTTPd24 Web service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #
