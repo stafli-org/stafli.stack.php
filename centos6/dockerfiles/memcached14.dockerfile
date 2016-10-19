@@ -201,5 +201,9 @@ RUN printf "Updading Memcached configuration...\n"; \
     printf "\n# Turn on SASL authentication\n${app_memcached_auth_sasl}\n" >> ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which memcached):"; $(which memcached) -i | grep "memcached"; \
+    printf "Done testing configuration...\n"; \
+    \
     printf "Finished updading Memcached configuration...\n";
 

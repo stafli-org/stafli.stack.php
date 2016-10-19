@@ -91,6 +91,11 @@ RUN printf "Start installing modules...\n" && \
     # Extra modules \
     a2dismod -f ${app_httpd_global_mods_extra_dis} && \
     a2enmod -f ${app_httpd_global_mods_extra_en} && \
+    printf "Done enabling/disabling modules...\n"; \
+    \
+    printf "\n# Checking modules...\n"; \
+    $(which apache2ctl) -l; $(which apache2ctl) -M; \
+    printf "Done checking modules...\n"; \
     \
     printf "Finished installing modules...\n";
 
@@ -321,16 +326,18 @@ RUN printf "Updading HTTPd configuration...\n"; \
     printf "\n# Applying configuration for ${file}...\n"; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "\n# Generate certificates...\n"; \
+    printf "\n# Generating certificates...\n"; \
     make-ssl-cert generate-default-snakeoil --force-overwrite; \
+    printf "\n# Done generating certificates...\n"; \
     \
-    printf "\n# Enable/Disable vhosts...\n"; \
+    printf "\n# Enabling/disabling vhosts...\n"; \
     a2dissite 000-default; \
     a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
+    printf "\n# Done enabling/disabling vhosts...\n"; \
     \
-    printf "\n# Test configuration...\n"; \
-    $(which apache2ctl) configtest; \
-    printf "Done testing...\n"; \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which apache2ctl):"; $(which apache2ctl) -V; $(which apache2ctl) configtest; $(which apache2ctl) -S; \
+    printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
 

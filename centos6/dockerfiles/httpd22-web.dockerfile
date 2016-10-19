@@ -276,6 +276,12 @@ LoadModule ssl_module modules/mod_ssl.so\n\
     rm -f ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    printf "Done enabling/disabling modules...\n"; \
+    \
+    printf "\n# Checking modules...\n"; \
+    $(which apachectl) -l; $(which apachectl) -M; \
+    printf "Done checking modules...\n"; \
+    \
     printf "Finished installing modules...\n";
 
 #
@@ -668,9 +674,9 @@ ServerSignature On\n\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "\n# Test configuration...\n"; \
-    $(which apachectl) configtest; \
-    printf "Done testing...\n"; \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which apachectl):"; $(which apachectl) -V; $(which apachectl) configtest; $(which apachectl) -S; \
+    printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
 

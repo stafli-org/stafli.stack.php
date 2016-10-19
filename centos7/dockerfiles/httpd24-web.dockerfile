@@ -268,6 +268,12 @@ RUN printf "Start installing modules...\n" && \
     printf "</IfModule>" >> ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    printf "Done enabling/disabling modules...\n"; \
+    \
+    printf "\n# Checking modules...\n"; \
+    $(which apachectl) -l; $(which apachectl) -M; \
+    printf "Done checking modules...\n"; \
+    \
     printf "Finished installing modules...\n";
 
 #
@@ -659,9 +665,9 @@ SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "\n# Test configuration...\n"; \
-    $(which apachectl) configtest; \
-    printf "Done testing...\n"; \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which apachectl):"; $(which apachectl) -V; $(which apachectl) configtest; $(which apachectl) -S; \
+    printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
 

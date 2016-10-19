@@ -102,18 +102,6 @@ RUN printf "Start installing modules...\n" && \
       rm /usr/bin/apxs && \
       cd .. && rm -Rf mod-proxy-fcgi \
     ) && \
-    printf "# Depends: proxy\n\
-LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
-\n" > /etc/apache2/mods-available/proxy_fcgi.load && \
-    \
-    printf "Enabling/disabling modules...\n" && \
-    # Core modules \
-    a2dismod -f ${app_httpd_global_mods_core_dis} && \
-    a2enmod -f ${app_httpd_global_mods_core_en} && \
-    # Extra modules \
-    a2dismod -f ${app_httpd_global_mods_extra_dis} && \
-    a2enmod -f ${app_httpd_global_mods_extra_en} && \
-    \
     # /etc/apache2/mods-available/proxy_fcgi.load \
     file="/etc/apache2/mods-available/proxy_fcgi.load"; \
     printf "\n# Applying configuration for ${file}...\n"; \
@@ -122,6 +110,21 @@ LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 LoadModule proxy_fcgi_module /usr/lib/apache2/modules/mod_proxy_fcgi.so\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
+    \
+    printf "Done building modules...\n" && \
+    \
+    printf "Enabling/disabling modules...\n" && \
+    # Core modules \
+    a2dismod -f ${app_httpd_global_mods_core_dis} && \
+    a2enmod -f ${app_httpd_global_mods_core_en} && \
+    # Extra modules \
+    a2dismod -f ${app_httpd_global_mods_extra_dis} && \
+    a2enmod -f ${app_httpd_global_mods_extra_en} && \
+    printf "Done enabling/disabling modules...\n"; \
+    \
+    printf "\n# Checking modules...\n"; \
+    $(which apache2ctl) -l; $(which apache2ctl) -M; \
+    printf "Done checking modules...\n"; \
     \
     printf "Finished installing modules...\n";
 
@@ -444,16 +447,18 @@ RUN printf "Updading HTTPd configuration...\n"; \
 >" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "\n# Generate certificates...\n"; \
+    printf "\n# Generating certificates...\n"; \
     make-ssl-cert generate-default-snakeoil --force-overwrite; \
+    printf "\n# Done generating certificates...\n"; \
     \
-    printf "\n# Enable/Disable vhosts...\n"; \
+    printf "\n# Enabling/disabling vhosts...\n"; \
     a2dissite 000-default; \
     a2ensite ${app_httpd_vhost_id}-http.conf ${app_httpd_vhost_id}-https.conf; \
+    printf "\n# Done enabling/disabling vhosts...\n"; \
     \
-    printf "\n# Test configuration...\n"; \
-    $(which apache2ctl) configtest; \
-    printf "Done testing...\n"; \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which apache2ctl):"; $(which apache2ctl) -V; $(which apache2ctl) configtest; $(which apache2ctl) -S; \
+    printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
 

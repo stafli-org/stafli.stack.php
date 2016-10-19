@@ -216,6 +216,8 @@ RUN printf "Start installing extensions...\n" && \
     echo "extension=xhprof.so" > /etc/php.d/70-xhprof.ini && \
     rm -rf /tmp/pear && \
     \
+    printf "Done building extensions...\n" && \
+    \
     printf "Enabling/disabling extensions...\n" && \
     # Core extensions \
     echo "php5dismod -f ${app_php_exts_core_dis}" && \
@@ -223,6 +225,11 @@ RUN printf "Start installing extensions...\n" && \
     # Extra extensions \
     echo "php5dismod -f ${app_php_exts_extra_dis}" && \
     echo "php5enmod -f ${app_php_exts_extra_en}" && \
+    printf "Done enabling/disabling extensions...\n" && \
+    \
+    printf "\n# Checking extensions...\n"; \
+    $(which php) -m; \
+    printf "Done checking extensions...\n"; \
     \
     printf "Finished installing extensions...\n";
 
@@ -438,9 +445,12 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     perl -0p -i -e "s>; Proxy variables\n>; Proxy variables\nenv\[http_proxy\] = \\\$http_proxy\n>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "\n# Test configuration...\n"; \
-    $(which php-fpm) --test; \
-    printf "Done testing...\n"; \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which ab):"; $(which ab) -V; \
+    echo "Testing $(which mysql):"; $(which mysql) -V; \
+    echo "Testing $(which php):"; $(which php) -v; $(which php) --ini; \
+    echo "Testing $(which php-fpm):"; $(which php-fpm) -v; $(which php-fpm) --test; \
+    printf "Done testing configuration...\n"; \
     \
     printf "Finished updading PHP and PHP-FPM configuration...\n";
 

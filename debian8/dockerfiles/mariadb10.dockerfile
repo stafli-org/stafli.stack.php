@@ -143,5 +143,10 @@ RUN printf "Updading MariaDB configuration...\n"; \
     perl -0p -i -e "s>.*collation-server      = .*>collation-server      = utf8_general_ci>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which mysql):"; $(which mysql) -V; \
+    echo "Testing $(which mysqld):"; $(which mysqld) -V; \
+    printf "Done testing configuration...\n"; \
+    \
     printf "Finished updading MariaDB configuration...\n";
 

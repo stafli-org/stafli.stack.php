@@ -138,5 +138,10 @@ RUN printf "Updading Redis configuration...\n"; \
     perl -0p -i -e "s># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>\nmaxmemory ${app_redis_limit_memory}>" ${file}; \
     printf "Done patching ${file}...\n"; \
     \
+    printf "\n# Testing configuration...\n"; \
+    echo "Testing $(which redis-cli):"; $(which redis-cli) -v; \
+    echo "Testing $(which redis-server):"; $(which redis-server) -v; \
+    printf "Done testing configuration...\n"; \
+    \
     printf "Finished updading Redis configuration...\n";
 
