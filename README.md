@@ -23,11 +23,11 @@ The services use custom images as a starting point:
 ## Services
 These are the services described by the dockerfile and dockercompose files:
 - Memcached 1.4.x, adds Memcached on top of upstream Standard service
-- Redis 3.0.x, adds Redis on top of upstream Standard service
-- MySQL 5.5.x/5.6.x/MariaDB 10.x, adds MySQL/MariaDB on top of upstream Standard service
+- Redis 3.2.x, adds Redis on top of upstream Standard service
+- MariaDB 10.x, adds MariaDB on top of upstream Standard service
 - PHP 5.6.x, adds PHP on top of upstream Devel service
-- HTTPd 2.x.x Web, adds HTTPd on top of upstream Devel service
-- HTTPd 2.x.x Proxy, adds HTTPd on top of upstream Standard service
+- HTTPd 2.2.x/2.4.x Web, adds HTTPd on top of upstream Standard/Devel service
+- HTTPd 2.2.x/2.4.x Proxy, adds HTTPd on top of upstream Standard service
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/solict/high-performance-php-stack/tags/) upon building:
@@ -36,16 +36,16 @@ These are the [resulting images](https://hub.docker.com/r/solict/high-performanc
   - solict/high-performance-php-stack:debian7_memcached14
   - solict/high-performance-php-stack:centos7_memcached14
   - solict/high-performance-php-stack:centos6_memcached14
-- Redis 3.0.x service:
-  - solict/high-performance-php-stack:debian8_redis30
-  - solict/high-performance-php-stack:debian7_redis30
-  - solict/high-performance-php-stack:centos7_redis30
-  - solict/high-performance-php-stack:centos6_redis30
-- MySQL 5.5.x/5.6.x/MariaDB 10.x service:
-  - solict/high-performance-php-stack:debian8_mysql56
-  - solict/high-performance-php-stack:debian7_mysql56
-  - solict/high-performance-php-stack:centos7_mysql55
-  - solict/high-performance-php-stack:centos6_mysql55
+- Redis 3.2.x service:
+  - solict/high-performance-php-stack:debian8_redis32
+  - solict/high-performance-php-stack:debian7_redis32
+  - solict/high-performance-php-stack:centos7_redis32
+  - solict/high-performance-php-stack:centos6_redis32
+- MariaDB 10.x service:
+  - solict/high-performance-php-stack:debian8_mariadb10
+  - solict/high-performance-php-stack:debian7_mariadb10
+  - solict/high-performance-php-stack:centos7_mariadb10
+  - solict/high-performance-php-stack:centos6_mariadb10
 - PHP 5.6.x service:
   - solict/high-performance-php-stack:debian8_php56
   - solict/high-performance-php-stack:debian7_php56
@@ -69,16 +69,16 @@ These containers can be created from the images:
   - debian7_memcached14_xxx
   - centos7_memcached14_xxx
   - centos6_memcached14_xxx
-- Redis 3.0.x service:
-  - debian8_redis30_xxx
-  - debian7_redis30_xxx
-  - centos7_redis30_xxx
-  - centos6_redis30_xxx
-- MySQL 5.5.x/5.6.x/MariaDB 10.x service:
-  - debian8_mysql56_xxx
-  - debian7_mysql56_xxx
-  - centos7_mysql55_xxx
-  - centos6_mysql55_xxx
+- Redis 3.2.x service:
+  - debian8_redis32_xxx
+  - debian7_redis32_xxx
+  - centos7_redis32_xxx
+  - centos6_redis32_xxx
+- MariaDB 10.x service:
+  - debian8_mariadb10_xxx
+  - debian7_mariadb10_xxx
+  - centos7_mariadb10_xxx
+  - centos6_mariadb10_xxx
 - PHP 5.6.x service:
   - debian8_php56_xxx
   - debian7_php56_xxx
@@ -111,8 +111,8 @@ Where <image_url> is the full image url (lookup the image list above).
 Example:
 ```
 docker pull solict/high-performance-php-stack:debian8_memcached14
-docker pull solict/high-performance-php-stack:debian8_redis30
-docker pull solict/high-performance-php-stack:debian8_mysql56
+docker pull solict/high-performance-php-stack:debian8_redis32
+docker pull solict/high-performance-php-stack:debian8_mariadb10
 docker pull solict/high-performance-php-stack:debian8_php56
 docker pull solict/high-performance-php-stack:debian8_httpd24_web
 docker pull solict/high-performance-php-stack:debian8_httpd24_proxy

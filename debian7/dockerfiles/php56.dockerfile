@@ -65,8 +65,8 @@ ARG app_fpm_pool_pm_max_requests="5000"
 #  - N/A: for Dotdeb
 # Install the Utilities and Clients packages
 # - apache2-utils: for ab and others, the HTTPd utilities
-# - mariadb-client: for mysql, the MySQL client
-# - mytop: for mytop, the MySQL monitoring tool
+# - mariadb-client: for mysql, the MariaDB client
+# - mytop: for mytop, the MariaDB monitoring tool
 # - redis-tools: for redis-cli, the Redis client
 # Install the PHP packages
 # - php5-common: the PHP common libraries and files
@@ -79,7 +79,7 @@ ARG app_fpm_pool_pm_max_requests="5000"
 # - php5-gd: the PHP GD extension
 # - php5-imap: the PHP IMAP extension
 # - php5-ldap: the PHP LDAP extension
-# - php5-mysqlnd: the PHP MySQL Native Driver extension
+# - php5-mysqlnd: the PHP MariaDB Native Driver extension
 # - php5-odbc: the PHP ODBC extension
 # - libyaml-dev: the YAML library - development files
 # - libmemcached-dev: the Memcached library - development files
@@ -273,7 +273,7 @@ RUN printf "Updading Supervisor configuration...\n"; \
     # /etc/supervisor/conf.d/phpfpm.conf \
     file="/etc/supervisor/conf.d/phpfpm.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# phpfpm\n\
+    printf "# PHP-FPM\n\
 [program:phpfpm]\n\
 command=/bin/bash -c \"\$(which php5-fpm) -y /etc/php5/fpm/php-fpm.conf -c /etc/php5/fpm/php.ini --nodaemonize\"\n\
 autostart=false\n\

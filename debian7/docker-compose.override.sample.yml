@@ -37,7 +37,7 @@ services:
       - "10022"
       - "11211"
 
-  redis30:
+  redis32:
     build:
       args:
         app_redis_listen_port: "6379"
@@ -49,10 +49,10 @@ services:
       - "10022"
       - "6379"
 
-  mysql56:
+  mariadb10:
     build:
       args:
-        app_mysql_listen_port: "3306"
+        app_mariadb_listen_port: "3306"
     ports:
       - "10022"
       - "3306"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 6 (centos6) Redis30 service (shell script)
+#    CentOS 6 (centos6) Redis32 service (shell script)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker General Purpose System Distro.
 #
@@ -27,7 +27,7 @@ alias RUN='';
 shopt -s expand_aliases;
 
 # Load dockerfile
-source "$(dirname $(readlink -f $0))/../dockerfiles/redis30.dockerfile";
+source "$(dirname $(readlink -f $0))/../dockerfiles/redis32.dockerfile";
 
 #
 # Configuration

@@ -317,7 +317,7 @@ RUN printf "Updading Supervisor configuration...\n"; \
     # /etc/supervisord.conf \
     file="/etc/supervisord.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# httpd\n\
+    printf "# HTTPd\n\
 [program:httpd]\n\
 command=/bin/bash -c \"\$(which apachectl) -d /etc/httpd -f /etc/httpd/conf/httpd.conf -D FOREGROUND\"\n\
 autostart=true\n\

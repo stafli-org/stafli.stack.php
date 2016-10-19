@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 6 (centos6) MySQL51 service (shell script)
+#    CentOS 6 (centos6) MariaDB10 service (shell script)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker General Purpose System Distro.
 #
@@ -27,7 +27,7 @@ alias RUN='';
 shopt -s expand_aliases;
 
 # Load dockerfile
-source "$(dirname $(readlink -f $0))/../dockerfiles/mysql51.dockerfile";
+source "$(dirname $(readlink -f $0))/../dockerfiles/MariaDB10.dockerfile";
 
 #
 # Configuration

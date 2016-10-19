@@ -67,10 +67,10 @@ services:
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisord.conf --nodaemon"
 
-  redis30:
+  redis32:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - Redis 3.0.x service"
+      - "org.label-schema.name=$PROJECT_NAME - Redis 3.2.x service"
       - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
       - "org.label-schema.vendor=$PROJECT_VENDOR"
       - "org.label-schema.url=$PROJECT_URL"
@@ -82,10 +82,10 @@ services:
       - "architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:centos7_redis30"
+    image: "solict/high-performance-php-stack:centos7_redis32"
     build:
       context: "./dockerfiles"
-      dockerfile: "redis30.dockerfile"
+      dockerfile: "redis32.dockerfile"
       args:
         app_redis_user: "redis"
         app_redis_group: "redis"
@@ -108,10 +108,10 @@ services:
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisord.conf --nodaemon"
 
-  mysql55:
+  mariadb10:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - MySQL 5.5.x service"
+      - "org.label-schema.name=$PROJECT_NAME - MariaDB 10.x service"
       - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
       - "org.label-schema.vendor=$PROJECT_VENDOR"
       - "org.label-schema.url=$PROJECT_URL"
@@ -123,16 +123,16 @@ services:
       - "architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:centos7_mysql55"
+    image: "solict/high-performance-php-stack:centos7_mariadb10"
     build:
       context: "./dockerfiles"
-      dockerfile: "mysql55.dockerfile"
+      dockerfile: "mariadb10.dockerfile"
       args:
-        app_mysql_user: "mysql"
-        app_mysql_group: "mysql"
-        app_mysql_home: "/var/lib/mysql"
-        app_mysql_listen_addr: "0.0.0.0"
-        app_mysql_listen_port: "3306"
+        app_mariadb_user: "mysql"
+        app_mariadb_group: "mysql"
+        app_mariadb_home: "/var/lib/mysql"
+        app_mariadb_listen_addr: "0.0.0.0"
+        app_mariadb_listen_port: "3306"
     logging:
       driver: "json-file"
     networks:
@@ -195,12 +195,12 @@ services:
         app_fpm_pool_pm_max_requests: "5000"
     depends_on:
       - memcached14
-      - redis30
-      - mysql55
+      - redis32
+      - mariadb10
     links:
       - memcached14
-      - redis30
-      - mysql55
+      - redis32
+      - mariadb10
     logging:
       driver: "json-file"
     networks:

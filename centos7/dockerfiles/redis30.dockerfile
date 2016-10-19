@@ -1,6 +1,6 @@
 
 #
-#    CentOS 7 (centos7) Redis30 service (dockerfile)
+#    CentOS 7 (centos7) Redis32 service (dockerfile)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker High Performance PHP Stack.
 #
@@ -99,7 +99,7 @@ RUN printf "Updading Supervisor configuration...\n"; \
     # /etc/supervisord.d/redis.conf \
     file="/etc/supervisord.d/redis.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# redis\n\
+    printf "# Redis\n\
 [program:redis]\n\
 command=/bin/bash -c \"\$(which redis-server) /etc/redis.conf --daemonize no\"\n\
 autostart=false\n\

@@ -158,7 +158,7 @@ RUN printf "Updading Supervisor configuration...\n"; \
     # /etc/supervisor/conf.d/httpd.conf \
     file="/etc/supervisor/conf.d/httpd.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# httpd\n\
+    printf "# HTTPd\n\
 [program:httpd]\n\
 command=/bin/bash -c \"\$(which apache2ctl) -d /etc/apache2 -f /etc/apache2/apache2.conf -D FOREGROUND\"\n\
 autostart=false\n\

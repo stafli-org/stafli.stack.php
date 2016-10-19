@@ -65,8 +65,8 @@ ARG app_fpm_pool_pm_max_requests="5000"
 #  - N/A: for MariaDB
 # Install the Utilities and Clients packages
 # - httpd-tools: for ab and others, the HTTPd utilities
-# - MariaDB-client: for mysql, the MySQL client
-# - mytop: for mytop, the MySQL monitoring tool
+# - MariaDB-client: for mysql, the MariaDB client
+# - mytop: for mytop, the MariaDB monitoring tool
 # Install the PHP packages
 # - php-common: the PHP common libraries and files
 # - php-devel: the PHP development libraries and files
@@ -81,7 +81,7 @@ ARG app_fpm_pool_pm_max_requests="5000"
 # - php-soap: the PHP SOAP extension
 # - php-ldap: the PHP LDAP extension
 # - php-pdo: the PHP PDO extension
-# - php-mysqlnd: the PHP MySQL Native Driver extension
+# - php-mysqlnd: the PHP MariaDB Native Driver extension
 # - php-odbc: the PHP ODBC extension
 # - libyaml-devel: the YAML library - development files
 # - libmemcached-devel: the Memcached library - development files
@@ -283,7 +283,7 @@ RUN printf "Updading Supervisor configuration...\n"; \
     # /etc/supervisord.conf \
     file="/etc/supervisord.conf"; \
     printf "\n# Applying configuration for ${file}...\n"; \
-    printf "# phpfpm\n\
+    printf "# PHP-FPM\n\
 [program:phpfpm]\n\
 command=/bin/bash -c \"\$(which php-fpm) -y /etc/php-fpm.conf -c /etc/php-fpm.ini --nodaemonize\"\n\
 autostart=true\n\

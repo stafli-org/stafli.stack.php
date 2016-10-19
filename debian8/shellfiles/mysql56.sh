@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 8 (jessie) MySQL56 (MariaDB10) service (shell script)
+#    Debian 8 (jessie) MariaDB10 service (shell script)
 #    Copyright (C) 2016 SOL-ICT
 #    This file is part of the Docker General Purpose System Distro.
 #
@@ -27,7 +27,7 @@ alias RUN='';
 shopt -s expand_aliases;
 
 # Load dockerfile
-source "$(dirname $(readlink -f $0))/../dockerfiles/mysql56.dockerfile";
+source "$(dirname $(readlink -f $0))/../dockerfiles/mariadb10.dockerfile";
 
 #
 # Configuration
