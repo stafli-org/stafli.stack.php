@@ -120,7 +120,7 @@ local1.debug  /var/log/memcached.log\n\
 \n" > ${file}; \
     printf "Done patching ${file}...\n"; \
     \
-    printf "Finished Updading Rsyslog configuration...\n";
+    printf "Finished updading Rsyslog configuration...\n";
 
 # Logrotate
 RUN printf "Updading Logrotate configuration...\n"; \
