@@ -395,7 +395,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # listen as user/group \
     perl -0p -i -e "s>;listen.owner = .*\n;listen.group = .*\n;listen.mode = .*>listen.owner = ${app_fpm_pool_user}\nlisten.group = ${app_fpm_pool_group}\nlisten.mode = 0660>" ${file}; \
     # change logging \
-    printf "\n; Error log path\nphp_admin_value[error_log] = ${app_fpm_pool_home}/log/${app_fpm_pool_id}.error.log\n" >> ${file}; \
+    printf "\n; Error log path\nphp_value[error_log] = ${app_fpm_pool_home}/log/${app_fpm_pool_id}.error.log\n" >> ${file}; \
     perl -0p -i -e "s>; Default: not set\n;access.log = .*>; Default: not set\naccess.log = log/\\\$pool.access.log>" ${file}; \
     perl -0p -i -e "s>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = .*>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = log/\\\$pool.slow.log>" ${file}; \
     # change status \
@@ -428,10 +428,10 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     # change allowed extensions \
     perl -0p -i -e "s>; Default Value: .php\n;security.limit_extensions = .*>; Default Value: .php\nsecurity.limit_extensions = .php>" ${file}; \
     # change temporary files \
-    printf "\n; Temporary files path\nphp_admin_value[upload_tmp_dir] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
+    printf "\n; Temporary files path\nphp_value[upload_tmp_dir] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
     # change session \
-    printf "\n; Session handler\nphp_admin_value[session.save_handler] = files\n" >> ${file}; \
-    printf "\n; Session path\nphp_admin_value[session.save_path] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
+    printf "\n; Session handler\nphp_value[session.save_handler] = files\n" >> ${file}; \
+    printf "\n; Session path\nphp_value[session.save_path] = ${app_fpm_pool_home}/tmp\n" >> ${file}; \
     # change environment \
     perl -0p -i -e "s>; Default Value: clean env>; Default Value: clean env\n\n; Main variables>" ${file}; \
     perl -0p -i -e "s>;env\[HOSTNAME\] = .*>env\[HOSTNAME\] = \\\$HOSTNAME>" ${file}; \
