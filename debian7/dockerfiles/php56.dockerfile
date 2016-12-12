@@ -220,6 +220,29 @@ RUN printf "Start installing extensions...\n" && \
     printf "Finished installing extensions...\n";
 
 #
+# PHP tools
+#
+
+# Install PHP tools
+# - Composer
+# - Drush
+RUN printf "Start installing tools...\n" && \
+    \
+    printf "Installing composer...\n" && \
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php -r "if (hash_file('SHA384', 'composer-setup.php') === 'aa96f26c2b67226a324c27919f1eb05f21c248b987e6195cad9690d5c1ff713d53020a02ac8c217dbf90a7eacc9d141d') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    php -r "unlink('composer-setup.php');" && \
+    \
+    printf "Installing drush...\n" && \
+    php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /usr/local/bin/drush && \
+    chmod +x /usr/local/bin/drush && \
+    drush @none dl registry_rebuild-7.x && \
+    drush cc drush && \
+    \
+    printf "Finished installing tools...\n";
+
+#
 # Configuration
 #
 
@@ -440,6 +463,8 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n"; \
     echo "Testing $(which redis-cli):"; $(which redis-cli) -v; \
     echo "Testing $(which php):"; $(which php) -v; $(which php) --ini; \
     echo "Testing $(which php5-fpm):"; $(which php5-fpm) -v; $(which php5-fpm) --test; \
+    echo "Testing $(which composer):"; $(which composer) --version; \
+    echo "Testing $(which drush):"; $(which drush) core-status; \
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading PHP and PHP-FPM configuration...\n";
