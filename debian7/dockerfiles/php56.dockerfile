@@ -133,33 +133,33 @@ deb http://packages.dotdeb.org wheezy-php56 all\n\
 RUN printf "Start installing extensions...\n" && \
     \
     printf "Building the Binary API (deb: N/A) extension...\n" && \
-    pecl install igbinary-1.2.1 && \
+    $(which pecl) install igbinary-1.2.1 && \
     echo "extension=igbinary.so" > /etc/php5/mods-available/igbinary.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the MessagePack (deb: php5-msgpack) extension...\n" && \
-    pecl install msgpack-0.5.7 && \
+    $(which pecl) install msgpack-0.5.7 && \
     echo "extension=msgpack.so" > /etc/php5/mods-available/msgpack.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the YAML (deb: N/A) extension...\n" && \
-    pecl install yaml-1.2.0 && \
+    $(which pecl) install yaml-1.2.0 && \
     echo "extension=yaml.so" > /etc/php5/mods-available/yaml.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the Solr (deb: N/A) extension...\n" && \
-    pecl install solr-2.4.0 && \
+    $(which pecl) install solr-2.4.0 && \
     echo "extension=solr.so" > /etc/php5/mods-available/solr.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the MongoDB (deb: php5-mongo) extension...\n" && \
-    pecl install mongodb-1.1.6 && \
+    $(which pecl) install mongodb-1.1.6 && \
     echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the Memcache (deb: php5-memcache) extension...\n" && \
-    pecl install memcache-2.2.7 && \
-    pecl install memcache-3.0.8 && \
+    $(which pecl) install memcache-2.2.7 && \
+    $(which pecl) install memcache-3.0.8 && \
     echo "extension=memcache.so" > /etc/php5/mods-available/memcache.ini && \
     rm -rf /tmp/pear && \
     \
@@ -173,7 +173,7 @@ RUN printf "Start installing extensions...\n" && \
   <configureoption name=\"enable-memcached-msgpack\" default=\"yes\" prompt=\"Enable msgpack\"/\>\n\
   <configureoption name=\"enable-memcached-protocol\" default=\"no\" prompt=\"Enable protocol\"/\>\
 >" package.xml && \
-      pecl install package.xml && \
+      $(which pecl) install package.xml && \
       echo -e "extension=memcached.so\n\n$(cat memcached.ini)" > /etc/php5/mods-available/memcached.ini && \
       cd .. && rm -Rf php-memcached-2.2.0 \
     ) && \
@@ -186,19 +186,19 @@ RUN printf "Start installing extensions...\n" && \
       perl -0p -i -e "s><extsrcrelease/\>><extsrcrelease\>\n\
   <configureoption name=\"enable-redis-igbinary\" default=\"yes\" prompt=\"Enable igbinary\"/\>\n\
  </extsrcrelease\>>" package.xml && \
-      pecl install package.xml && \
+      $(which pecl) install package.xml && \
       cd .. && rm -Rf phpredis-2.2.7 \
     ) && \
     echo "extension=redis.so" > /etc/php5/mods-available/redis.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the Xdebug (deb: php5-xdebug) extension...\n" && \
-    pecl install xdebug-2.4.0 && \
+    $(which pecl) install xdebug-2.4.0 && \
     echo "zend_extension=xdebug.so" > /etc/php5/mods-available/xdebug.ini && \
     rm -rf /tmp/pear && \
     \
     printf "Building the XHProf (deb: php5-xhprof) extension...\n" && \
-    pecl install xhprof-0.9.4 && \
+    $(which pecl) install xhprof-0.9.4 && \
     echo "extension=xhprof.so" > /etc/php5/mods-available/xhprof.ini && \
     rm -rf /tmp/pear && \
     \
@@ -206,11 +206,11 @@ RUN printf "Start installing extensions...\n" && \
     \
     printf "Enabling/disabling extensions...\n" && \
     # Core extensions \
-    php5dismod -f ${app_php_exts_core_dis} && \
-    php5enmod -f ${app_php_exts_core_en} && \
+    $(which php5dismod) -f ${app_php_exts_core_dis} && \
+    $(which php5enmod) -f ${app_php_exts_core_en} && \
     # Extra extensions \
-    php5dismod -f ${app_php_exts_extra_dis} && \
-    php5enmod -f ${app_php_exts_extra_en} && \
+    $(which php5dismod) -f ${app_php_exts_extra_dis} && \
+    $(which php5enmod) -f ${app_php_exts_extra_en} && \
     printf "Done enabling/disabling extensions...\n" && \
     \
     printf "\n# Checking extensions...\n"; \
@@ -229,16 +229,17 @@ RUN printf "Start installing extensions...\n" && \
 RUN printf "Start installing tools...\n" && \
     \
     printf "Installing composer...\n" && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('SHA384', 'composer-setup.php') === 'aa96f26c2b67226a324c27919f1eb05f21c248b987e6195cad9690d5c1ff713d53020a02ac8c217dbf90a7eacc9d141d') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');" && \
+    $(which php) -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    $(which php) -r "if (hash_file('SHA384', 'composer-setup.php') === 'aa96f26c2b67226a324c27919f1eb05f21c248b987e6195cad9690d5c1ff713d53020a02ac8c217dbf90a7eacc9d141d') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    $(which php) composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    $(which php) -r "unlink('composer-setup.php');" && \
     \
     printf "Installing drush...\n" && \
-    php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /usr/local/bin/drush && \
+    $(which php) -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /usr/local/bin/drush && \
     chmod +x /usr/local/bin/drush && \
-    drush @none dl registry_rebuild-7.x && \
-    drush cc drush && \
+    $(which drush) core-init --add-path -y && \
+    $(which drush) @none dl registry_rebuild-7.x && \
+    $(which drush) cc drush && \
     \
     printf "Finished installing tools...\n";
 

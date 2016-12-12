@@ -86,11 +86,11 @@ RUN printf "Start installing modules...\n" && \
     \
     printf "Enabling/disabling modules...\n" && \
     # Core modules \
-    a2dismod -f ${app_httpd_global_mods_core_dis} && \
-    a2enmod -f ${app_httpd_global_mods_core_en} && \
+    $(which a2dismod) -f ${app_httpd_global_mods_core_dis} && \
+    $(which a2enmod) -f ${app_httpd_global_mods_core_en} && \
     # Extra modules \
-    a2dismod -f ${app_httpd_global_mods_extra_dis} && \
-    a2enmod -f ${app_httpd_global_mods_extra_en} && \
+    $(which a2dismod) -f ${app_httpd_global_mods_extra_dis} && \
+    $(which a2enmod) -f ${app_httpd_global_mods_extra_en} && \
     printf "Done enabling/disabling modules...\n"; \
     \
     printf "\n# Checking modules...\n"; \
