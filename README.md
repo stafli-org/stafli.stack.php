@@ -5,7 +5,7 @@ Continues on [Docker General Purpose System Distro](https://github.com/solict/do
 Requires [Docker Compose](https://docs.docker.com/compose/) 1.6.x or higher due to the [version 2](https://docs.docker.com/compose/compose-file/#versioning) format of the docker-compose.yml files.
 
 There are docker-compose.yml files per distribution, as well as docker-compose.override.yml and .env files, which may be used to override configuration.
-An optional Makefile [Makefile](../../tree/master/Makefile) is provided to help with loading these with ease and perform commands in batch.
+An optional [Makefile](../../tree/master/Makefile) is provided to help with loading these with ease and perform commands in batch.
 
 Scripts are also provided for each distribution to help test and deploy the installation procedures in non-Docker environments.
 
@@ -99,7 +99,7 @@ These containers can be created from the images:
 
 ### From Docker Hub repository (manual)
 
-Note: this method will not allow you to use the docker-compose files nor the script.
+Note: this method will not allow you to use the docker-compose files nor the Makefile.
 
 1. To pull the images, try typing:  
 `docker pull <image_url>`
@@ -122,6 +122,8 @@ docker run -ti solict/high-performance-php-stack:debian8_memcached14 /bin/bash
 
 ### From GitHub repository (automated)
 
+Note: this method allows using docker-compose and the Makefile.
+
 1. Download the repository [zip file](https://github.com/solict/docker-high-performance-php-stack/archive/master.zip) and unpack it or clone the repository using:  
 `git clone https://github.com/solict/docker-high-performance-php-stack.git`
 2. Navigate to the project directory through the terminal:  
@@ -133,17 +135,26 @@ Where <distro> is the distribution/directory and <operation> is the desired dock
 
 Example:
 ```
-git clone https://github.com/solict/docker-high-performance-php-stack.git
-cd docker-high-performance-php-stack
-make build DISTRO=debian8
-make netup DISTRO=debian8
-make create DISTRO=debian8
-make start DISTRO=debian8
-make ps DISTRO=debian8
-make stop DISTRO=debian8
-make rm DISTRO=debian8
-make netdown DISTRO=debian8
+git clone https://github.com/solict/docker-high-performance-php-stack.git;
+cd docker-high-performance-php-stack;
+
+# Example #1: quick start, with build
+make up DISTRO=debian8;
+
+# Example #2: quick start, with pull
+make img-pull DISTRO=debian8;
+make up DISTRO=debian8;
+
+# Example #3: manual steps, with build
+make img-build DISTRO=debian8;
+make net-create DISTRO=debian8;
+make vol-create DISTRO=debian8;
+make con-create DISTRO=debian8;
+make con-start DISTRO=debian8;
+make con-ls DISTRO=debian8;
 ```
+
+Type `make` in the terminal to discover all the possible commands.
 
 ## Credits
 Docker High Performance PHP Stack  
