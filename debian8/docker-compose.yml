@@ -61,6 +61,8 @@ services:
       driver: "json-file"
     networks:
       - backend
+    volumes:
+      - memcached14_data:/var/lib/memcached
     ports:
       - "22"
       - "11211"
@@ -102,6 +104,8 @@ services:
       driver: "json-file"
     networks:
       - backend
+    volumes:
+      - redis32_data:/var/lib/redis
     ports:
       - "22"
       - "6379"
@@ -137,6 +141,8 @@ services:
       driver: "json-file"
     networks:
       - backend
+    volumes:
+      - mariadb10_data:/var/lib/mysql
     ports:
       - "22"
       - "3306"
@@ -206,6 +212,8 @@ services:
     networks:
       - application
       - backend
+    volumes:
+      - web_data:/var/www
     ports:
       - "22"
       - "9000"
@@ -266,6 +274,8 @@ services:
     networks:
       - frontend
       - application
+    volumes:
+      - web_data:/var/www
     ports:
       - "22"
       - "80"
@@ -345,4 +355,17 @@ networks:
     driver: "bridge"
   backend:
     driver: "bridge"
+
+#
+# Volumes
+#
+volumes:
+  memcached14_data:
+    driver: "local"
+  redis32_data:
+    driver: "local"
+  mariadb10_data:
+    driver: "local"
+  web_data:
+    driver: "local"
 
