@@ -1,9 +1,8 @@
 #!/bin/bash
 #
-#    Debian 8 (wheezy) PHP Stack (envfile)
-#    Copyright (C) 2016-2017 Stafli
-#    Luís Pedro Algarvio
-#    This file is part of the Stafli Application Stack.
+#    Debian 7 (wheezy) HTTPD24-proxy service (shell script)
+#    Copyright (C) 2016 SOL-ICT
+#    This file is part of the Docker General Purpose System Distro.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,11 +18,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Load project settings
-source $(dirname "${BASH_SOURCE[0]}")/../.env;
+# Workaround for docker commands
+alias FROM="#";
+alias MAINTAINER="#";
+alias ENV='export';
+alias ARG='export';
+alias RUN='';
+shopt -s expand_aliases;
 
-# Distro settings
-OS_ID="debian";
-OS_VERSION_ID="8";
+# Load dockerfile
+source "$(dirname $(readlink -f $0))/../dockerfiles/httpd24_proxy.dockerfile";
 
-# add variables as needed
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable apache2.service;
+
+# Start daemon
+systemctl restart apache2.service;
+

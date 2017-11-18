@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 8 (wheezy) PHP Stack (envfile)
+#    CentOS 7 (centos7) Memcached14 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.
@@ -19,11 +19,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Load project settings
-source $(dirname "${BASH_SOURCE[0]}")/../.env;
+# Workaround for docker commands
+alias FROM="#";
+alias MAINTAINER="#";
+alias ENV='export';
+alias ARG='export';
+alias RUN='';
+shopt -s expand_aliases;
 
-# Distro settings
-OS_ID="debian";
-OS_VERSION_ID="8";
+# Load dockerfile
+source "$(dirname $(readlink -f $0))/../dockerfiles/memcached14_cache.dockerfile";
 
-# add variables as needed
+#
+# Configuration
+#
+
+# Enable daemon
+systemctl enable memcached.service;
+
+# Start daemon
+systemctl restart memcached.service;
+

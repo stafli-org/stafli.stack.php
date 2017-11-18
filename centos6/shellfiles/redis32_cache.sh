@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 8 (wheezy) PHP Stack (envfile)
+#    CentOS 6 (centos6) Redis32 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.
@@ -19,11 +19,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Load project settings
-source $(dirname "${BASH_SOURCE[0]}")/../.env;
+# Workaround for docker commands
+alias FROM="#";
+alias MAINTAINER="#";
+alias ENV='export';
+alias ARG='export';
+alias RUN='';
+shopt -s expand_aliases;
 
-# Distro settings
-OS_ID="debian";
-OS_VERSION_ID="8";
+# Load dockerfile
+source "$(dirname $(readlink -f $0))/../dockerfiles/redis32_cache.dockerfile";
 
-# add variables as needed
+#
+# Configuration
+#
+
+# Enable daemon
+chkconfig redis on;
+
+# Start daemon
+service redis restart;
+

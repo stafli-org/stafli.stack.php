@@ -1,8 +1,9 @@
 ---
 #
-#    Debian 8 (jessie) docker-compose.yml
-#    Copyright (C) 2016 SOL-ICT
-#    This file is part of the Docker High Performance PHP Stack.
+#    Debian 8 (jessie) PHP Stack (docker-compose.yml)
+#    Copyright (C) 2016-2017 Stafli
+#    Luís Pedro Algarvio
+#    This file is part of the Stafli Application Stack.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,25 +27,37 @@ version: '2'
 #
 services:
 
-  memcached14:
+  memcached14_cache:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - Memcached 1.4.x service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_memcached14"
+    image: "stafli/stafli.php.stack:debian8_memcached14_cache"
     build:
       context: "./dockerfiles"
-      dockerfile: "memcached14.dockerfile"
+      dockerfile: "memcached14_cache.dockerfile"
       args:
         app_memcached_user: "memcache"
         app_memcached_group: "memcache"
@@ -62,32 +75,43 @@ services:
     networks:
       - backend
     volumes:
-      - memcached14_data:/var/lib/memcached
+      - memcached14_cache_data:/var/lib/memcached
     ports:
-      - "22"
       - "11211"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  redis32:
+  redis32_cache:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - Redis 3.2.x service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_redis32"
+    image: "stafli/stafli.php.stack:debian8_redis32_cache"
     build:
       context: "./dockerfiles"
-      dockerfile: "redis32.dockerfile"
+      dockerfile: "redis32_cache.dockerfile"
       args:
         app_redis_user: "redis"
         app_redis_group: "redis"
@@ -105,32 +129,43 @@ services:
     networks:
       - backend
     volumes:
-      - redis32_data:/var/lib/redis
+      - redis32_cache_data:/var/lib/redis
     ports:
-      - "22"
       - "6379"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  mariadb10:
+  mariadb10_rdbms:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - MariaDB 10.x service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_mariadb10"
+    image: "stafli/stafli.php.stack:debian8_mariadb10_rdbms"
     build:
       context: "./dockerfiles"
-      dockerfile: "mariadb10.dockerfile"
+      dockerfile: "mariadb10_rdbms.dockerfile"
       args:
         app_mariadb_user: "mysql"
         app_mariadb_group: "mysql"
@@ -142,32 +177,43 @@ services:
     networks:
       - backend
     volumes:
-      - mariadb10_data:/var/lib/mysql
+      - mariadb10_rdbms_data:/var/lib/mysql
     ports:
-      - "22"
       - "3306"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  php56:
+  php56_language:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - PHP 5.6.x service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Devel service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_php56"
+    image: "stafli/stafli.php.stack:debian8_php56_language"
     build:
       context: "./dockerfiles"
-      dockerfile: "php56.dockerfile"
+      dockerfile: "php56_language.dockerfile"
       args:
         app_php_exts_core_dis: "mysql"
         app_php_exts_core_en: "mcrypt curl gd imap ldap mysqli mysqlnd odbc pdo pdo_mysql pdo_odbc opcache"
@@ -200,13 +246,13 @@ services:
         app_fpm_pool_pm_process_idle_timeout: "10s"
         app_fpm_pool_pm_max_requests: "5000"
     depends_on:
-      - memcached14
-      - redis32
-      - mariadb10
+      - memcached14_cache
+      - redis32_cache
+      - mariadb10_rdbms
     links:
-      - memcached14
-      - redis32
-      - mariadb10
+      - memcached14_cache
+      - redis32_cache
+      - mariadb10_rdbms
     logging:
       driver: "json-file"
     networks:
@@ -215,7 +261,6 @@ services:
     volumes:
       - web_data:/var/www
     ports:
-      - "22"
       - "9000"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
@@ -223,22 +268,34 @@ services:
   httpd24_web:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - HTTPd 2.4.x Web service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_httpd24_web"
+    image: "stafli/stafli.php.stack:debian8_httpd24_web"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd24-web.dockerfile"
+      dockerfile: "httpd24_web.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "allowmethods asis auth_digest auth_form authn_anon authn_dbd authn_dbm authn_socache authnz_fcgi authnz_ldap authz_dbd authz_dbm authz_owner buffer cache cache_disk cache_socache cgi cgid charset_lite dav_fs dav dav_lock data dbd dialup dump_io echo ext_filter file_cache heartbeat heartmonitor ident include lbmethod_bybusyness lbmethod_byrequests lbmethod_bytraffic lbmethod_heartbeat ldap log_debug log_forensic lua mime_magic negotiation proxy_balancer proxy_connect proxy_express proxy_fdpass proxy_ftp proxy_html proxy_scgi proxy_wstunnel ratelimit reflector remoteip reqtimeout request sed session_crypto session_dbd slotmem_plain slotmem_shm socache_dbm socache_memcache speling substitute suexec unique_id userdir usertrack vhost_alias xml2enc"
         app_httpd_global_mods_core_en: "mpm_event macro alias dir autoindex mime setenvif env expires headers filter deflate rewrite actions authn_core authn_file authz_core authz_groupfile authz_host authz_user auth_basic access_compat session session_cookie socache_shmcb ssl proxy proxy_ajp proxy_fcgi proxy_http info status"
@@ -263,12 +320,12 @@ services:
         app_httpd_vhost_listen_port_https: "443"
         app_httpd_vhost_httpd_wlist: "ip 127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
         app_httpd_vhost_fpm_wlist: "ip 127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
-        app_httpd_vhost_fpm_addr: "debian8_php56_1"
+        app_httpd_vhost_fpm_addr: "debian8_php56_language_1"
         app_httpd_vhost_fpm_port: "9000"
     depends_on:
-      - php56
+      - php56_language
     links:
-      - php56
+      - php56_language
     logging:
       driver: "json-file"
     networks:
@@ -277,7 +334,6 @@ services:
     volumes:
       - web_data:/var/www
     ports:
-      - "22"
       - "80"
       - "443"
     working_dir: "/tmp"
@@ -286,22 +342,34 @@ services:
   httpd24_proxy:
     labels:
       - "org.label-schema.schema-version=1.0"
-      - "org.label-schema.name=$PROJECT_NAME - HTTPd 2.4.x Proxy service"
-      - "org.label-schema.description=Based on $PROJECT_FROM - Standard service"
-      - "org.label-schema.vendor=$PROJECT_VENDOR"
+      - "org.label-schema.name=$PROJECT_NAME"
+      - "name=$PROJECT_NAME"
+      - "org.label-schema.description=$PROJECT_DESCRIPTION"
+      - "org.label-schema.keywords=$PROJECT_KEYWORDS"
       - "org.label-schema.url=$PROJECT_URL"
+      - "org.label-schema.license=$PROJECT_LICENSE"
       - "license=$PROJECT_LICENSE"
-      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vendor-name=$PROJECT_VENDOR_NAME"
+      - "org.label-schema.vendor-email=$PROJECT_VENDOR_EMAIL"
+      - "org.label-schema.vendor-website=$PROJECT_VENDOR_WEBSITE"
+      - "maintainer=$PROJECT_AUTHORS_LPALGARVIO_NAME <$PROJECT_AUTHORS_LPALGARVIO_EMAIL>"
+      - "org.label-schema.authors.lpalgarvio.name=$PROJECT_AUTHORS_LPALGARVIO_NAME"
+      - "org.label-schema.authors.lpalgarvio.email=$PROJECT_AUTHORS_LPALGARVIO_EMAIL"
+      - "org.label-schema.authors.lpalgarvio.homepage=$PROJECT_AUTHORS_LPALGARVIO_HOMEPAGE"
+      - "org.label-schema.authors.lpalgarvio.role=$PROJECT_AUTHORS_LPALGARVIO_ROLE"
+      - "org.label-schema.registry-url=$REGISTRY_URL"
       - "org.label-schema.vcs-url=$VCS_URL"
-      - "os-id=$OS_ID"
-      - "os-version-id=$OS_VERSION_ID"
-      - "architecture=$BUILD_ARCH"
+      - "org.label-schema.vcs-ref=$VCS_REF"
+      - "org.label-schema.vcs-branch=$VCS_BRANCH"
+      - "org.label-schema.os-id=$OS_ID"
+      - "org.label-schema.os-version-id=$OS_VERSION_ID"
+      - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "solict/high-performance-php-stack:debian8_httpd24_proxy"
+    image: "stafli/stafli.php.stack:debian8_httpd24_proxy"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd24-proxy.dockerfile"
+      dockerfile: "httpd24_proxy.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "allowmethods asis auth_digest auth_form authn_anon authn_dbd authn_dbm authn_socache authnz_fcgi authnz_ldap authz_dbd authz_dbm authz_owner buffer cache cache_disk cache_socache cgi cgid charset_lite dav_fs dav dav_lock data dbd dialup dump_io echo ext_filter file_cache heartbeat heartmonitor ident include lbmethod_bybusyness lbmethod_byrequests lbmethod_bytraffic lbmethod_heartbeat ldap log_debug log_forensic lua mime_magic negotiation proxy_ajp proxy_balancer proxy_connect proxy_express proxy_fcgi proxy_fdpass proxy_ftp proxy_html proxy_scgi proxy_wstunnel ratelimit reflector remoteip reqtimeout request sed session_crypto session_dbd slotmem_plain slotmem_shm socache_dbm socache_memcache speling substitute suexec unique_id userdir usertrack vhost_alias xml2enc"
         app_httpd_global_mods_core_en: "mpm_event macro alias dir autoindex mime setenvif env expires headers filter deflate rewrite actions authn_core authn_file authz_core authz_groupfile authz_host authz_user auth_basic access_compat session session_cookie socache_shmcb ssl proxy proxy_http info status"
@@ -335,7 +403,6 @@ services:
       - proxy
       - frontend
     ports:
-      - "22"
       - "80"
       - "443"
     working_dir: "/tmp"
@@ -360,11 +427,11 @@ networks:
 # Volumes
 #
 volumes:
-  memcached14_data:
+  memcached14_cache_data:
     driver: "local"
-  redis32_data:
+  redis32_cache_data:
     driver: "local"
-  mariadb10_data:
+  mariadb10_rdbms_data:
     driver: "local"
   web_data:
     driver: "local"
