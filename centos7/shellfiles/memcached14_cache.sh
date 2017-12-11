@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 7 (centos7) Memcached14 Cache System (shellfile)
+#    CentOS 7 (centos7) PHP Stack - Memcached14 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

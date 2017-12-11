@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 7 (wheezy) MariaDB10 RDBMS (shellfile)
+#    Debian 7 (wheezy) PHP Stack - MariaDB10 RDBMS (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

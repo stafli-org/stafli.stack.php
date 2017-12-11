@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-#    Debian 7 (wheezy) HTTPD22-proxy service (shell script)
-#    Copyright (C) 2016 SOL-ICT
-#    This file is part of the Docker General Purpose System Distro.
+#    Debian 7 (wheezy) PHP Stack - HTTPd22 Proxy Server (shellfile)
+#    Copyright (C) 2016-2017 Stafli
+#    Luís Pedro Algarvio
+#    This file is part of the Stafli Application Stack.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

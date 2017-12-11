@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 7 (wheezy) Redis32 Cache System (shellfile)
+#    Debian 7 (wheezy) PHP Stack - Redis32 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

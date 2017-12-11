@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 8 (jessie) HTTPd24 Web Server (shellfile)
+#    Debian 8 (jessie) PHP Stack - HTTPd24 Web Server (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

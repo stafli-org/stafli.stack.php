@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) Redis32 Cache System (dockerfile)
+#    Debian 8 (jessie) PHP Stack - Redis32 Cache System (dockerfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

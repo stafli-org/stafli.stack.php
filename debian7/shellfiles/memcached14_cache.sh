@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Debian 7 (wheezy) Memcached14 Cache System (shellfile)
+#    Debian 7 (wheezy) PHP Stack - Memcached14 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

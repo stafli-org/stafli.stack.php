@@ -1,6 +1,6 @@
 
 #
-#    Debian 7 (wheezy) HTTPd22 Web Server (dockerfile)
+#    Debian 7 (wheezy) PHP Stack - HTTPd22 Web Server (dockerfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

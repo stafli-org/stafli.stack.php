@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) HTTPd24 Web Server (dockerfile)
+#    Debian 8 (jessie) PHP Stack - HTTPd24 Web Server (dockerfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

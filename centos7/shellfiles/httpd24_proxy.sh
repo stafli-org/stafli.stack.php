@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-#    CentOS 7 (centos7) HTTPD24-proxy service (shell script)
-#    Copyright (C) 2016 SOL-ICT
-#    This file is part of the Docker General Purpose System Distro.
+#    CentOS 7 (centos7) PHP Stack - HTTPd24 Proxy Server (shellfile)
+#    Copyright (C) 2016-2017 Stafli
+#    Luís Pedro Algarvio
+#    This file is part of the Stafli Application Stack.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) Memcached14 Cache System (dockerfile)
+#    Debian 8 (jessie) PHP Stack - Memcached14 Cache System (dockerfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

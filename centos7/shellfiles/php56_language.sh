@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 7 (centos7) PHP Language (shellfile)
+#    CentOS 7 (centos7) PHP Stack - PHP56 Language (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 7 (centos7) MariaDB10 RDBMS (shellfile)
+#    CentOS 7 (centos7) PHP Stack - MariaDB10 RDBMS (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

@@ -1,8 +1,9 @@
 
 #
-#    Debian 7 (wheezy) HTTPd22 Proxy service (dockerfile)
-#    Copyright (C) 2016 SOL-ICT
-#    This file is part of the Docker High Performance PHP Stack.
+#    Debian 7 (wheezy) PHP Stack - HTTPd22 Proxy Server (dockerfile)
+#    Copyright (C) 2016-2017 Stafli
+#    Luís Pedro Algarvio
+#    This file is part of the Stafli Application Stack.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

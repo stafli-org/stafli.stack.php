@@ -1,6 +1,6 @@
 
 #
-#    Debian 8 (jessie) MariaDB10 RDBMS (dockerfile)
+#    Debian 8 (jessie) PHP Stack - MariaDB10 RDBMS (dockerfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.

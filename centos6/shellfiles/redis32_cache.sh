@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    CentOS 6 (centos6) Redis32 Cache System (shellfile)
+#    CentOS 6 (centos6) PHP Stack - Redis32 Cache System (shellfile)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.
