@@ -1,6 +1,6 @@
 ---
 #
-#    CentOS 6 (centos6) PHP Stack (docker-compose.override.sample.yml)
+#    CentOS 6 (centos6) PHP56 Stack (docker-compose.override.sample.yml)
 #    Copyright (C) 2016-2017 Stafli
 #    Luís Pedro Algarvio
 #    This file is part of the Stafli Application Stack.
@@ -27,7 +27,7 @@ version: '2'
 #
 services:
 
-  memcached14_cache:
+  stack_php56_cache_memcached14_centos6:
     build:
       args:
         app_memcached_listen_port: "11211"
@@ -37,7 +37,7 @@ services:
     ports:
       - "11211"
 
-  redis32_cache:
+  stack_php56_cache_redis32_centos6:
     build:
       args:
         app_redis_listen_port: "6379"
@@ -48,14 +48,14 @@ services:
     ports:
       - "6379"
 
-  mariadb10_rdbms:
+  stack_php56_rdbms_mariadb10_centos6:
     build:
       args:
         app_mariadb_listen_port: "3306"
     ports:
       - "3306"
 
-  php56_language:
+  stack_php56_language_php56_centos6:
     build:
       args:
         app_php_global_limit_timeout: "120"
@@ -73,7 +73,7 @@ services:
     ports:
       - "9000"
 
-  httpd22_web:
+  stack_php56_web_httpd22_centos6:
     build:
       args:
         app_httpd_global_listen_port_http: "8080"
@@ -89,7 +89,7 @@ services:
       - "8080"
       - "8443"
 
-  httpd22_proxy:
+  stack_php56_proxy_httpd22_centos6:
     build:
       args:
         app_httpd_global_listen_port_http: "8080"

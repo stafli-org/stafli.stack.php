@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.mariadb.rdbms:centos6_mariadb10
+FROM stafli/stafli.rdbms.mariadb:mariadb10_centos6
 
 #
 # Arguments

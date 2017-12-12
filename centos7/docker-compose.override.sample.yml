@@ -27,7 +27,7 @@ version: '2'
 #
 services:
 
-  memcached14_cache:
+  stack_php56_cache_memcached14_centos7:
     build:
       args:
         app_memcached_listen_port: "11211"
@@ -37,7 +37,7 @@ services:
     ports:
       - "11211"
 
-  redis32_cache:
+  stack_php56_cache_redis32_centos7:
     build:
       args:
         app_redis_listen_port: "6379"
@@ -48,14 +48,14 @@ services:
     ports:
       - "6379"
 
-  mariadb10_rdbms:
+  stack_php56_rdbms_mariadb10_centos7:
     build:
       args:
         app_mariadb_listen_port: "3306"
     ports:
       - "3306"
 
-  php56_language:
+  stack_php56_language_php56_centos7:
     build:
       args:
         app_php_global_limit_timeout: "120"
@@ -73,7 +73,7 @@ services:
     ports:
       - "9000"
 
-  httpd24_web:
+  stack_php56_web_httpd24_centos7:
     build:
       args:
         app_httpd_global_listen_port_http: "8080"
@@ -89,7 +89,7 @@ services:
       - "8080"
       - "8443"
 
-  httpd24_proxy:
+  stack_php56_proxy_httpd24_centos7:
     build:
       args:
         app_httpd_global_listen_port_http: "8080"

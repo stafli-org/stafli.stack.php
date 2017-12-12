@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.httpd.proxy:centos6_httpd22
+FROM stafli/stafli.proxy.httpd:httpd22_centos6
 
 #
 # Arguments

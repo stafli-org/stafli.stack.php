@@ -27,7 +27,7 @@ version: '2'
 #
 services:
 
-  memcached14_cache:
+  stack_php56_cache_memcached14_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -54,7 +54,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_memcached14_cache"
+    image: "${IMAGE_URL_PREFIX}:cache_memcached14_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "memcached14_cache.dockerfile"
@@ -73,15 +73,15 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - backend
+      - stack_php56_backend
     volumes:
-      - memcached14_cache_data:/var/lib/memcached
+      - stack_php56_cache_memcached14_debian7_data:/var/lib/memcached
     ports:
       - "11211"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  redis32_cache:
+  stack_php56_cache_redis32_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -108,7 +108,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_redis32_cache"
+    image: "${IMAGE_URL_PREFIX}:cache_redis32_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "redis32_cache.dockerfile"
@@ -127,15 +127,15 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - backend
+      - stack_php56_backend
     volumes:
-      - redis32_cache_data:/var/lib/redis
+      - stack_php56_cache_redis32_debian7_data:/var/lib/redis
     ports:
       - "6379"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  mariadb10_rdbms:
+  stack_php56_rdbms_mariadb10_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -162,7 +162,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_mariadb10_rdbms"
+    image: "${IMAGE_URL_PREFIX}:rdbms_mariadb10_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "mariadb10_rdbms.dockerfile"
@@ -175,15 +175,15 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - backend
+      - stack_php56_backend
     volumes:
-      - mariadb10_data:/var/lib/mysql
+      - stack_php56_rdbms_mariadb10_debian7_data:/var/lib/mysql
     ports:
       - "3306"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  php56_language:
+  stack_php56_language_php56_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -210,7 +210,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_php56_language"
+    image: "${IMAGE_URL_PREFIX}:language_php56_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "php56_language.dockerfile"
@@ -246,26 +246,26 @@ services:
         app_fpm_pool_pm_process_idle_timeout: "10s"
         app_fpm_pool_pm_max_requests: "5000"
     depends_on:
-      - memcached14_cache
-      - redis32_cache
-      - mariadb10_rdbms
+      - stack_php56_cache_memcached14_debian7
+      - stack_php56_cache_redis32_debian7
+      - stack_php56_rdbms_mariadb10_debian7
     links:
-      - memcached14_cache
-      - redis32_cache
-      - mariadb10_rdbms
+      - stack_php56_cache_memcached14_debian7
+      - stack_php56_cache_redis32_debian7
+      - stack_php56_rdbms_mariadb10_debian7
     logging:
       driver: "json-file"
     networks:
-      - application
-      - backend
+      - stack_php56_application
+      - stack_php56_backend
     volumes:
-      - web_data:/var/www
+      - stack_php56_web_debian7_data:/var/www
     ports:
       - "9000"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  httpd22_web:
+  stack_php56_web_httpd22_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -292,7 +292,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_httpd22_web"
+    image: "${IMAGE_URL_PREFIX}:web_httpd22_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "httpd22_web.dockerfile"
@@ -320,26 +320,26 @@ services:
         app_httpd_vhost_listen_port_https: "443"
         app_httpd_vhost_httpd_wlist: "127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
         app_httpd_vhost_fpm_wlist: "127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
-        app_httpd_vhost_fpm_addr: "debian7_php56_language_1"
+        app_httpd_vhost_fpm_addr: "stack_php56_language_php56_debian7_1"
         app_httpd_vhost_fpm_port: "9000"
     depends_on:
-      - php56_language
+      - stack_php56_language_php56_debian7
     links:
-      - php56_language
+      - stack_php56_language_php56_debian7
     logging:
       driver: "json-file"
     networks:
-      - frontend
-      - application
+      - stack_php56_frontend
+      - stack_php56_application
     volumes:
-      - web_data:/var/www
+      - stack_php56_web_debian7_data:/var/www
     ports:
       - "80"
       - "443"
     working_dir: "/tmp"
     command: "/usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"
 
-  httpd22_proxy:
+  stack_php56_proxy_httpd22_debian7:
     labels:
       - "org.label-schema.schema-version=1.0"
       - "org.label-schema.name=$PROJECT_NAME"
@@ -366,7 +366,7 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "stafli/stafli.php.stack:debian7_httpd22_proxy"
+    image: "${IMAGE_URL_PREFIX}:proxy_httpd22_debian7"
     build:
       context: "./dockerfiles"
       dockerfile: "httpd22_proxy.dockerfile"
@@ -394,14 +394,14 @@ services:
         app_httpd_vhost_listen_port_https: "443"
         app_httpd_vhost_httpd_wlist: "127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
     depends_on:
-      - httpd22_web
+      - stack_php56_web_httpd22_debian7
     links:
-      - httpd22_web
+      - stack_php56_web_httpd22_debian7
     logging:
       driver: "json-file"
     networks:
-      - proxy
-      - frontend
+      - stack_php56_proxy
+      - stack_php56_frontend
     ports:
       - "80"
       - "443"
@@ -414,25 +414,25 @@ services:
 networks:
   default:
     driver: "bridge"
-  proxy:
+  stack_php56_proxy:
     driver: "bridge"
-  frontend:
+  stack_php56_frontend:
     driver: "bridge"
-  application:
+  stack_php56_application:
     driver: "bridge"
-  backend:
+  stack_php56_backend:
     driver: "bridge"
 
 #
 # Volumes
 #
 volumes:
-  memcached14_cache_data:
+  stack_php56_cache_memcached14_debian7_data:
     driver: "local"
-  redis32_cache_data:
+  stack_php56_cache_redis32_debian7_data:
     driver: "local"
-  mariadb10_data:
+  stack_php56_rdbms_mariadb10_debian7_data:
     driver: "local"
-  web_data:
+  stack_php56_web_debian7_data:
     driver: "local"
 

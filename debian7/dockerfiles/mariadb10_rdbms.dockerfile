@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.mariadb.rdbms:debian7_mariadb10
+FROM stafli/stafli.rdbms.mariadb:mariadb10_debian7
 
 #
 # Arguments

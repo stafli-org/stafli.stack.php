@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.php.language:centos6_php56
+FROM stafli/stafli.language.php:php56_centos6
 
 #
 # Arguments

@@ -10,7 +10,7 @@ An optional [Makefile](../../tree/master/Makefile) is provided to help with load
 
 Scripts are also provided for each distribution to help test and deploy the installation procedures in non-Docker environments.
 
-The images are automatically built at a [repository](https://hub.docker.com/r/stafli/stafli.php.stack) in the Docker Hub registry.
+The images are automatically built at a [repository](https://hub.docker.com/r/stafli/stafli.stack.php) in the Docker Hub registry.
 
 ## Distributions
 The services use custom images as a starting point for the following distributions:
@@ -23,78 +23,78 @@ The services use custom images as a starting point for the following distributio
 
 ## Services
 These are the services described by the dockerfile and docker-compose files:
-- Memcached 1.4.x Cache, built on [Stafli Memcached Cache](https://github.com/stafli-org/stafli.memcached.cache)
-- Redis 3.2.x Cache, built on [Stafli Redis Cache](https://github.com/stafli-org/stafli.redis.cache)
-- MariaDB 10.x.x RDBMS, built on [Stafli MariaDB RDBMS](https://github.com/stafli-org/stafli.mariadb.rdbms)
-- PHP 5.6.x Language, built on [Stafli PHP Language](https://github.com/stafli-org/stafli.php.language)
-- HTTPd 2.2.x/2.4.x Web, built on [Stafli HTTPd Web](https://github.com/stafli-org/stafli.httpd.web)
-- HTTPd 2.2.x/2.4.x Proxy, built on [Stafli HTTPd Proxy](https://github.com/stafli-org/stafli.httpd.proxy)
+- Memcached 1.4.x Cache, built on [Stafli Memcached Cache](https://github.com/stafli-org/stafli.cache.memcached)
+- Redis 3.2.x Cache, built on [Stafli Redis Cache](https://github.com/stafli-org/stafli.cache.redis)
+- MariaDB 10.x.x RDBMS, built on [Stafli MariaDB RDBMS](https://github.com/stafli-org/stafli.rdbms.mariadb)
+- PHP 5.6.x Language, built on [Stafli PHP Language](https://github.com/stafli-org/stafli.language.php)
+- HTTPd 2.2.x/2.4.x Web, built on [Stafli HTTPd Web](https://github.com/stafli-org/stafli.web.httpd)
+- HTTPd 2.2.x/2.4.x Proxy, built on [Stafli HTTPd Proxy](https://github.com/stafli-org/stafli.proxy.httpd)
 
 ## Images
-These are the [resulting images](https://hub.docker.com/r/stafli/stafli.php.stack/tags) upon building:
+These are the [resulting images](https://hub.docker.com/r/stafli/stafli.stack.php/tags) upon building:
 - Memcached 1.4.x Cache:
-  - stafli/stafli.php.stack:debian8_memcached14_cache
-  - stafli/stafli.php.stack:debian7_memcached14_cache
-  - stafli/stafli.php.stack:centos7_memcached14_cache
-  - stafli/stafli.php.stack:centos6_memcached14_cache
+  - stafli/stafli.stack.php:cache_memcached14_debian8
+  - stafli/stafli.stack.php:cache_memcached14_debian7
+  - stafli/stafli.stack.php:cache_memcached14_centos7
+  - stafli/stafli.stack.php:cache_memcached14_debian8
 - Redis 3.2.x Cache:
-  - stafli/stafli.php.stack:debian8_redis32_cache
-  - stafli/stafli.php.stack:debian7_redis32_cache
-  - stafli/stafli.php.stack:centos7_redis32_cache
-  - stafli/stafli.php.stack:centos6_redis32_cache
+  - stafli/stafli.stack.php:cache_redis32_debian8
+  - stafli/stafli.stack.php:cache_redis32_debian7
+  - stafli/stafli.stack.php:cache_redis32_centos7
+  - stafli/stafli.stack.php:cache_redis32_centos6
 - MariaDB 10.x.x RDBMS:
-  - stafli/stafli.php.stack:debian8_mariadb10_rdbms
-  - stafli/stafli.php.stack:debian7_mariadb10_rdbms
-  - stafli/stafli.php.stack:centos7_mariadb10_rdbms
-  - stafli/stafli.php.stack:centos6_mariadb10_rdbms
+  - stafli/stafli.stack.php:rdbms_mariadb10_debian8
+  - stafli/stafli.stack.php:rdbms_mariadb10_debian7
+  - stafli/stafli.stack.php:rdbms_mariadb10_centos7
+  - stafli/stafli.stack.php:rdbms_mariadb10_centos6
 - PHP 5.6.x Language:
-  - stafli/stafli.php.stack:debian8_php56_language
-  - stafli/stafli.php.stack:debian7_php56_language
-  - stafli/stafli.php.stack:centos7_php56_language
-  - stafli/stafli.php.stack:centos6_php56_language
+  - stafli/stafli.stack.php:language_php56_debian8
+  - stafli/stafli.stack.php:language_php56_debian7
+  - stafli/stafli.stack.php:language_php56_centos7
+  - stafli/stafli.stack.php:language_php56_centos6
 - HTTPd 2.x.x Web:
-  - stafli/stafli.php.stack:debian8_httpd24_web
-  - stafli/stafli.php.stack:debian7_httpd22_web
-  - stafli/stafli.php.stack:centos7_httpd24_web
-  - stafli/stafli.php.stack:centos6_httpd22_web
+  - stafli/stafli.stack.php:web_httpd24_debian8
+  - stafli/stafli.stack.php:web_httpd22_debian7
+  - stafli/stafli.stack.php:web_httpd24_centos7
+  - stafli/stafli.stack.php:web_httpd22_centos6
 - HTTPd 2.x.x Proxy:
-  - stafli/stafli.httpd.web:debian8_httpd24_proxy
-  - stafli/stafli.httpd.web:debian7_httpd22_proxy
-  - stafli/stafli.httpd.web:centos7_httpd24_proxy
-  - stafli/stafli.httpd.web:centos6_httpd22_proxy
+  - stafli/stafli.web.httpd:proxy_httpd24_debian8
+  - stafli/stafli.web.httpd:proxy_httpd22_debian7
+  - stafli/stafli.web.httpd:proxy_httpd24_centos7
+  - stafli/stafli.web.httpd:proxy_httpd22_centos6
 
 ## Containers
 These containers can be created from the images:
 - Memcached 1.4.x Cache:
-  - debian8_memcached14_cache_xxx
-  - debian7_memcached14_cache_xxx
-  - centos7_memcached14_cache_xxx
-  - centos6_memcached14_cache_xxx
+  - stafli_stack_php56_cache_memcached14_debian8_xxx
+  - stafli_stack_php56_cache_memcached14_debian7_xxx
+  - stafli_stack_php56_cache_memcached14_centos7_xxx
+  - stafli_stack_php56_cache_memcached14_debian8_xxx
 - Redis 3.2.x Cache:
-  - debian8_redis32_cache_xxx
-  - debian7_redis32_cache_xxx
-  - centos7_redis32_cache_xxx
-  - centos6_redis32_cache_xxx
+  - stafli_stack_php56_cache_redis32_debian8_xxx
+  - stafli_stack_php56_cache_redis32_debian7_xxx
+  - stafli_stack_php56_cache_redis32_centos7_xxx
+  - stafli_stack_php56_cache_redis32_centos6_xxx
 - MariaDB 10.x.x RDBMS:
-  - debian8_mariadb10_rdbms_xxx
-  - debian7_mariadb10_rdbms_xxx
-  - centos7_mariadb10_rdbms_xxx
-  - centos6_mariadb10_rdbms_xxx
+  - stafli_stack_php56_rdbms_mariadb10_debian8_xxx
+  - stafli_stack_php56_rdbms_mariadb10_debian7_xxx
+  - stafli_stack_php56_rdbms_mariadb10_centos7_xxx
+  - stafli_stack_php56_rdbms_mariadb10_centos6_xxx
 - PHP 5.6.x Language:
-  - debian8_php56_language_xxx
-  - debian7_php56_language_xxx
-  - centos7_php56_language_xxx
-  - centos6_php56_language_xxx
+  - stafli_stack_php56_language_php56_debian8_xxx
+  - stafli_stack_php56_language_php56_debian7_xxx
+  - stafli_stack_php56_language_php56_centos7_xxx
+  - stafli_stack_php56_language_php56_centos6_xxx
 - HTTPd 2.x.x Web:
-  - debian8_httpd24_web_xxx
-  - debian7_httpd22_web_xxx
-  - centos7_httpd24_web_xxx
-  - centos6_httpd22_web_xxx
+  - stafli_stack_php56_web_httpd24_debian8_xxx
+  - stafli_stack_php56_web_httpd22_debian7_xxx
+  - stafli_stack_php56_web_httpd24_centos7_xxx
+  - stafli_stack_php56_web_httpd22_centos6_xxx
 - HTTPd 2.x.x Proxy:
-  - debian8_httpd24_proxy_xxx
-  - debian7_httpd22_proxy_xxx
-  - centos7_httpd24_proxy_xxx
-  - centos6_httpd22_proxy_xxx
+  - stafli_stack_php56_proxy_httpd24_debian8_xxx
+  - stafli_stack_php56_proxy_httpd22_debian7_xxx
+  - stafli_stack_php56_proxy_httpd24_centos7_xxx
+  - stafli_stack_php56_proxy_httpd22_centos6_xxx
 
 ## Usage
 
@@ -111,24 +111,24 @@ Where <image_url> is the full image url (lookup the image list above).
 
 Example:
 ```
-docker pull stafli/stafli.php.stack:debian8_memcached14
-docker pull stafli/stafli.php.stack:debian8_redis32
-docker pull stafli/stafli.php.stack:debian8_mariadb10
-docker pull stafli/stafli.php.stack:debian8_php56
-docker pull stafli/stafli.php.stack:debian8_httpd24_web
-docker pull stafli/stafli.httpd.web:debian8_httpd24_proxy
+docker pull stafli/stafli.stack.php:memcached14_debian8
+docker pull stafli/stafli.stack.php:redis32_debian8
+docker pull stafli/stafli.stack.php:mariadb10_debian8
+docker pull stafli/stafli.stack.php:php56_debian8
+docker pull stafli/stafli.stack.php:web_httpd24_debian8
+docker pull stafli/stafli.web.httpd:proxy_httpd24_debian8
 
-docker run -ti stafli/stafli.php.stack:debian8_memcached14 /bin/bash
+docker run -ti stafli/stafli.stack.php:memcached14_debian8 /bin/bash
 ```
 
 ### From GitHub repository (automated)
 
 Note: this method allows using docker-compose and the Makefile.
 
-1. Download the repository [zip file](https://github.com/stafli-org/stafli.php.stack/archive/master.zip) and unpack it or clone the repository using:  
-`git clone https://github.com/stafli-org/stafli.php.stack.git`
+1. Download the repository [zip file](https://github.com/stafli-org/stafli.stack.php/archive/master.zip) and unpack it or clone the repository using:  
+`git clone https://github.com/stafli-org/stafli.stack.php.git`
 2. Navigate to the project directory through the terminal:  
-`cd stafli.php.stack`
+`cd stafli.stack.php`
 3. Type in the desired operation through the terminal:  
 `make <operation> DISTRO=<distro>`
 
@@ -136,8 +136,8 @@ Where <distro> is the distribution/directory and <operation> is the desired dock
 
 Example:
 ```
-git clone https://github.com/stafli-org/stafli.php.stack.git;
-cd stafli.php.stack;
+git clone https://github.com/stafli-org/stafli.stack.php.git;
+cd stafli.stack.php;
 
 # Example #1: quick start, with build
 make up DISTRO=debian8;

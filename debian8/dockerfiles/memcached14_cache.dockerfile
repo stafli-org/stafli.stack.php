@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.memcached.cache:debian8_memcached14
+FROM stafli/stafli.cache.memcached:memcached14_debian8
 
 #
 # Arguments

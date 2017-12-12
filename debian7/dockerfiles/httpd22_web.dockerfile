@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.httpd.web:debian7_httpd22
+FROM stafli/stafli.web.httpd:httpd22_debian7
 
 #
 # Arguments
@@ -48,7 +48,7 @@ ARG app_httpd_vhost_listen_port_http="80"
 ARG app_httpd_vhost_listen_port_https="443"
 ARG app_httpd_vhost_httpd_wlist="127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
 ARG app_httpd_vhost_fpm_wlist="127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
-ARG app_httpd_vhost_fpm_addr="debian7_php56_1"
+ARG app_httpd_vhost_fpm_addr="php56_stack_language_php56_debian7_1"
 ARG app_httpd_vhost_fpm_port="9000"
 
 #

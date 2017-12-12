@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.httpd.proxy:debian7_httpd22
+FROM stafli/stafli.proxy.httpd:httpd22_debian7
 
 #
 # Arguments

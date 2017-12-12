@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM stafli/stafli.redis.cache:debian7_redis32
+FROM stafli/stafli.cache.redis:redis32_debian7
 
 #
 # Arguments
