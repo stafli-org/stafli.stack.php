@@ -70,7 +70,7 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_backend
+      - stack_php56_centos6_backend
     volumes:
       - stack_php56_cache_memcached14_centos6_data:/var/lib/memcached
     ports:
@@ -121,7 +121,7 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_backend
+      - stack_php56_centos6_backend
     volumes:
       - stack_php56_cache_redis32_centos6_data:/var/lib/redis
     ports:
@@ -169,7 +169,7 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_backend
+      - stack_php56_centos6_backend
     volumes:
       - stack_php56_rdbms_mariadb10_centos6_data:/var/lib/mysql
     ports:
@@ -250,8 +250,8 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_application
-      - stack_php56_backend
+      - stack_php56_centos6_application
+      - stack_php56_centos6_backend
     volumes:
       - stack_php56_web_centos6_data:/var/www
     ports:
@@ -323,8 +323,8 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_frontend
-      - stack_php56_application
+      - stack_php56_centos6_frontend
+      - stack_php56_centos6_application
     volumes:
       - stack_php56_web_centos6_data:/var/www
     ports:
@@ -394,8 +394,8 @@ services:
     logging:
       driver: "json-file"
     networks:
-      - stack_php56_proxy
-      - stack_php56_frontend
+      - stack_php56_centos6_proxy
+      - stack_php56_centos6_frontend
     ports:
       - "80"
       - "443"
@@ -408,13 +408,13 @@ services:
 networks:
   default:
     driver: "bridge"
-  stack_php56_proxy:
+  stack_php56_centos6_proxy:
     driver: "bridge"
-  stack_php56_frontend:
+  stack_php56_centos6_frontend:
     driver: "bridge"
-  stack_php56_application:
+  stack_php56_centos6_application:
     driver: "bridge"
-  stack_php56_backend:
+  stack_php56_centos6_backend:
     driver: "bridge"
 
 #
