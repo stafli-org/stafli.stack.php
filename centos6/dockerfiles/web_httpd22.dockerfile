@@ -21,6 +21,30 @@
 
 FROM stafli/stafli.web.httpd:httpd22_centos6
 
+# Labels to apply
+LABEL description="Stafli PHP Stack (stafli/stafli.stack.php), Based on Stafli Memcached Cache (stafli/stafli.cache.memcached), Stafli Redis Cache (stafli/stafli.cache.redis), Stafli MariaDB Cache (stafli/stafli.rdbms.mariadb), Stafli PHP Language (stafli/stafli.language.php), Stafli HTTPd Web Server (stafli/stafli.web.httpd) and Stafli HTTPd Proxy Server (stafli/stafli.proxy.httpd)" \
+      maintainer="lp@algarvio.org" \
+      org.label-schema.schema-version="1.0.0-rc.1" \
+      org.label-schema.name="Stafli PHP Stack (stafli/stafli.stack.php)" \
+      org.label-schema.description="Based on Stafli Memcached Cache (stafli/stafli.cache.memcached), Stafli Redis Cache (stafli/stafli.cache.redis), Stafli MariaDB Cache (stafli/stafli.rdbms.mariadb), Stafli PHP Language (stafli/stafli.language.php), Stafli HTTPd Web Server (stafli/stafli.web.httpd) and Stafli HTTPd Proxy Server (stafli/stafli.proxy.httpd)" \
+      org.label-schema.keywords="stafli, stack, memcached, redis, mariadb, php, httpd, debian, centos" \
+      org.label-schema.url="https://stafli.org/" \
+      org.label-schema.license="GPLv3" \
+      org.label-schema.vendor-name="Stafli" \
+      org.label-schema.vendor-email="info@stafli.org" \
+      org.label-schema.vendor-website="https://www.stafli.org" \
+      org.label-schema.authors.lpalgarvio.name="Luis Pedro Algarvio" \
+      org.label-schema.authors.lpalgarvio.email="lp@algarvio.org" \
+      org.label-schema.authors.lpalgarvio.homepage="https://lp.algarvio.org" \
+      org.label-schema.authors.lpalgarvio.role="Maintainer" \
+      org.label-schema.registry-url="https://hub.docker.com/r/stafli/stafli.stack.php" \
+      org.label-schema.vcs-url="https://github.com/stafli-org/stafli.stack.php" \
+      org.label-schema.vcs-branch="master" \
+      org.label-schema.os-id="centos" \
+      org.label-schema.os-version-id="6" \
+      org.label-schema.os-architecture="amd64" \
+      org.label-schema.version="1.0"
+
 #
 # Arguments
 #
