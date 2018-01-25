@@ -32,69 +32,87 @@ These are the services described by the dockerfile and docker-compose files:
 
 ## Images
 These are the [resulting images](https://hub.docker.com/r/stafli/stafli.stack.php/tags) upon building:
-- Memcached 1.4.x Cache:
-  - stafli/stafli.stack.php:cache_memcached14_debian8
-  - stafli/stafli.stack.php:cache_memcached14_debian7
-  - stafli/stafli.stack.php:cache_memcached14_centos7
-  - stafli/stafli.stack.php:cache_memcached14_debian8
-- Redis 3.2.x Cache:
-  - stafli/stafli.stack.php:cache_redis32_debian8
-  - stafli/stafli.stack.php:cache_redis32_debian7
-  - stafli/stafli.stack.php:cache_redis32_centos7
-  - stafli/stafli.stack.php:cache_redis32_centos6
-- MariaDB 10.x.x RDBMS:
-  - stafli/stafli.stack.php:rdbms_mariadb10_debian8
-  - stafli/stafli.stack.php:rdbms_mariadb10_debian7
-  - stafli/stafli.stack.php:rdbms_mariadb10_centos7
-  - stafli/stafli.stack.php:rdbms_mariadb10_centos6
-- PHP 5.6.x Language:
-  - stafli/stafli.stack.php:language_php56_debian8
-  - stafli/stafli.stack.php:language_php56_debian7
-  - stafli/stafli.stack.php:language_php56_centos7
-  - stafli/stafli.stack.php:language_php56_centos6
-- HTTPd 2.x.x Web:
-  - stafli/stafli.stack.php:web_httpd24_debian8
-  - stafli/stafli.stack.php:web_httpd22_debian7
-  - stafli/stafli.stack.php:web_httpd24_centos7
-  - stafli/stafli.stack.php:web_httpd22_centos6
-- HTTPd 2.x.x Proxy:
-  - stafli/stafli.web.httpd:proxy_httpd24_debian8
-  - stafli/stafli.web.httpd:proxy_httpd22_debian7
-  - stafli/stafli.web.httpd:proxy_httpd24_centos7
-  - stafli/stafli.web.httpd:proxy_httpd22_centos6
+- Stable:
+  - Memcached 1.4.x Cache:
+    - stafli/stafli.stack.php:cache_memcached14_debian8
+    - stafli/stafli.stack.php:cache_memcached14_centos7
+  - Redis 3.2.x Cache:
+    - stafli/stafli.stack.php:cache_redis32_debian8
+    - stafli/stafli.stack.php:cache_redis32_centos7
+  - MariaDB 10.x.x RDBMS:
+    - stafli/stafli.stack.php:rdbms_mariadb10_debian8
+    - stafli/stafli.stack.php:rdbms_mariadb10_centos7
+  - PHP 5.6.x Language:
+    - stafli/stafli.stack.php:language_php56_debian8
+    - stafli/stafli.stack.php:language_php56_centos7
+  - HTTPd 2.x.x Web:
+    - stafli/stafli.stack.php:web_httpd24_debian8
+    - stafli/stafli.stack.php:web_httpd24_centos7
+  - HTTPd 2.x.x Proxy:
+    - stafli/stafli.web.httpd:proxy_httpd24_debian8
+    - stafli/stafli.web.httpd:proxy_httpd24_centos7
+
+- Old Stable:
+  - Memcached 1.4.x Cache:
+    - stafli/stafli.stack.php:cache_memcached14_debian7
+    - stafli/stafli.stack.php:cache_memcached14_centos6
+  - Redis 3.2.x Cache:
+    - stafli/stafli.stack.php:cache_redis32_debian7
+    - stafli/stafli.stack.php:cache_redis32_centos6
+  - MariaDB 10.x.x RDBMS:
+    - stafli/stafli.stack.php:rdbms_mariadb10_debian7
+    - stafli/stafli.stack.php:rdbms_mariadb10_centos6
+  - PHP 5.6.x Language:
+    - stafli/stafli.stack.php:language_php56_debian7
+    - stafli/stafli.stack.php:language_php56_centos6
+  - HTTPd 2.x.x Web:
+    - stafli/stafli.stack.php:web_httpd22_debian7
+    - stafli/stafli.stack.php:web_httpd22_centos6
+  - HTTPd 2.x.x Proxy:
+    - stafli/stafli.web.httpd:proxy_httpd22_debian7
+    - stafli/stafli.web.httpd:proxy_httpd22_centos6
 
 ## Containers
 These containers can be created from the images:
-- Memcached 1.4.x Cache:
-  - stafli_stack_php56_cache_memcached14_debian8_xxx
-  - stafli_stack_php56_cache_memcached14_debian7_xxx
-  - stafli_stack_php56_cache_memcached14_centos7_xxx
-  - stafli_stack_php56_cache_memcached14_debian8_xxx
-- Redis 3.2.x Cache:
-  - stafli_stack_php56_cache_redis32_debian8_xxx
-  - stafli_stack_php56_cache_redis32_debian7_xxx
-  - stafli_stack_php56_cache_redis32_centos7_xxx
-  - stafli_stack_php56_cache_redis32_centos6_xxx
-- MariaDB 10.x.x RDBMS:
-  - stafli_stack_php56_rdbms_mariadb10_debian8_xxx
-  - stafli_stack_php56_rdbms_mariadb10_debian7_xxx
-  - stafli_stack_php56_rdbms_mariadb10_centos7_xxx
-  - stafli_stack_php56_rdbms_mariadb10_centos6_xxx
-- PHP 5.6.x Language:
-  - stafli_stack_php56_language_php56_debian8_xxx
-  - stafli_stack_php56_language_php56_debian7_xxx
-  - stafli_stack_php56_language_php56_centos7_xxx
-  - stafli_stack_php56_language_php56_centos6_xxx
-- HTTPd 2.x.x Web:
-  - stafli_stack_php56_web_httpd24_debian8_xxx
-  - stafli_stack_php56_web_httpd22_debian7_xxx
-  - stafli_stack_php56_web_httpd24_centos7_xxx
-  - stafli_stack_php56_web_httpd22_centos6_xxx
-- HTTPd 2.x.x Proxy:
-  - stafli_stack_php56_proxy_httpd24_debian8_xxx
-  - stafli_stack_php56_proxy_httpd22_debian7_xxx
-  - stafli_stack_php56_proxy_httpd24_centos7_xxx
-  - stafli_stack_php56_proxy_httpd22_centos6_xxx
+- Stable:
+  - Memcached 1.4.x Cache:
+    - stafli_stack_php56_cache_memcached14_debian8_xxx
+    - stafli_stack_php56_cache_memcached14_centos7_xxx
+  - Redis 3.2.x Cache:
+    - stafli_stack_php56_cache_redis32_debian8_xxx
+    - stafli_stack_php56_cache_redis32_centos7_xxx
+  - MariaDB 10.x.x RDBMS:
+    - stafli_stack_php56_rdbms_mariadb10_debian8_xxx
+    - stafli_stack_php56_rdbms_mariadb10_centos7_xxx
+  - PHP 5.6.x Language:
+    - stafli_stack_php56_language_php56_debian8_xxx
+    - stafli_stack_php56_language_php56_centos7_xxx
+  - HTTPd 2.x.x Web:
+    - stafli_stack_php56_web_httpd24_debian8_xxx
+    - stafli_stack_php56_web_httpd24_centos7_xxx
+  - HTTPd 2.x.x Proxy:
+    - stafli_stack_php56_proxy_httpd24_debian8_xxx
+    - stafli_stack_php56_proxy_httpd24_centos7_xxx
+
+- Old Stable:
+  - Memcached 1.4.x Cache:
+    - stafli_stack_php56_cache_memcached14_debian7_xxx
+    - stafli_stack_php56_cache_memcached14_centos6_xxx
+  - Redis 3.2.x Cache:
+    - stafli_stack_php56_cache_redis32_debian7_xxx
+    - stafli_stack_php56_cache_redis32_centos6_xxx
+  - MariaDB 10.x.x RDBMS:
+    - stafli_stack_php56_rdbms_mariadb10_debian7_xxx
+    - stafli_stack_php56_rdbms_mariadb10_centos6_xxx
+  - PHP 5.6.x Language:
+    - stafli_stack_php56_language_php56_debian7_xxx
+    - stafli_stack_php56_language_php56_centos6_xxx
+  - HTTPd 2.x.x Web:
+    - stafli_stack_php56_web_httpd22_debian7_xxx
+    - stafli_stack_php56_web_httpd22_centos6_xxx
+  - HTTPd 2.x.x Proxy:
+    - stafli_stack_php56_proxy_httpd22_debian7_xxx
+    - stafli_stack_php56_proxy_httpd22_centos6_xxx
 
 ## Usage
 
