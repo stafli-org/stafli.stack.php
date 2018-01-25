@@ -34,43 +34,43 @@ These are the services described by the dockerfile and docker-compose files:
 These are the [resulting images](https://hub.docker.com/r/stafli/stafli.stack.php/tags) upon building:
 - Stable:
   - Memcached 1.4.x Cache:
-    - stafli/stafli.stack.php:cache_memcached14_debian8
-    - stafli/stafli.stack.php:cache_memcached14_centos7
+    - stafli/stafli.stack.php:cache_memcached14_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_memcached14_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_memcached14_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:cache_memcached14_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_memcached14_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_memcached14_centos7 "Get your own image badge on microbadger.com")
   - Redis 3.2.x Cache:
-    - stafli/stafli.stack.php:cache_redis32_debian8
-    - stafli/stafli.stack.php:cache_redis32_centos7
+    - stafli/stafli.stack.php:cache_redis32_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_redis32_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_redis32_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:cache_redis32_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_redis32_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_redis32_centos7 "Get your own image badge on microbadger.com")
   - MariaDB 10.x.x RDBMS:
-    - stafli/stafli.stack.php:rdbms_mariadb10_debian8
-    - stafli/stafli.stack.php:rdbms_mariadb10_centos7
+    - stafli/stafli.stack.php:rdbms_mariadb10_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:rdbms_mariadb10_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:rdbms_mariadb10_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:rdbms_mariadb10_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:rdbms_mariadb10_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:rdbms_mariadb10_centos7 "Get your own image badge on microbadger.com")
   - PHP 5.6.x Language:
-    - stafli/stafli.stack.php:language_php56_debian8
-    - stafli/stafli.stack.php:language_php56_centos7
+    - stafli/stafli.stack.php:language_php56_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:language_php56_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:language_php56_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:language_php56_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:language_php56_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:language_php56_centos7 "Get your own image badge on microbadger.com")
   - HTTPd 2.x.x Web:
-    - stafli/stafli.stack.php:web_httpd24_debian8
-    - stafli/stafli.stack.php:web_httpd24_centos7
+    - stafli/stafli.stack.php:web_httpd24_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:web_httpd24_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:web_httpd24_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:web_httpd24_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:web_httpd24_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:web_httpd24_centos7 "Get your own image badge on microbadger.com")
   - HTTPd 2.x.x Proxy:
-    - stafli/stafli.web.httpd:proxy_httpd24_debian8
-    - stafli/stafli.web.httpd:proxy_httpd24_centos7
+    - stafli/stafli.stack.php:proxy_httpd24_debian8   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:proxy_httpd24_debian8.svg)](https://microbadger.com/images/stafli/stafli.stack.php:proxy_httpd24_debian8 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:proxy_httpd24_centos7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:proxy_httpd24_centos7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:proxy_httpd24_centos7 "Get your own image badge on microbadger.com")
 
 - Old Stable:
   - Memcached 1.4.x Cache:
-    - stafli/stafli.stack.php:cache_memcached14_debian7
-    - stafli/stafli.stack.php:cache_memcached14_centos6
+    - stafli/stafli.stack.php:cache_memcached14_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_memcached14_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_memcached14_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:cache_memcached14_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_memcached14_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_memcached14_centos6 "Get your own image badge on microbadger.com")
   - Redis 3.2.x Cache:
-    - stafli/stafli.stack.php:cache_redis32_debian7
-    - stafli/stafli.stack.php:cache_redis32_centos6
+    - stafli/stafli.stack.php:cache_redis32_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_redis32_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_redis32_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:cache_redis32_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:cache_redis32_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:cache_redis32_centos6 "Get your own image badge on microbadger.com")
   - MariaDB 10.x.x RDBMS:
-    - stafli/stafli.stack.php:rdbms_mariadb10_debian7
-    - stafli/stafli.stack.php:rdbms_mariadb10_centos6
+    - stafli/stafli.stack.php:rdbms_mariadb10_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:rdbms_mariadb10_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:rdbms_mariadb10_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:rdbms_mariadb10_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:rdbms_mariadb10_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:rdbms_mariadb10_centos6 "Get your own image badge on microbadger.com")
   - PHP 5.6.x Language:
-    - stafli/stafli.stack.php:language_php56_debian7
-    - stafli/stafli.stack.php:language_php56_centos6
+    - stafli/stafli.stack.php:language_php56_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:language_php56_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:language_php56_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:language_php56_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:language_php56_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:language_php56_centos6 "Get your own image badge on microbadger.com")
   - HTTPd 2.x.x Web:
-    - stafli/stafli.stack.php:web_httpd22_debian7
-    - stafli/stafli.stack.php:web_httpd22_centos6
+    - stafli/stafli.stack.php:web_httpd22_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:web_httpd22_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:web_httpd22_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:web_httpd22_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:web_httpd22_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:web_httpd22_centos6 "Get your own image badge on microbadger.com")
   - HTTPd 2.x.x Proxy:
-    - stafli/stafli.web.httpd:proxy_httpd22_debian7
-    - stafli/stafli.web.httpd:proxy_httpd22_centos6
+    - stafli/stafli.stack.php:proxy_httpd22_debian7   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:proxy_httpd22_debian7.svg)](https://microbadger.com/images/stafli/stafli.stack.php:proxy_httpd22_debian7 "Get your own image badge on microbadger.com")
+    - stafli/stafli.stack.php:proxy_httpd22_centos6   [![](https://images.microbadger.com/badges/image/stafli/stafli.stack.php:proxy_httpd22_centos6.svg)](https://microbadger.com/images/stafli/stafli.stack.php:proxy_httpd22_centos6 "Get your own image badge on microbadger.com")
 
 ## Containers
 These containers can be created from the images:
