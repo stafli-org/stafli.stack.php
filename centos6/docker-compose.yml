@@ -54,10 +54,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:cache_memcached14_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_CACHE_MEMCACHED_PREFIX}${SERVICE_CACHE_MEMCACHED_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "memcached14_cache.dockerfile"
+      dockerfile: "${SERVICE_CACHE_MEMCACHED_PREFIX}${SERVICE_CACHE_MEMCACHED_CENTOS6_VERSION}.dockerfile"
       args:
         app_memcached_loglevel: "notice"
         app_memcached_auth_sasl: "no"
@@ -105,10 +105,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:cache_redis32_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_CACHE_REDIS_PREFIX}${SERVICE_CACHE_REDIS_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "redis32_cache.dockerfile"
+      dockerfile: "${SERVICE_CACHE_REDIS_PREFIX}${SERVICE_CACHE_REDIS_CENTOS6_VERSION}.dockerfile"
       args:
         app_redis_loglevel: "notice"
         app_redis_listen_addr: "0.0.0.0"
@@ -156,10 +156,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:rdbms_mariadb10_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_RDBMS_MARIADB_PREFIX}${SERVICE_RDBMS_MARIADB_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "mariadb10_rdbms.dockerfile"
+      dockerfile: "${SERVICE_RDBMS_MARIADB_PREFIX}${SERVICE_RDBMS_MARIADB_CENTOS6_VERSION}.dockerfile"
       args:
         app_mariadb_user: "mysql"
         app_mariadb_group: "mysql"
@@ -204,10 +204,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:language_php56_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_LANGUAGE_PHP_PREFIX}${SERVICE_LANGUAGE_PHP_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "php56_language.dockerfile"
+      dockerfile: "${SERVICE_LANGUAGE_PHP_PREFIX}${SERVICE_LANGUAGE_PHP_CENTOS6_VERSION}.dockerfile"
       args:
         app_php_exts_core_dis: "mysql"
         app_php_exts_core_en: "mcrypt curl gd imap ldap mysqli mysqlnd odbc pdo pdo_mysql pdo_odbc opcache"
@@ -286,10 +286,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:web_httpd22_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_WEB_HTTPD_PREFIX}${SERVICE_WEB_HTTPD_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd22_web.dockerfile"
+      dockerfile: "${SERVICE_WEB_HTTPD_PREFIX}${SERVICE_WEB_HTTPD_CENTOS6_VERSION}.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "asis auth_digest authn_anon authn_dbd authn_dbm authnz_ldap authz_dbm authz_owner cache cern_meta cgi cgid charset_lite dav_fs dav dav_lock dbd disk_cache dump_io ext_filter file_cache filter ident imagemap include ldap log_forensic mem_cache mime_magic negotiation proxy_balancer proxy_connect proxy_ftp proxy_scgi reqtimeout speling substitute suexec unique_id userdir usertrack vhost_alias"
         app_httpd_global_mods_core_en: "alias dir autoindex mime setenvif env expires headers deflate rewrite actions authn_default authn_alias authn_file authz_default authz_groupfile authz_host authz_user auth_basic ssl proxy proxy_ajp proxy_http info status"
@@ -360,10 +360,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:proxy_httpd22_centos6"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_PROXY_HTTPD_PREFIX}${SERVICE_PROXY_HTTPD_CENTOS6_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd22_proxy.dockerfile"
+      dockerfile: "${SERVICE_PROXY_HTTPD_PREFIX}${SERVICE_PROXY_HTTPD_CENTOS6_VERSION}.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "asis auth_digest authn_anon authn_dbd authn_dbm authnz_ldap authz_dbm authz_owner cache cern_meta cgi cgid charset_lite dav_fs dav dav_lock dbd disk_cache dump_io ext_filter file_cache filter ident imagemap include ldap log_forensic mem_cache mime_magic negotiation proxy_ajp proxy_balancer proxy_connect proxy_ftp proxy_scgi reqtimeout speling substitute suexec unique_id userdir usertrack vhost_alias"
         app_httpd_global_mods_core_en: "alias dir autoindex mime setenvif env expires headers deflate rewrite actions authn_default authn_alias authn_file authz_default authz_groupfile authz_host authz_user auth_basic ssl proxy proxy_http info status"

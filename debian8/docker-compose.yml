@@ -54,10 +54,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:cache_memcached14_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_CACHE_MEMCACHED_PREFIX}${SERVICE_CACHE_MEMCACHED_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "memcached14_cache.dockerfile"
+      dockerfile: "${SERVICE_CACHE_MEMCACHED_PREFIX}${SERVICE_CACHE_MEMCACHED_DEBIAN8_VERSION}.dockerfile"
       args:
         app_memcached_user: "memcache"
         app_memcached_group: "memcache"
@@ -108,10 +108,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:cache_redis32_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_CACHE_REDIS_PREFIX}${SERVICE_CACHE_REDIS_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "redis32_cache.dockerfile"
+      dockerfile: "${SERVICE_CACHE_REDIS_PREFIX}${SERVICE_CACHE_REDIS_DEBIAN8_VERSION}.dockerfile"
       args:
         app_redis_user: "redis"
         app_redis_group: "redis"
@@ -162,10 +162,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:rdbms_mariadb10_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_RDBMS_MARIADB_PREFIX}${SERVICE_RDBMS_MARIADB_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "mariadb10_rdbms.dockerfile"
+      dockerfile: "${SERVICE_RDBMS_MARIADB_PREFIX}${SERVICE_RDBMS_MARIADB_DEBIAN8_VERSION}.dockerfile"
       args:
         app_mariadb_user: "mysql"
         app_mariadb_group: "mysql"
@@ -210,10 +210,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:language_php56_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_LANGUAGE_PHP_PREFIX}${SERVICE_LANGUAGE_PHP_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "php56_language.dockerfile"
+      dockerfile: "${SERVICE_LANGUAGE_PHP_PREFIX}${SERVICE_LANGUAGE_PHP_DEBIAN8_VERSION}.dockerfile"
       args:
         app_php_exts_core_dis: "mysql"
         app_php_exts_core_en: "mcrypt curl gd imap ldap mysqli mysqlnd odbc pdo pdo_mysql pdo_odbc opcache"
@@ -292,10 +292,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:web_httpd24_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_WEB_HTTPD_PREFIX}${SERVICE_WEB_HTTPD_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd24_web.dockerfile"
+      dockerfile: "${SERVICE_WEB_HTTPD_PREFIX}${SERVICE_WEB_HTTPD_DEBIAN8_VERSION}.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "allowmethods asis auth_digest auth_form authn_anon authn_dbd authn_dbm authn_socache authnz_fcgi authnz_ldap authz_dbd authz_dbm authz_owner buffer cache cache_disk cache_socache cgi cgid charset_lite dav_fs dav dav_lock data dbd dialup dump_io echo ext_filter file_cache heartbeat heartmonitor ident include lbmethod_bybusyness lbmethod_byrequests lbmethod_bytraffic lbmethod_heartbeat ldap log_debug log_forensic lua mime_magic negotiation proxy_balancer proxy_connect proxy_express proxy_fdpass proxy_ftp proxy_html proxy_scgi proxy_wstunnel ratelimit reflector remoteip reqtimeout request sed session_crypto session_dbd slotmem_plain slotmem_shm socache_dbm socache_memcache speling substitute suexec unique_id userdir usertrack vhost_alias xml2enc"
         app_httpd_global_mods_core_en: "mpm_event macro alias dir autoindex mime setenvif env expires headers filter deflate rewrite actions authn_core authn_file authz_core authz_groupfile authz_host authz_user auth_basic access_compat session session_cookie socache_shmcb ssl proxy proxy_ajp proxy_fcgi proxy_http info status"
@@ -366,10 +366,10 @@ services:
       - "org.label-schema.os-architecture=$BUILD_ARCH"
       - "org.label-schema.version=$BUILD_VERSION"
       - "org.label-schema.build-date=$BUILD_DATE"
-    image: "${IMAGE_URL_PREFIX}:proxy_httpd24_debian8"
+    image: "${IMAGE_URL_PREFIX}:${SERVICE_PROXY_HTTPD_PREFIX}${SERVICE_PROXY_HTTPD_DEBIAN8_VERSION}_${OS_RELEASE_ID}"
     build:
       context: "./dockerfiles"
-      dockerfile: "httpd24_proxy.dockerfile"
+      dockerfile: "${SERVICE_PROXY_HTTPD_PREFIX}${SERVICE_PROXY_HTTPD_DEBIAN8_VERSION}.dockerfile"
       args:
         app_httpd_global_mods_core_dis: "allowmethods asis auth_digest auth_form authn_anon authn_dbd authn_dbm authn_socache authnz_fcgi authnz_ldap authz_dbd authz_dbm authz_owner buffer cache cache_disk cache_socache cgi cgid charset_lite dav_fs dav dav_lock data dbd dialup dump_io echo ext_filter file_cache heartbeat heartmonitor ident include lbmethod_bybusyness lbmethod_byrequests lbmethod_bytraffic lbmethod_heartbeat ldap log_debug log_forensic lua mime_magic negotiation proxy_ajp proxy_balancer proxy_connect proxy_express proxy_fcgi proxy_fdpass proxy_ftp proxy_html proxy_scgi proxy_wstunnel ratelimit reflector remoteip reqtimeout request sed session_crypto session_dbd slotmem_plain slotmem_shm socache_dbm socache_memcache speling substitute suexec unique_id userdir usertrack vhost_alias xml2enc"
         app_httpd_global_mods_core_en: "mpm_event macro alias dir autoindex mime setenvif env expires headers filter deflate rewrite actions authn_core authn_file authz_core authz_groupfile authz_host authz_user auth_basic access_compat session session_cookie socache_shmcb ssl proxy proxy_http info status"
