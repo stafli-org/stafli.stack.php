@@ -52,6 +52,7 @@ LABEL description="Stafli PHP Stack (stafli/stafli.stack.php), Based on Stafli M
 ARG app_mariadb_user="mysql"
 ARG app_mariadb_group="mysql"
 ARG app_mariadb_home="/var/lib/mysql"
+ARG app_mariadb_loglevel="notice"
 ARG app_mariadb_listen_addr="0.0.0.0"
 ARG app_mariadb_listen_port="3306"
 

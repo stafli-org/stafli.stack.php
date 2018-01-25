@@ -30,6 +30,7 @@ services:
   stack_php56_cache_memcached14_debian8:
     build:
       args:
+        app_memcached_loglevel: "verbose"
         app_memcached_listen_port: "11211"
         app_memcached_limit_backlog: "256"
         app_memcached_limit_concurent: "256"
@@ -40,6 +41,7 @@ services:
   stack_php56_cache_redis32_debian8:
     build:
       args:
+        app_redis_loglevel: "verbose"
         app_redis_listen_port: "6379"
         app_redis_listen_timeout: "5"
         app_redis_limit_backlog: "256"
@@ -51,6 +53,7 @@ services:
   stack_php56_rdbms_mariadb10_debian8:
     build:
       args:
+        app_mariadb_loglevel: "verbose"
         app_mariadb_listen_port: "3306"
     ports:
       - "3306"
@@ -62,7 +65,7 @@ services:
         app_php_global_limit_memory: "134217728"
         app_fpm_global_limit_processes: "128"
         app_fpm_pool_listen_port: "9000"
-        app_fpm_pool_limit_backlog: "256"
+        app_fpm_pool_limit_backlog: "65536"
         app_fpm_pool_pm_method: "dynamic"
         app_fpm_pool_pm_max_children: "100"
         app_fpm_pool_pm_start_servers: "20"
