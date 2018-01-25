@@ -108,7 +108,9 @@ Available commands:\n\
   - img-ls:		Lists images, using docker, using docker.\n\
   - img-build:		Builds images from dockerfiles, using docker-compose.\n\
   - img-pull:		Pulls images from repository, using docker-compose.\n\
+  - img-push:		Pushes images to repository, using docker-compose.\n\
   - img-rm:		Removes images, using docker.\n\
+  - img-inspect:	Inspects images, using docker.\n\
 - for containers:\n\
   - con-ls:		Lists containers, using docker-compose.\n\
   - con-create:		Creates containers, using docker-compose.\n\
@@ -262,8 +264,19 @@ img-pull:
 	@echo
 	@for DISTRO_INDEX in $(DISTROS); do \
 		echo; \
-		echo Building images for $$DISTRO_INDEX...; \
+		echo Pulling images for $$DISTRO_INDEX...; \
 		bash -c "(cd $$DISTRO_INDEX; set -o allexport; source .env; set +o allexport; docker-compose pull)"; \
+	done
+
+
+img-push:
+	@echo
+	@echo Pushing images...
+	@echo
+	@for DISTRO_INDEX in $(DISTROS); do \
+		echo; \
+		echo Pushing images for $$DISTRO_INDEX...; \
+		bash -c "(cd $$DISTRO_INDEX; set -o allexport; source .env; set +o allexport; docker-compose push)"; \
 	done
 
 
@@ -313,6 +326,55 @@ img-rm:
 		docker image rm $(IMAGE_URL_PREFIX)":"$(SERVICE_LANGUAGE_PHP_PREFIX)$$SERVICE_LANGUAGE_PHP_VERSION"_"$$DISTRO_INDEX; \
 		docker image rm $(IMAGE_URL_PREFIX)":"$(SERVICE_WEB_HTTPD_PREFIX)$$SERVICE_WEB_HTTPD_VERSION"_"$$DISTRO_INDEX; \
 		docker image rm $(IMAGE_URL_PREFIX)":"$(SERVICE_PROXY_HTTPD_PREFIX)$$SERVICE_PROXY_HTTPD_VERSION"_"$$DISTRO_INDEX; \
+	done
+
+
+img-inspect:
+	@echo
+	@echo Inspecting images...
+	@echo
+	@for DISTRO_INDEX in $(DISTROS); do \
+		if [ $$DISTRO_INDEX = "debian8" ]; then \
+			VERSION=$(DISTRO_DEBIAN8_VERSION); \
+			SERVICE_CACHE_MEMCACHED_VERSION=$(SERVICE_CACHE_MEMCACHED_DEBIAN8_VERSION); \
+			SERVICE_CACHE_REDIS_VERSION=$(SERVICE_CACHE_REDIS_DEBIAN8_VERSION); \
+			SERVICE_RDBMS_MARIADB_VERSION=$(SERVICE_RDBMS_MARIADB_DEBIAN8_VERSION); \
+			SERVICE_LANGUAGE_PHP_VERSION=$(SERVICE_LANGUAGE_PHP_DEBIAN8_VERSION); \
+			SERVICE_WEB_HTTPD_VERSION=$(SERVICE_WEB_HTTPD_DEBIAN8_VERSION); \
+			SERVICE_PROXY_HTTPD_VERSION=$(SERVICE_PROXY_HTTPD_DEBIAN8_VERSION); \
+		elif [ $$DISTRO_INDEX = "debian7" ]; then \
+			VERSION=$(DISTRO_DEBIAN7_VERSION); \
+			SERVICE_CACHE_MEMCACHED_VERSION=$(SERVICE_CACHE_MEMCACHED_DEBIAN7_VERSION); \
+			SERVICE_CACHE_REDIS_VERSION=$(SERVICE_CACHE_REDIS_DEBIAN7_VERSION); \
+			SERVICE_RDBMS_MARIADB_VERSION=$(SERVICE_RDBMS_MARIADB_DEBIAN7_VERSION); \
+			SERVICE_LANGUAGE_PHP_VERSION=$(SERVICE_LANGUAGE_PHP_DEBIAN7_VERSION); \
+			SERVICE_WEB_HTTPD_VERSION=$(SERVICE_WEB_HTTPD_DEBIAN7_VERSION); \
+			SERVICE_PROXY_HTTPD_VERSION=$(SERVICE_PROXY_HTTPD_DEBIAN7_VERSION); \
+		elif [ $$DISTRO_INDEX = "centos7" ]; then \
+			VERSION=$(DISTRO_CENTOS7_VERSION); \
+			SERVICE_CACHE_MEMCACHED_VERSION=$(SERVICE_CACHE_MEMCACHED_CENTOS7_VERSION); \
+			SERVICE_CACHE_REDIS_VERSION=$(SERVICE_CACHE_REDIS_CENTOS7_VERSION); \
+			SERVICE_RDBMS_MARIADB_VERSION=$(SERVICE_RDBMS_MARIADB_CENTOS7_VERSION); \
+			SERVICE_LANGUAGE_PHP_VERSION=$(SERVICE_LANGUAGE_PHP_CENTOS7_VERSION); \
+			SERVICE_WEB_HTTPD_VERSION=$(SERVICE_WEB_HTTPD_CENTOS7_VERSION); \
+			SERVICE_PROXY_HTTPD_VERSION=$(SERVICE_PROXY_HTTPD_CENTOS7_VERSION); \
+		elif [ $$DISTRO_INDEX = "centos6" ]; then \
+			VERSION=$(DISTRO_CENTOS6_VERSION); \
+			SERVICE_CACHE_MEMCACHED_VERSION=$(SERVICE_CACHE_MEMCACHED_CENTOS6_VERSION); \
+			SERVICE_CACHE_REDIS_VERSION=$(SERVICE_CACHE_REDIS_CENTOS6_VERSION); \
+			SERVICE_RDBMS_MARIADB_VERSION=$(SERVICE_RDBMS_MARIADB_CENTOS6_VERSION); \
+			SERVICE_LANGUAGE_PHP_VERSION=$(SERVICE_LANGUAGE_PHP_CENTOS6_VERSION); \
+			SERVICE_WEB_HTTPD_VERSION=$(SERVICE_WEB_HTTPD_CENTOS6_VERSION); \
+			SERVICE_PROXY_HTTPD_VERSION=$(SERVICE_PROXY_HTTPD_CENTOS6_VERSION); \
+		fi; \
+		echo; \
+		echo Inspecting images for $$DISTRO_INDEX...; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_CACHE_MEMCACHED_PREFIX)$$SERVICE_CACHE_MEMCACHED_VERSION"_"$$DISTRO_INDEX; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_CACHE_REDIS_PREFIX)$$SERVICE_CACHE_REDIS_VERSION"_"$$DISTRO_INDEX; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_RDBMS_MARIADB_PREFIX)$$SERVICE_RDBMS_MARIADB_VERSION"_"$$DISTRO_INDEX; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_LANGUAGE_PHP_PREFIX)$$SERVICE_LANGUAGE_PHP_VERSION"_"$$DISTRO_INDEX; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_WEB_HTTPD_PREFIX)$$SERVICE_WEB_HTTPD_VERSION"_"$$DISTRO_INDEX; \
+		docker image inspect $(IMAGE_URL_PREFIX)":"$(SERVICE_PROXY_HTTPD_PREFIX)$$SERVICE_PROXY_HTTPD_VERSION"_"$$DISTRO_INDEX; \
 	done
 
 
@@ -626,6 +688,15 @@ vol-ls:
 	@echo Listing volumes...
 	@echo
 	@for DISTRO_INDEX in $(DISTROS); do \
+		if [ $$DISTRO_INDEX = "debian8" ]; then \
+			VERSION=$(DISTRO_DEBIAN8_VERSION); \
+		elif [ $$DISTRO_INDEX = "debian7" ]; then \
+			VERSION=$(DISTRO_DEBIAN7_VERSION); \
+		elif [ $$DISTRO_INDEX = "centos7" ]; then \
+			VERSION=$(DISTRO_CENTOS7_VERSION); \
+		elif [ $$DISTRO_INDEX = "centos6" ]; then \
+			VERSION=$(DISTRO_CENTOS6_VERSION); \
+		fi; \
 		echo; \
 		echo Listing volumes for $$DISTRO_INDEX...; \
 		docker volume ls | grep -E "$(VOLUME_URL_PREFIX)$$VERSION" | grep -E "$$DISTRO_INDEX" | sort -n; \
