@@ -19,6 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Build
+#
+
+# Base image to use
 FROM stafli/stafli.rdbms.mariadb:mariadb10_debian7
 
 # Labels to apply
@@ -55,6 +60,18 @@ ARG app_mariadb_home="/var/lib/mysql"
 ARG app_mariadb_loglevel="notice"
 ARG app_mariadb_listen_addr="0.0.0.0"
 ARG app_mariadb_listen_port="3306"
+
+#
+# Environment
+#
+
+# Working directory to use when executing build and run instructions
+# Defaults to /.
+#WORKDIR /
+
+# User and group to use when executing build and run instructions
+# Defaults to root.
+#USER root:root
 
 #
 # Packages
@@ -108,4 +125,16 @@ RUN printf "Updading MariaDB configuration...\n"; \
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading MariaDB configuration...\n";
+
+#
+# Run
+#
+
+# Command to execute
+# Defaults to /bin/bash.
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "--nodaemon"]
+
+# Ports to expose
+# Defaults to 3306
+EXPOSE ${app_mariadb_listen_port}
 

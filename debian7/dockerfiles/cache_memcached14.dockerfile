@@ -19,6 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Build
+#
+
+# Base image to use
 FROM stafli/stafli.cache.memcached:memcached14_debian7
 
 # Labels to apply
@@ -60,6 +65,18 @@ ARG app_memcached_listen_port="11211"
 ARG app_memcached_limit_backlog="256"
 ARG app_memcached_limit_concurent="256"
 ARG app_memcached_limit_memory="128"
+
+#
+# Environment
+#
+
+# Working directory to use when executing build and run instructions
+# Defaults to /.
+#WORKDIR /
+
+# User and group to use when executing build and run instructions
+# Defaults to root.
+#USER root:root
 
 #
 # Packages
@@ -111,4 +128,16 @@ RUN printf "Updading Memcached configuration...\n"; \
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading Memcached configuration...\n";
+
+#
+# Run
+#
+
+# Command to execute
+# Defaults to /bin/bash.
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "--nodaemon"]
+
+# Ports to expose
+# Defaults to 11211
+EXPOSE ${app_memcached_listen_port}
 

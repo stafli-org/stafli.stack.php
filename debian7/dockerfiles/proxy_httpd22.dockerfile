@@ -19,6 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Build
+#
+
+# Base image to use
 FROM stafli/stafli.proxy.httpd:httpd22_debian7
 
 # Labels to apply
@@ -44,6 +49,18 @@ LABEL description="Stafli PHP Stack (stafli/stafli.stack.php), Based on Stafli M
       org.label-schema.os-version-id="7" \
       org.label-schema.os-architecture="amd64" \
       org.label-schema.version="1.0"
+
+#
+# Environment
+#
+
+# Working directory to use when executing build and run instructions
+# Defaults to /.
+#WORKDIR /
+
+# User and group to use when executing build and run instructions
+# Defaults to root.
+#USER root:root
 
 #
 # Arguments
@@ -268,4 +285,17 @@ RUN printf "Updading HTTPd configuration...\n"; \
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
+
+#
+# Run
+#
+
+# Command to execute
+# Defaults to /bin/bash.
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "--nodaemon"]
+
+# Ports to expose
+# Defaults to 80 and 443
+EXPOSE ${app_httpd_global_listen_port_http}
+EXPOSE ${app_httpd_global_listen_port_https}
 

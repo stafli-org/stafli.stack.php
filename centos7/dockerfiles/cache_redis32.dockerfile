@@ -19,6 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Build
+#
+
+# Base image to use
 FROM stafli/stafli.cache.redis:redis32_centos7
 
 # Labels to apply
@@ -62,6 +67,18 @@ ARG app_redis_limit_concurent="256"
 ARG app_redis_limit_memory="134217728"
 
 #
+# Environment
+#
+
+# Working directory to use when executing build and run instructions
+# Defaults to /.
+#WORKDIR /
+
+# User and group to use when executing build and run instructions
+# Defaults to root.
+#USER root:root
+
+#
 # Packages
 #
 
@@ -103,4 +120,16 @@ RUN printf "Updading Redis configuration...\n"; \
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading Redis configuration...\n";
+
+#
+# Run
+#
+
+# Command to execute
+# Defaults to /bin/bash.
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "--nodaemon"]
+
+# Ports to expose
+# Defaults to 6379
+EXPOSE ${app_redis_listen_port}
 

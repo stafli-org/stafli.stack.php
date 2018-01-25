@@ -19,6 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Build
+#
+
+# Base image to use
 FROM stafli/stafli.proxy.httpd:httpd22_centos6
 
 # Labels to apply
@@ -71,6 +76,18 @@ ARG app_httpd_vhost_listen_addr="0.0.0.0"
 ARG app_httpd_vhost_listen_port_http="80"
 ARG app_httpd_vhost_listen_port_https="443"
 ARG app_httpd_vhost_httpd_wlist="127.0.0.1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
+
+#
+# Environment
+#
+
+# Working directory to use when executing build and run instructions
+# Defaults to /.
+#WORKDIR /
+
+# User and group to use when executing build and run instructions
+# Defaults to root.
+#USER root:root
 
 #
 # Packages
@@ -503,4 +520,17 @@ ServerSignature On\n\
     printf "Done testing configuration...\n"; \
     \
     printf "Finished updading HTTPd configuration...\n";
+
+#
+# Run
+#
+
+# Command to execute
+# Defaults to /bin/bash.
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "--nodaemon"]
+
+# Ports to expose
+# Defaults to 80 and 443
+EXPOSE ${app_httpd_global_listen_port_http}
+EXPOSE ${app_httpd_global_listen_port_https}
 
