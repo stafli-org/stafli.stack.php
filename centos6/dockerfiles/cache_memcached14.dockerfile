@@ -87,67 +87,69 @@ ARG app_memcached_limit_memory="128"
 #
 
 # Memcached
-RUN printf "Updading Memcached configuration...\n"; \
+RUN printf "Updading Memcached configuration...\n" && \
     \
     # /etc/sysconfig/memcached \
-    file="/etc/sysconfig/memcached"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/sysconfig/memcached" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # disable daemon/run in foreground \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"#-d >" ${file}; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"#-d >" ${file} && \
     # run as user \
-    perl -0p -i -e "s>USER=.*>USER=\"${app_memcached_user}\">" ${file}; \
+    perl -0p -i -e "s>USER=.*>USER=\"${app_memcached_user}\">" ${file} && \
     # change log level \
-    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi; \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_loglevel_ovr} >" ${file}; \
+    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi && \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_loglevel_ovr} >" ${file} && \
     # change interface \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-l ${app_memcached_listen_addr} >" ${file}; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-l ${app_memcached_listen_addr} >" ${file} && \
     # change port \
-    perl -0p -i -e "s>PORT=.*>PORT=\"${app_memcached_listen_port}\">" ${file}; \
+    perl -0p -i -e "s>PORT=.*>PORT=\"${app_memcached_listen_port}\">" ${file} && \
     # change backlog queue limit \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-b ${app_memcached_limit_backlog} >" ${file}; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-b ${app_memcached_limit_backlog} >" ${file} && \
     # change max concurrent connections \
-    perl -0p -i -e "s>MAXCONN=.*>MAXCONN=\"${app_memcached_limit_concurent}\">" ${file}; \
+    perl -0p -i -e "s>MAXCONN=.*>MAXCONN=\"${app_memcached_limit_concurent}\">" ${file} && \
     # change max memory \
-    perl -0p -i -e "s>CACHESIZE=.*>CACHESIZE=\"${app_memcached_limit_memory}\">" ${file}; \
+    perl -0p -i -e "s>CACHESIZE=.*>CACHESIZE=\"${app_memcached_limit_memory}\">" ${file} && \
     # change protocol to auto \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-B ${app_memcached_listen_proto} >" ${file}; \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"-B ${app_memcached_listen_proto} >" ${file} && \
     # change SASL authentication \
-    if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl=""; fi; \
-    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_auth_sasl} >" ${file}; \
-    printf "Done patching ${file}...\n"; \
+    if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl=""; fi && \
+    perl -0p -i -e "s>OPTIONS=\">OPTIONS=\"${app_memcached_auth_sasl} >" ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
     # /etc/memcached.conf \
-    file="/etc/memcached.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/memcached.conf" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # clear old file \
-    printf "#\n# memcached.conf\n#\n" > ${file}; \
+    printf "#\n# memcached.conf\n#\n" > ${file} && \
     # disable daemon/run in foreground \
-    printf "\n# Run memcached as a daemon.\n#-d\n" >> ${file}; \
+    printf "\n# Run memcached as a daemon.\n#-d\n" >> ${file} && \
     # run as user \
-    printf "\n# Specify which user to run memcache on.\n-u ${app_memcached_user}\n" >> ${file}; \
+    printf "\n# Specify which user to run memcache on.\n-u ${app_memcached_user}\n" >> ${file} && \
     # change log level \
-    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi; \
-    printf "\n# Be verbose\n${app_memcached_loglevel_ovr}\n" >> ${file}; \
+    if [ "$app_memcached_loglevel" = "notice" ]; then app_memcached_loglevel_ovr="-v"; elif [ "$app_memcached_loglevel" = "verbose" ]; then app_memcached_loglevel_ovr="-vv"; else app_memcached_loglevel_ovr=""; fi && \
+    printf "\n# Be verbose\n${app_memcached_loglevel_ovr}\n" >> ${file} && \
+    # change log file \
+    printf "\n# Log memcached output\n#logfile /proc/self/fd/2\n" >> ${file} && \
     # change interface \
-    printf "\n# Specify which IP address to listen on.\n-l ${app_memcached_listen_addr}\n" >> ${file}; \
+    printf "\n# Specify which IP address to listen on.\n-l ${app_memcached_listen_addr}\n" >> ${file} && \
     # change port \
-    printf "\n# Default connection port is 11211\n-p ${app_memcached_listen_port}\n" >> ${file}; \
+    printf "\n# Default connection port is 11211\n-p ${app_memcached_listen_port}\n" >> ${file} && \
     # change backlog queue limit \
-    printf "\n# Set the backlog queue limit (default: 1024)\n-b ${app_memcached_limit_backlog}\n" >> ${file}; \
+    printf "\n# Set the backlog queue limit (default: 1024)\n-b ${app_memcached_limit_backlog}\n" >> ${file} && \
     # change max concurrent connections \
-    printf "\n# Limit the number of simultaneous incoming connections. The daemon default is 1024\n-c ${app_memcached_limit_concurent}\n" >> ${file}; \
+    printf "\n# Limit the number of simultaneous incoming connections. The daemon default is 1024\n-c ${app_memcached_limit_concurent}\n" >> ${file} && \
     # change max memory \
-    printf "\n# Limit the memory usage.\n-m ${app_memcached_limit_memory}\n" >> ${file}; \
+    printf "\n# Limit the memory usage.\n-m ${app_memcached_limit_memory}\n" >> ${file} && \
     # change protocol to auto \
-    printf "\n# Binding protocol - one of ascii, binary, or auto (default)\n-B ${app_memcached_listen_proto}\n" >> ${file}; \
+    printf "\n# Binding protocol - one of ascii, binary, or auto (default)\n-B ${app_memcached_listen_proto}\n" >> ${file} && \
     # change SASL authentication \
-    if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl="#-S"; fi; \
-    printf "\n# Turn on SASL authentication\n${app_memcached_auth_sasl}\n" >> ${file}; \
-    printf "Done patching ${file}...\n"; \
+    if [ "$app_memcached_auth_sasl" = "yes" ]; then app_memcached_auth_sasl="-S"; else app_memcached_auth_sasl="#-S"; fi && \
+    printf "\n# Turn on SASL authentication\n${app_memcached_auth_sasl}\n" >> ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
-    printf "\n# Testing configuration...\n"; \
-    echo "Testing $(which memcached):"; $(which memcached) -i | grep "memcached"; \
-    printf "Done testing configuration...\n"; \
+    printf "\n# Testing configuration...\n" && \
+    echo "Testing $(which memcached):"; $(which memcached) -i | grep "memcached" && \
+    printf "Done testing configuration...\n" && \
     \
     printf "Finished updading Memcached configuration...\n";
 

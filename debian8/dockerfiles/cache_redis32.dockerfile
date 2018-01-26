@@ -87,37 +87,39 @@ ARG app_redis_limit_memory="134217728"
 #
 
 # Redis
-RUN printf "Updading Redis configuration...\n"; \
+RUN printf "Updading Redis configuration...\n" && \
     \
     # ignoring /etc/default/redis-server
     \
     # /etc/redis/redis.conf \
-    file="/etc/redis/redis.conf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/redis/redis.conf" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # disable daemon/run in foreground \
-    perl -0p -i -e "s># Note that Redis will write a pid file in /var/run/redis.pid when daemonized.\ndaemonize .*\n># Note that Redis will write a pid file in /var/run/redis.pid when daemonized.\ndaemonize no\n>" ${file}; \
+    perl -0p -i -e "s># Note that Redis will write a pid file in /var/run/redis.pid when daemonized.\ndaemonize .*\n># Note that Redis will write a pid file in /var/run/redis.pid when daemonized.\ndaemonize no\n>" ${file} && \
     # change log level \
-    perl -0p -i -e "s># warning (only very important / critical messages are logged)\nloglevel .*\n># warning (only very important / critical messages are logged)\nloglevel ${app_redis_loglevel}\n>" ${file}; \
+    perl -0p -i -e "s># warning (only very important / critical messages are logged)\nloglevel .*\n># warning (only very important / critical messages are logged)\nloglevel ${app_redis_loglevel}\n>" ${file} && \
+    # disable log file \
+    perl -0p -i -e "s># output for logging but daemonize, logs will be sent to /dev/null\nlogfile .*># output for logging but daemonize, logs will be sent to /dev/null\n#logfile /proc/self/fd/2>" ${file} && \
     # change interface \
-    perl -0p -i -e "s># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind .*\n># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind ${app_redis_listen_addr}\n>" ${file}; \
+    perl -0p -i -e "s># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind .*\n># ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nbind ${app_redis_listen_addr}\n>" ${file} && \
     # change port \
-    perl -0p -i -e "s># If port 0 is specified Redis will not listen on a TCP socket.\nport .*\n># If port 0 is specified Redis will not listen on a TCP socket.\nport ${app_redis_listen_port}\n>" ${file}; \
+    perl -0p -i -e "s># If port 0 is specified Redis will not listen on a TCP socket.\nport .*\n># If port 0 is specified Redis will not listen on a TCP socket.\nport ${app_redis_listen_port}\n>" ${file} && \
     # change timeout \
-    perl -0p -i -e "s># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout .*\n># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout ${app_redis_listen_timeout}\n>" ${file}; \
+    perl -0p -i -e "s># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout .*\n># Close the connection after a client is idle for N seconds \(0 to disable\)\ntimeout ${app_redis_listen_timeout}\n>" ${file} && \
     # change keepalive \
-    perl -0p -i -e "s># A reasonable value for this option is 60 seconds.\ntcp-keepalive .*\n># A reasonable value for this option is 60 seconds.\ntcp-keepalive ${app_redis_listen_keepalive}\n>" ${file}; \
+    perl -0p -i -e "s># A reasonable value for this option is 60 seconds.\ntcp-keepalive .*\n># A reasonable value for this option is 60 seconds.\ntcp-keepalive ${app_redis_listen_keepalive}\n>" ${file} && \
     # change backlog \
-    perl -0p -i -e "s># in order to get the desired effect.\ntcp-backlog .*\n># in order to get the desired effect.\ntcp-backlog ${app_redis_limit_backlog}\n>" ${file}; \
+    perl -0p -i -e "s># in order to get the desired effect.\ntcp-backlog .*\n># in order to get the desired effect.\ntcp-backlog ${app_redis_limit_backlog}\n>" ${file} && \
     # change max clients \
-    perl -0p -i -e "s># an error 'max number of clients reached'.\n#\n# maxclients 10000\n># an error 'max number of clients reached'.\n#\n# maxclients 10000\nmaxclients ${app_redis_limit_concurent}\n>" ${file}; \
+    perl -0p -i -e "s># an error 'max number of clients reached'.\n#\n# maxclients 10000\n># an error 'max number of clients reached'.\n#\n# maxclients 10000\nmaxclients ${app_redis_limit_concurent}\n>" ${file} && \
     # change max memory \
-    perl -0p -i -e "s># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>\nmaxmemory ${app_redis_limit_memory}>" ${file}; \
-    printf "Done patching ${file}...\n"; \
+    perl -0p -i -e "s># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>># output buffers \(but this is not needed if the policy is \'noeviction\'\).\n#\n# maxmemory <bytes\>\nmaxmemory ${app_redis_limit_memory}>" ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
-    printf "\n# Testing configuration...\n"; \
-    echo "Testing $(which redis-cli):"; $(which redis-cli) -v; \
-    echo "Testing $(which redis-server):"; $(which redis-server) -v; \
-    printf "Done testing configuration...\n"; \
+    printf "\n# Testing configuration...\n" && \
+    echo "Testing $(which redis-cli):"; $(which redis-cli) -v && \
+    echo "Testing $(which redis-server):"; $(which redis-server) -v && \
+    printf "Done testing configuration...\n" && \
     \
     printf "Finished updading Redis configuration...\n";
 

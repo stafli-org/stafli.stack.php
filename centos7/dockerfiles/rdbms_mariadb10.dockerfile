@@ -82,60 +82,71 @@ ARG app_mariadb_listen_port="3306"
 #
 
 # MariaDB
-RUN printf "Updading MariaDB configuration...\n"; \
+RUN printf "Updading MariaDB configuration...\n" && \
     \
     # ignoring /etc/sysconfig/mysql \
     \
     # ignoring /etc/my.cnf \
     \
     # /etc/my.cnf.d/server.cnf \
-    file="/etc/my.cnf.d/server.cnf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/my.cnf.d/server.cnf" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # run as user \
-    perl -0p -i -e "s>\[server\]>\[server\]\nuser = ${app_mariadb_user}>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nuser = ${app_mariadb_user}>" ${file} && \
     # change logging \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog-error = /var/log/mysql/mariadb-error.log>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_error = /var/log/mysql/mariadb-error.log>" ${file} && \
+    if [ "$app_mariadb_loglevel" = "notice" ]; then app_mariadb_loglevel_ovr="1"; elif [ "$app_mariadb_loglevel" = "verbose" ]; then app_mariadb_loglevel_ovr="2"; else app_mariadb_loglevel_ovr="1"; fi && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_warnings = ${app_mariadb_loglevel_ovr}>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_output = FILE>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\ngeneral_log = 1>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\ngeneral_log_file = /var/log/mysql/mariadb-general.log>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nslow_query_log = 1>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nslow_query_log_file = /var/log/mysql/mariadb-slow.log>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_slow_admin_statements = 1>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_queries_not_using_indexes = 1>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlog_slow_rate_limit = 1>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\nlong_query_time = 2>" ${file} && \
     # change interface \
-    perl -0p -i -e "s>\[server\]>\[server\]\nbind-address = ${app_mariadb_listen_addr}>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nbind-address = ${app_mariadb_listen_addr}>" ${file} && \
     # change port \
-    perl -0p -i -e "s>\[server\]>\[server\]\nport = ${app_mariadb_listen_port}>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nport = ${app_mariadb_listen_port}>" ${file} && \
     # change performance settings \
-    perl -0p -i -e "s>\[server\]>\[server\]\nmax_allowed_packet = 128M>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\nmax_allowed_packet = 128M>" ${file} && \
     # storage engine \
-    perl -0p -i -e "s>\[server\]>\[server\]\ndefault-storage-engine = InnoDB>" ${file}; \
+    perl -0p -i -e "s>\[server\]>\[server\]\ndefault-storage-engine = InnoDB>" ${file} && \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[server\]>\[server\]\ncharacter-set-server = utf8>" ${file}; \
-    perl -0p -i -e "s>\[server\]>\[server\]\ncollation-server = utf8_general_ci>" ${file}; \
-    printf "Done patching ${file}...\n"; \
+    perl -0p -i -e "s>\[server\]>\[server\]\ncharacter-set-server = utf8>" ${file} && \
+    perl -0p -i -e "s>\[server\]>\[server\]\ncollation-server = utf8_general_ci>" ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
     # /etc/my.cnf.d/client.cnf \
-    file="/etc/my.cnf.d/client.cnf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/my.cnf.d/client.cnf" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # change protocol \
-    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file}; \
+    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file} && \
     # change port \
-    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mariadb_listen_port}>" ${file}; \
+    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mariadb_listen_port}>" ${file} && \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file}; \
-    printf "Done patching ${file}...\n"; \
+    perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
     # /etc/my.cnf.d/mysql-clients.cnf \
-    file="/etc/my.cnf.d/mysql-clients.cnf"; \
-    printf "\n# Applying configuration for ${file}...\n"; \
+    file="/etc/my.cnf.d/mysql-clients.cnf" && \
+    printf "\n# Applying configuration for ${file}...\n" && \
     # change performance settings \
-    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M>" ${file}; \
-    printf "Done patching ${file}...\n"; \
+    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M>" ${file} && \
+    printf "Done patching ${file}...\n" && \
     \
-    printf "\n# Testing configuration...\n"; \
-    echo "Testing $(which mysql):"; $(which mysql) -V; \
-    echo "Testing $(which mysqld):"; $(which mysqld) -V; \
-    printf "Done testing configuration...\n"; \
+    printf "\n# Testing configuration...\n" && \
+    echo "Testing $(which mysql):"; $(which mysql) -V && \
+    echo "Testing $(which mysqld):"; $(which mysqld) -V && \
+    printf "Done testing configuration...\n" && \
     \
     printf "Finished updading MariaDB configuration...\n";
 
