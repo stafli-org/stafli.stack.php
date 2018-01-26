@@ -199,14 +199,14 @@ RUN printf "Updading HTTPd configuration...\n" && \
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
   # HTTPd info\n\
-  <Location /server-info>\n\
+  <Location /httpd-info>\n\
     SetHandler server-info\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
   # HTTPd status\n\
-  <Location /server-status>\n\
+  <Location /httpd-status>\n\
     SetHandler server-status\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\

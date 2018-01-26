@@ -225,8 +225,8 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n" && \
     perl -0p -i -e "s>; Note: slowlog is mandatory if request_slowlog_timeout is set\n;slowlog = .*>; Note: slowlog is mandatory if request_slowlog_timeout is set\nslowlog = /proc/self/fd/2>" ${file} && \
     perl -0p -i -e "s>; Default Value: no\n;catch_workers_output = .*>; Default Value: no\ncatch_workers_output = yes>" ${file} && \
     # change status \
-    perl -0p -i -e "s>; Default Value: not set \n;pm.status_path = .*>; Default Value: not set\npm.status_path = /fpm-status>" ${file} && \
-    perl -0p -i -e "s>; Default Value: not set\n;ping.path = .*>; Default Value: not set\nping.path = /fpm-ping>" ${file} && \
+    perl -0p -i -e "s>; Default Value: not set \n;pm.status_path = .*>; Default Value: not set\npm.status_path = /phpfpm-status>" ${file} && \
+    perl -0p -i -e "s>; Default Value: not set\n;ping.path = .*>; Default Value: not set\nping.path = /phpfpm-ping>" ${file} && \
     perl -0p -i -e "s>; Default Value: pong\n;ping.response = .*>; Default Value: pong\nping.response = pong>" ${file} && \
     # change whitelist \
     if [ ! -z "$app_fpm_pool_listen_wlist" ]; then perl -0p -i -e "s>; Default Value: any\n;listen.allowed_clients = .*>; Default Value: any\nlisten.allowed_clients = ${app_fpm_pool_listen_wlist}>" ${file}; else perl -0p -i -e "s>; Default Value: any\n;listen.allowed_clients = .*>; Default Value: any\n;listen.allowed_clients = 127.0.0.1>" ${file}; fi && \
@@ -276,7 +276,7 @@ RUN printf "Updading PHP and PHP-FPM configuration...\n" && \
     printf "\n# Writing test for php-fpm...\n" && \
     printf "\n\
 # https://easyengine.io/tutorials/php/directly-connect-php-fpm/\n\
-SCRIPT_NAME=/fpm-status SCRIPT_FILENAME=/fpm-status REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:${app_fpm_pool_listen_port}\n\
+SCRIPT_NAME=/phpfpm-status SCRIPT_FILENAME=/phpfpm-status REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:${app_fpm_pool_listen_port}\n\
 "> ${file} && \
     chmod +x ${file} && \
     printf "Done writing ${file}...\n" && \

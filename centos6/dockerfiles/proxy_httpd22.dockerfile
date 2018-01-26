@@ -419,14 +419,14 @@ CustomLog /proc/self/fd/1 vhost_combined\n\
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
   # HTTPd info\n\
-  <Location /server-info>\n\
+  <Location /httpd-info>\n\
     SetHandler server-info\n\
     Allow from ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
   # HTTPd status\n\
-  <Location /server-status>\n\
+  <Location /httpd-status>\n\
     SetHandler server-status\n\
     Allow from ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\

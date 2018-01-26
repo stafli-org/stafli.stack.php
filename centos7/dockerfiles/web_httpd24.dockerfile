@@ -423,14 +423,14 @@ SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
     printf "# HTTPd info and status\n\
 <IfModule info_module>\n\
   # HTTPd info\n\
-  <Location /server-info>\n\
+  <Location /httpd-info>\n\
     SetHandler server-info\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
 </IfModule>\n\
 <IfModule status_module>\n\
   # HTTPd status\n\
-  <Location /server-status>\n\
+  <Location /httpd-status>\n\
     SetHandler server-status\n\
     Require ${app_httpd_vhost_httpd_wlist}\n\
   </Location>\n\
@@ -446,7 +446,7 @@ SSLStaplingCache shmcb:/var/run/ocsp\(128000\)\n\
   DirectoryIndex index.php\n\
   ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
   # PHP-FPM status and ping\n\
-  <LocationMatch /(fpm-status|fpm-ping)>\n\
+  <LocationMatch /(phpfpm-status|phpfpm-ping)>\n\
     ProxyPassMatch fcgi://${app_httpd_vhost_fpm_addr}:${app_httpd_vhost_fpm_port}${app_httpd_vhost_home}/html/\$1\n\
     Require ${app_httpd_vhost_fpm_wlist}\n\
   </LocationMatch>\n\
