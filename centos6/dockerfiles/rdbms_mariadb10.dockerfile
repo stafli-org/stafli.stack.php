@@ -74,6 +74,7 @@ ARG app_mariadb_tuning_tmp_table_size="32M"
 ARG app_mariadb_tuning_max_heap_table_size="32M"
 ARG app_mariadb_query_cache_limit="128K"
 ARG app_mariadb_query_cache_size="64M"
+ARG app_mariadb_query_cache_min_res_unit="4k"
 ARG app_mariadb_query_cache_type="DEMAND"
 ARG app_mariadb_myisam_key_buffer_size="128M"
 ARG app_mariadb_myisam_open_files_limit="2000"
@@ -84,6 +85,7 @@ ARG app_mariadb_myisam_read_buffer_size="2M"
 ARG app_mariadb_myisam_read_rnd_buffer_size="1M"
 ARG app_mariadb_innodb_log_file_size="50M"
 ARG app_mariadb_innodb_buffer_pool_size="256M"
+ARG app_mariadb_innodb_buffer_pool_instances="1"
 ARG app_mariadb_innodb_log_buffer_size="8M"
 ARG app_mariadb_innodb_file_per_table="1"
 ARG app_mariadb_innodb_open_files="400"
@@ -149,7 +151,6 @@ RUN printf "Updading MariaDB configuration...\n" && \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>.*default-character-set = .*>default-character-set = ${app_mariadb_global_default_character_set}>" ${file} && \
     perl -0p -i -e "s>.*character-set-server  = .*>character-set-server  = ${app_mariadb_global_default_character_set}>" ${file} && \
     perl -0p -i -e "s>.*collation-server      = .*>collation-server      = ${app_mariadb_global_default_collation}>" ${file} && \
     # change tuning settings \
@@ -165,6 +166,7 @@ RUN printf "Updading MariaDB configuration...\n" && \
     # change query cache settings \
     perl -0p -i -e "s>.*query_cache_limit\t\t= .*>query_cache_limit\t\t= ${app_mariadb_query_cache_limit}>" ${file} && \
     perl -0p -i -e "s>.*query_cache_size\t\t= .*>query_cache_size\t\t= ${app_mariadb_query_cache_size}>" ${file} && \
+    perl -0p -i -e "s>.*nquery_cache_min_res_unit\t= .*>query_cache_min_res_unit\t= ${app_mariadb_query_cache_min_res_unit}>" ${file} && \
     perl -0p -i -e "s>.*query_cache_type\t\t= .*>query_cache_type\t\t= ${app_mariadb_query_cache_type}>" ${file} && \
     # change myisam settings \
     perl -0p -i -e "s>.*key_buffer_size\t\t= .*>key_buffer_size\t\t= ${app_mariadb_myisam_key_buffer_size}>" ${file} && \
@@ -177,6 +179,7 @@ RUN printf "Updading MariaDB configuration...\n" && \
     # change innodb settings \
     perl -0p -i -e "s>.*innodb_log_file_size\t= .*>innodb_log_file_size\t= ${app_mariadb_innodb_log_file_size}>" ${file} && \
     perl -0p -i -e "s>.*innodb_buffer_pool_size\t= .*>innodb_buffer_pool_size\t= ${app_mariadb_innodb_buffer_pool_size}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_buffer_pool_instances\t= .*>innodb_buffer_pool_instances\t= ${app_mariadb_innodb_buffer_pool_instances}>" ${file} && \
     perl -0p -i -e "s>.*innodb_log_buffer_size\t= .*>innodb_log_buffer_size\t= ${app_mariadb_innodb_log_buffer_size}>" ${file} && \
     perl -0p -i -e "s>.*innodb_file_per_table\t= .*>innodb_file_per_table\t= ${app_mariadb_innodb_file_per_table}>" ${file} && \
     perl -0p -i -e "s>.*innodb_open_files\t= .*>innodb_open_files\t= ${app_mariadb_innodb_open_files}>" ${file} && \

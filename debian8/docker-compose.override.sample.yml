@@ -69,6 +69,7 @@ services:
         app_mariadb_tuning_max_heap_table_size: "32M"
         app_mariadb_query_cache_limit: "128K"
         app_mariadb_query_cache_size: "64M"
+        app_mariadb_query_cache_min_res_unit: "4k"
         app_mariadb_query_cache_type: "DEMAND"
         app_mariadb_myisam_key_buffer_size: "128M"
         app_mariadb_myisam_myisam_sort_buffer_size: "512M"
@@ -76,6 +77,7 @@ services:
         app_mariadb_myisam_read_rnd_buffer_size: "1M"
         app_mariadb_innodb_log_file_size: "50M"
         app_mariadb_innodb_buffer_pool_size: "256M"
+        app_mariadb_innodb_buffer_pool_instances: "1"
         app_mariadb_innodb_log_buffer_size: "8M"
     ports:
       - "3306"
