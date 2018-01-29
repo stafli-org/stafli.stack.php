@@ -54,12 +54,41 @@ LABEL description="Stafli PHP Stack (stafli/stafli.stack.php), Based on Stafli M
 # Arguments
 #
 
-ARG app_mariadb_user="mysql"
-ARG app_mariadb_group="mysql"
-ARG app_mariadb_home="/var/lib/mysql"
-ARG app_mariadb_loglevel="notice"
-ARG app_mariadb_listen_addr="0.0.0.0"
-ARG app_mariadb_listen_port="3306"
+ARG app_mariadb_global_user="mysql"
+ARG app_mariadb_global_group="mysql"
+ARG app_mariadb_global_home="/var/lib/mysql"
+ARG app_mariadb_global_loglevel="notice"
+ARG app_mariadb_global_listen_addr="0.0.0.0"
+ARG app_mariadb_global_listen_port="3306"
+ARG app_mariadb_global_default_storage_engine="InnoDB"
+ARG app_mariadb_global_default_character_set="utf8"
+ARG app_mariadb_global_default_collation="utf8_general_ci"
+ARG app_mariadb_tuning_max_connections="100"
+ARG app_mariadb_tuning_connect_timeout="5"
+ARG app_mariadb_tuning_wait_timeout="600"
+ARG app_mariadb_tuning_max_allowed_packet="128M"
+ARG app_mariadb_tuning_thread_cache_size="128"
+ARG app_mariadb_tuning_sort_buffer_size="4M"
+ARG app_mariadb_tuning_bulk_insert_buffer_size="16M"
+ARG app_mariadb_tuning_tmp_table_size="32M"
+ARG app_mariadb_tuning_max_heap_table_size="32M"
+ARG app_mariadb_query_cache_limit="128K"
+ARG app_mariadb_query_cache_size="64M"
+ARG app_mariadb_query_cache_type="DEMAND"
+ARG app_mariadb_myisam_key_buffer_size="128M"
+ARG app_mariadb_myisam_open_files_limit="2000"
+ARG app_mariadb_myisam_table_open_cache="400"
+ARG app_mariadb_myisam_myisam_sort_buffer_size="512M"
+ARG app_mariadb_myisam_concurrent_insert="2"
+ARG app_mariadb_myisam_read_buffer_size="2M"
+ARG app_mariadb_myisam_read_rnd_buffer_size="1M"
+ARG app_mariadb_innodb_log_file_size="50M"
+ARG app_mariadb_innodb_buffer_pool_size="256M"
+ARG app_mariadb_innodb_log_buffer_size="8M"
+ARG app_mariadb_innodb_file_per_table="1"
+ARG app_mariadb_innodb_open_files="400"
+ARG app_mariadb_innodb_io_capacity="400"
+ARG app_mariadb_innodb_flush_method="O_DIRECT"
 
 #
 # Environment
@@ -92,55 +121,92 @@ RUN printf "Updading MariaDB configuration...\n" && \
     file="/etc/my.cnf.d/server.cnf" && \
     printf "\n# Applying configuration for ${file}...\n" && \
     # run as user \
-    perl -0p -i -e "s>\[server\]>\[server\]\nuser = ${app_mariadb_user}>" ${file} && \
+    perl -0p -i -e "s>.*user\t\t= .*>user\t\t= ${app_mariadb_global_user}>" ${file} && \
+    # change home \
+    perl -0p -i -e "s>.*datadir\t\t= .*>datadir\t\t= ${app_mariadb_global_home}>" ${file} && \
     # change logging \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_error = /var/log/mysql/mariadb-error.log>" ${file} && \
-    if [ "$app_mariadb_loglevel" = "notice" ]; then app_mariadb_loglevel_ovr="1"; elif [ "$app_mariadb_loglevel" = "verbose" ]; then app_mariadb_loglevel_ovr="2"; else app_mariadb_loglevel_ovr="1"; fi && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_warnings = ${app_mariadb_loglevel_ovr}>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_output = FILE>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\ngeneral_log = 1>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\ngeneral_log_file = /var/log/mysql/mariadb-general.log>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nslow_query_log = 1>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nslow_query_log_file = /var/log/mysql/mariadb-slow.log>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_slow_admin_statements = 1>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_queries_not_using_indexes = 1>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlog_slow_rate_limit = 1>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\nlong_query_time = 2>" ${file} && \
+    perl -0p -i -e "s>.*log_error       = .*>log_error       = /var/log/mysql/mariadb-error.log>" ${file} && \
+    if [ "$app_mariadb_global_loglevel" = "notice" ]; then app_mariadb_global_loglevel_ovr="1"; elif [ "$app_mariadb_global_loglevel" = "verbose" ]; then app_mariadb_global_loglevel_ovr="2"; else app_mariadb_global_loglevel_ovr="1"; fi && \
+    perl -0p -i -e "s>.*log_warnings            = .*>log_warnings            = ${app_mariadb_global_loglevel_ovr}>" ${file} && \
+    perl -0p -i -e "s>.*log_output              = .*>log_output              = FILE>" ${file} && \
+    perl -0p -i -e "s>.*general_log             = .*>general_log             = 1>" ${file} && \
+    perl -0p -i -e "s>.*general_log_file        = .*>general_log_file        = /var/log/mysql/mariadb-general.log>" ${file} && \
+    perl -0p -i -e "s>.*slow_query_log          = .*>slow_query_log          = 1>" ${file} && \
+    perl -0p -i -e "s>.*slow_query_log_file     = .*>slow_query_log_file     = /var/log/mysql/mariadb-slow.log>" ${file} && \
+    perl -0p -i -e "s>.*log_slow_admin_statements>log_slow_admin_statements>" ${file} && \
+    perl -0p -i -e "s>.*log_queries_not_using_indexes = .*>log_queries_not_using_indexes = 1>" ${file} && \
+    perl -0p -i -e "s>.*log_slow_rate_limit     = .*>log_slow_rate_limit     = 1>" ${file} && \
+    perl -0p -i -e "s>.*long_query_time         = .*>long_query_time         = 2>" ${file} && \
     # change interface \
-    perl -0p -i -e "s>\[server\]>\[server\]\nbind-address = ${app_mariadb_listen_addr}>" ${file} && \
+    perl -0p -i -e "s>.*bind-address\t\t= .*>bind-address\t\t= ${app_mariadb_global_listen_addr}>" ${file} && \
     # change port \
-    perl -0p -i -e "s>\[server\]>\[server\]\nport = ${app_mariadb_listen_port}>" ${file} && \
-    # change performance settings \
-    perl -0p -i -e "s>\[server\]>\[server\]\nmax_allowed_packet = 128M>" ${file} && \
+    perl -0p -i -e "s>.*port\t\t= .*>port\t\t= ${app_mariadb_global_listen_port}>g" ${file} && \
+    # change protocol \
+    perl -0p -i -e "s>.*protocol        = .*>protocol        = tcp>" ${file} && \
     # storage engine \
-    perl -0p -i -e "s>\[server\]>\[server\]\ndefault-storage-engine = InnoDB>" ${file} && \
-    # change engine and collation \
+    perl -0p -i -e "s>.*default_storage_engine  = .*>default_storage_engine  = ${app_mariadb_global_default_storage_engine}>" ${file} && \
+    # change collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[server\]>\[server\]\ncharacter-set-server = utf8>" ${file} && \
-    perl -0p -i -e "s>\[server\]>\[server\]\ncollation-server = utf8_general_ci>" ${file} && \
+    perl -0p -i -e "s>.*default-character-set = .*>default-character-set = ${app_mariadb_global_default_character_set}>" ${file} && \
+    perl -0p -i -e "s>.*character-set-server  = .*>character-set-server  = ${app_mariadb_global_default_character_set}>" ${file} && \
+    perl -0p -i -e "s>.*collation-server      = .*>collation-server      = ${app_mariadb_global_default_collation}>" ${file} && \
+    # change tuning settings \
+    perl -0p -i -e "s>.*max_connections\t\t= .*>max_connections\t\t= ${app_mariadb_tuning_max_connections}>" ${file} && \
+    perl -0p -i -e "s>.*connect_timeout\t\t= .*>connect_timeout\t\t= ${app_mariadb_tuning_connect_timeout}>" ${file} && \
+    perl -0p -i -e "s>.*wait_timeout\t\t= .*>wait_timeout\t\t= ${app_mariadb_tuning_wait_timeout}>" ${file} && \
+    perl -0p -i -e "s>.*max_allowed_packet\t= .*>max_allowed_packet\t= ${app_mariadb_tuning_max_allowed_packet}>" ${file} && \
+    perl -0p -i -e "s>.*thread_cache_size       = .*>thread_cache_size       = ${app_mariadb_tuning_thread_cache_size}>" ${file} && \
+    perl -0p -i -e "s>.*sort_buffer_size\t= .*>sort_buffer_size\t= ${app_mariadb_tuning_sort_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*bulk_insert_buffer_size\t= .*>bulk_insert_buffer_size\t= ${app_mariadb_tuning_bulk_insert_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*tmp_table_size\t\t= .*>tmp_table_size\t\t= ${app_mariadb_tuning_tmp_table_size}>" ${file} && \
+    perl -0p -i -e "s>.*max_heap_table_size\t= .*>max_heap_table_size\t= ${app_mariadb_tuning_max_heap_table_size}>" ${file} && \
+    # change query cache settings \
+    perl -0p -i -e "s>.*query_cache_limit\t\t= .*>query_cache_limit\t\t= ${app_mariadb_query_cache_limit}>" ${file} && \
+    perl -0p -i -e "s>.*query_cache_size\t\t= .*>query_cache_size\t\t= ${app_mariadb_query_cache_size}>" ${file} && \
+    perl -0p -i -e "s>.*query_cache_type\t\t= .*>query_cache_type\t\t= ${app_mariadb_query_cache_type}>" ${file} && \
+    # change myisam settings \
+    perl -0p -i -e "s>.*key_buffer_size\t\t= .*>key_buffer_size\t\t= ${app_mariadb_myisam_key_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*open-files-limit\t= .*>open-files-limit\t= ${app_mariadb_myisam_open_files_limit}>" ${file} && \
+    perl -0p -i -e "s>.*table_open_cache\t= .*>table_open_cache\t= ${app_mariadb_myisam_table_open_cache}>" ${file} && \
+    perl -0p -i -e "s>.*myisam_sort_buffer_size\t= .*>myisam_sort_buffer_size\t= ${app_mariadb_myisam_myisam_sort_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*concurrent_insert\t= .*>concurrent_insert\t= ${app_mariadb_myisam_concurrent_insert}>" ${file} && \
+    perl -0p -i -e "s>.*read_buffer_size\t= .*>read_buffer_size\t= ${app_mariadb_myisam_read_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*read_rnd_buffer_size\t= .*>read_rnd_buffer_size\t= ${app_mariadb_myisam_read_rnd_buffer_size}>" ${file} && \
+    # change innodb settings \
+    perl -0p -i -e "s>.*innodb_log_file_size\t= .*>innodb_log_file_size\t= ${app_mariadb_innodb_log_file_size}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_buffer_pool_size\t= .*>innodb_buffer_pool_size\t= ${app_mariadb_innodb_buffer_pool_size}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_log_buffer_size\t= .*>innodb_log_buffer_size\t= ${app_mariadb_innodb_log_buffer_size}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_file_per_table\t= .*>innodb_file_per_table\t= ${app_mariadb_innodb_file_per_table}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_open_files\t= .*>innodb_open_files\t= ${app_mariadb_innodb_open_files}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_io_capacity\t= .*>innodb_io_capacity\t= ${app_mariadb_innodb_io_capacity}>" ${file} && \
+    perl -0p -i -e "s>.*innodb_flush_method\t= .*>innodb_flush_method\t= ${app_mariadb_innodb_flush_method}>" ${file} && \
+    # change mysqldump settings \
+    perl -0p -i -e "s>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet\t= .*>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet\t= ${app_mariadb_tuning_max_allowed_packet}>" ${file} && \
+    # change client settings \
+    perl -0p -i -e "s>\[client\]\nport\t\t= .*>\[client\]\nport\t\t= ${app_mariadb_global_listen_port}>g" ${file} && \
     printf "Done patching ${file}...\n" && \
     \
     # /etc/my.cnf.d/client.cnf \
     file="/etc/my.cnf.d/client.cnf" && \
     printf "\n# Applying configuration for ${file}...\n" && \
     # change protocol \
-    perl -0p -i -e "s>\[client\]>\[client\]\nprotocol = tcp>" ${file} && \
+    perl -0p -i -e "s>.*protocol = .*>protocol = tcp>" ${file} && \
     # change port \
-    perl -0p -i -e "s>\[client\]>\[client\]\nport = ${app_mariadb_listen_port}>" ${file} && \
+    perl -0p -i -e "s>.*port = .*>port = ${app_mariadb_global_listen_port}>" ${file} && \
     # change engine and collation \
     # https://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf \
     # https://www.percona.com/blog/2014/01/28/10-mysql-settings-to-tune-after-installation/ \
     # https://dev.mysql.com/doc/refman/5.6/en/charset-configuration.html \
-    perl -0p -i -e "s>\[client\]>\[client\]\ndefault-character-set = utf8>" ${file} && \
+    perl -0p -i -e "s>.*default-character-set = .*>default-character-set = ${app_mariadb_global_default_character_set}>" ${file} && \
     printf "Done patching ${file}...\n" && \
     \
     # /etc/my.cnf.d/mysql-clients.cnf \
     file="/etc/my.cnf.d/mysql-clients.cnf" && \
     printf "\n# Applying configuration for ${file}...\n" && \
     # change performance settings \
-    perl -0p -i -e "s>\[mysqldump\]>\[mysqldump\]\nquick\nquote-names\nmax_allowed_packet = 24M>" ${file} && \
+    perl -0p -i -e "s>.*max_allowed_packet = .*>max_allowed_packet = ${app_mariadb_tuning_max_allowed_packet}>" ${file} && \
     printf "Done patching ${file}...\n" && \
     \
     printf "\n# Testing configuration...\n" && \
@@ -160,5 +226,5 @@ CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "--nodaemon"]
 
 # Ports to expose
 # Defaults to 3306
-EXPOSE ${app_mariadb_listen_port}
+EXPOSE ${app_mariadb_global_listen_port}
 

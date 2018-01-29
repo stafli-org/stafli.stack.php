@@ -53,8 +53,30 @@ services:
   stack_php56_rdbms_mariadb10_debian7:
     build:
       args:
-        app_mariadb_loglevel: "verbose"
-        app_mariadb_listen_port: "3306"
+        app_mariadb_global_loglevel: "verbose"
+        app_mariadb_global_listen_port: "3306"
+        app_mariadb_global_default_storage_engine: "InnoDB"
+        app_mariadb_global_default_character_set: "utf8"
+        app_mariadb_global_default_collation: "utf8_general_ci"
+        app_mariadb_tuning_max_connections: "100"
+        app_mariadb_tuning_connect_timeout: "5"
+        app_mariadb_tuning_wait_timeout: "600"
+        app_mariadb_tuning_max_allowed_packet: "128M"
+        app_mariadb_tuning_thread_cache_size: "128"
+        app_mariadb_tuning_sort_buffer_size: "4M"
+        app_mariadb_tuning_bulk_insert_buffer_size: "16M"
+        app_mariadb_tuning_tmp_table_size: "32M"
+        app_mariadb_tuning_max_heap_table_size: "32M"
+        app_mariadb_query_cache_limit: "128K"
+        app_mariadb_query_cache_size: "64M"
+        app_mariadb_query_cache_type: "DEMAND"
+        app_mariadb_myisam_key_buffer_size: "128M"
+        app_mariadb_myisam_myisam_sort_buffer_size: "512M"
+        app_mariadb_myisam_read_buffer_size: "2M"
+        app_mariadb_myisam_read_rnd_buffer_size: "1M"
+        app_mariadb_innodb_log_file_size: "50M"
+        app_mariadb_innodb_buffer_pool_size: "256M"
+        app_mariadb_innodb_log_buffer_size: "8M"
     ports:
       - "3306"
 
